@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+    database:
+        image: 'mariadb:10.6'
+        networks:
+            - primary
+        environment:
+            MYSQL_DATABASE: application
+            MYSQL_USER: application
+            MYSQL_PASSWORD: password
+            MYSQL_RANDOM_ROOT_PASSWORD: 1
+            MYSQL_INITDB_SKIP_TZINFO: 1
+    php:
+        build: ./docker/php
+        networks:
+            - primary
+        volumes:
+            -
+                type: bind
+                source: .
+                target: /var/www/html
+            - var_dir:/var/www/html/var
+    nginx:
+        build: ./docker/nginx
+        networks:
+            - primary
+        ports:
+            - 8000:80
+        depends_on:
+            - php
+        volumes:
+            -
+                type: bind
+                source: .
+                target: /var/www/html
+            - var_dir:/var/www/html/var
+
+networks:
+    primary:
+
+volumes:
+    var_dir:
