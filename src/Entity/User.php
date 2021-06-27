@@ -1,7 +1,11 @@
 <?php
 	namespace App\Entity;
 
+	use Doctrine\Common\Collections\ArrayCollection;
+	use Doctrine\Common\Collections\Collection;
+	use Doctrine\Common\Collections\Selectable;
 	use Doctrine\ORM\Mapping as ORM;
+	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 	use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -28,7 +32,17 @@
 		private ?string $password = null;
 
 		/**
+		 * @var Collection|Selectable|PlaythroughTemplate[]
+		 *
+		 * @ORM\OneToMany(targetEntity="App\Entity\PlaythroughTemplate", mappedBy="owner")
+		 */
+		private Collection|Selectable|array $playthroughTemplates;
+
+		#[Pure] public function __construct(string $email) {
+
 			$this->email = $email;
+
+			$this->playthroughTemplates = new ArrayCollection();
 		}
 
 		/**

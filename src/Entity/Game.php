@@ -107,5 +107,5 @@
 		public function getGenre(): Genre {
 			return $this->genre;
 		}
-		
+
 	}
