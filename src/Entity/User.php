@@ -38,11 +38,33 @@
 		 */
 		private Collection|Selectable|array $playthroughTemplates;
 
+		/**
+		 * @var Collection|Selectable|PlaythroughTemplateStep[]
+		 *
+		 * @ORM\OneToMany(targetEntity="App\Entity\PlaythroughTemplateStep", mappedBy="owner")
+		 */
+		private Collection|Selectable|array $playthroughTemplateSteps;
+
+		/**
+		 * @var Collection|Selectable|Playthrough[]
+		 *
+		 * @ORM\OneToMany(targetEntity="App\Entity\Playthrough", mappedBy="owner", cascade={"all"}, orphanRemoval=true)
+		 */
+		private Collection|Selectable|array $playthroughs;
+
+		/**
+		 * @var Collection|Selectable|PlaythroughStep[]
+		 *
+		 * @ORM\OneToMany(targetEntity="App\Entity\PlaythroughStep", mappedBy="owner", cascade={"all"}, orphanRemoval=true)
+		 */
+		private Collection|Selectable|array $playthroughSteps;
+
 		#[Pure] public function __construct(string $email) {
 
 			$this->email = $email;
 
 			$this->playthroughTemplates = new ArrayCollection();
+			$this->playthroughTemplateSteps = new ArrayCollection();
 		}
 
 		/**
@@ -64,6 +86,27 @@
 		 */
 		public function getPlaythroughTemplates(): Collection|array|Selectable {
 			return $this->playthroughTemplates;
+		}
+
+		/**
+		 * @return PlaythroughTemplateStep[]|Collection|Selectable
+		 */
+		public function getPlaythroughTemplateSteps(): Collection|array|Selectable {
+			return $this->playthroughTemplateSteps;
+		}
+
+		/**
+		 * @return Playthrough[]|Collection|Selectable
+		 */
+		public function getPlaythroughs(): Collection|array|Selectable {
+			return $this->playthroughs;
+		}
+
+		/**
+		 * @return PlaythroughStep[]|Collection|Selectable
+		 */
+		public function getPlaythroughSteps(): Collection|array|Selectable {
+			return $this->playthroughSteps;
 		}
 
 		/**
