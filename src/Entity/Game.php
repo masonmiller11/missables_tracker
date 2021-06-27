@@ -11,7 +11,7 @@
 	 * @ORM\Entity()
 	 * @ORM\Table(name="games")
 	 */
-	class Game implements EntityInterface {
+	class Game implements EntityInterface {//TODO create a CustomGame entity
 
 		use EntityTrait;
 
