@@ -27,15 +27,8 @@
 		 */
 		private ?string $password = null;
 
-		public function __construct(string $email) {
-			$this->email = $email;
-		}
-
 		/**
-		 * @return string
-		 */
-		public function getEmail(): string {
-			return $this->email;
+			$this->email = $email;
 		}
 
 		/**
@@ -46,13 +39,6 @@
 		}
 
 		/**
-		 * @return string|null
-		 */
-		public function getPassword(): ?string {
-			return $this->password;
-		}
-
-		/**
 		 * @param string|null $password
 		 */
 		public function setPassword(?string $password): void {
@@ -60,21 +46,35 @@
 		}
 
 		/**
-		 * @return int|null
+		 * @return PlaythroughTemplate[]|Collection|Selectable
 		 */
-		public function getId(): ?int {
-			return $this->id;
+		public function getPlaythroughTemplates(): Collection|array|Selectable {
+			return $this->playthroughTemplates;
+		}
+
+		/**
+		 * @return string
+		 */
+		public function getEmail(): string {
+			return $this->email;
+		}
+
+		/**
+		 * @return string|null
+		 */
+		public function getPassword(): ?string {
+			return $this->password;
 		}
 
 		public function getRoles() :array {
 			return ['ROLE_USER'];
 		}
 
-		public function getUsername() :string {
+		#[Pure] public function getUsername() :string {
 			return $this->getEmail();
 		}
 
-		public function getUserIdentifier() :string {
+		#[Pure] public function getUserIdentifier() :string {
 			return $this->getEmail();
 		}
 
