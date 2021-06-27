@@ -7,7 +7,10 @@
 	use Doctrine\ORM\Mapping as ORM;
 	use JetBrains\PhpStorm\Pure;
 
-	class PlaythroughTemplate implements EntityInterface {
+	/**
+	 * @ORM\Entity()
+	 * @ORM\Table(name="playthrough_templates")
+	 */
 
 		use EntityTrait;
 
