@@ -4,7 +4,7 @@
 	use Doctrine\Common\Collections\Collection;
 	use Doctrine\Common\Collections\Selectable;
 
-	interface PlaythroughInterface {
+	interface PlaythroughInterface extends EntityInterface {
 
 		public function getSteps(): Collection|array|Selectable;
 

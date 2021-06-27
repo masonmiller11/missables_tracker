@@ -11,7 +11,7 @@
 	 * @ORM\Entity()
 	 * @ORM\Table(name="playthrough_templates")
 	 */
-	class PlaythroughTemplate implements EntityInterface, PlaythroughInterface {
+	class PlaythroughTemplate implements PlaythroughInterface {
 
 		use EntityTrait;
 
