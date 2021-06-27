@@ -43,7 +43,7 @@
 		 *
 		 * @ORM\OneToMany(targetEntity="App\Entity\PlaythroughTemplateStep", mappedBy="template", cascade={"all"}, orphanRemoval=true)
 		 */
-		private Collection|Selectable|array $playthroughTemplateSteps;
+		private Collection|Selectable|array $templateSteps;
 
 		/**
 		 * @var Collection|Selectable|Playthrough[]
@@ -55,7 +55,7 @@
 		#[Pure] public function __construct(User $owner, Game $game, bool $visibility) {
 
 			$this->playthroughs = new ArrayCollection();
-			$this->playthroughTemplateSteps = new ArrayCollection();
+			$this->templateSteps = new ArrayCollection();
 
 			$this->owner = $owner;
 			$this->game = $game;
@@ -69,6 +69,7 @@
 		 */
 		public function setVisibility(bool $visibility): static {
 			$this->visibility = $visibility;
+			return $this;
 		}
 
 		/**
@@ -96,7 +97,7 @@
 		 * @return PlaythroughTemplateStep[]|Collection|Selectable
 		 */
 		public function getSteps(): Collection|array|Selectable {
-			return $this->playthroughTemplateSteps;
+			return $this->templateSteps;
 		}
 
 		/**

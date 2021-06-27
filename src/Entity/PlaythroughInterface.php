@@ -14,4 +14,6 @@
 
 		public function isVisible(): bool;
 
+		public function setVisibility(bool $visibility): static;
+
 	}
