@@ -12,4 +12,6 @@
 
 		public function getGame(): Game;
 
+		public function isVisible(): bool;
+
 	}

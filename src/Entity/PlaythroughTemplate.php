@@ -32,6 +32,13 @@
 		private User $owner;
 
 		/**
+		 * @var bool
+		 *
+		 * @ORM\Column(type="boolean")
+		 */
+		private bool $visibility;
+
+		/**
 		 * @var Collection|Selectable|PlaythroughTemplateStep[]
 		 *
 		 * @ORM\OneToMany(targetEntity="App\Entity\PlaythroughTemplateStep", mappedBy="template", cascade={"all"}, orphanRemoval=true)
@@ -45,14 +52,23 @@
 		 */
 		private Collection|Selectable|array $playthroughs;
 
-		#[Pure] public function __construct(User $owner, Game $game) {
+		#[Pure] public function __construct(User $owner, Game $game, bool $visibility) {
 
 			$this->playthroughs = new ArrayCollection();
 			$this->playthroughTemplateSteps = new ArrayCollection();
 
 			$this->owner = $owner;
 			$this->game = $game;
+			$this->visibility = $visibility;
 
+		}
+
+		/**
+		 * @param bool $visibility
+		 * @return static
+		 */
+		public function setVisibility(bool $visibility): static {
+			$this->visibility = $visibility;
 		}
 
 		/**
@@ -67,6 +83,13 @@
 		 */
 		public function getOwner(): User {
 			return $this->owner;
+		}
+
+		/**
+		 * @return bool
+		 */
+		public function isVisible(): bool {
+			return $this->visibility;
 		}
 
 		/**
