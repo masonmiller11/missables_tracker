@@ -11,14 +11,7 @@
 	 */
 	class User implements PasswordAuthenticatedUserInterface, UserInterface {
 
-		/**
-		 * @var int|null
-		 *
-		 * @ORM\Id
-		 * @ORM\GeneratedValue()
-		 * @ORM\Column(type="integer", options={"unsigned": true})
-		 */
-		private ?int $id = null;
+		use EntityTrait;
 
 		/**
 		 * @var string
