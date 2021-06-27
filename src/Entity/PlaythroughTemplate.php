@@ -11,6 +11,7 @@
 	 * @ORM\Entity()
 	 * @ORM\Table(name="playthrough_templates")
 	 */
+	class PlaythroughTemplate implements EntityInterface, PlaythroughInterface {
 
 		use EntityTrait;
 
@@ -71,7 +72,7 @@
 		/**
 		 * @return PlaythroughTemplateStep[]|Collection|Selectable
 		 */
-		public function getPlaythroughTemplateSteps(): Collection|array|Selectable {
+		public function getSteps(): Collection|array|Selectable {
 			return $this->playthroughTemplateSteps;
 		}
 
