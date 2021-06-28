@@ -29,7 +29,9 @@
 		 */
 		private Collection|Selectable|array $games;
 
-		#[Pure] public function __construct() {
+		#[Pure] public function __construct(string $name) {
+
+			$this->name = $name;
 
 			$this->games = new ArrayCollection();
 
