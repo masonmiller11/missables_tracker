@@ -7,11 +7,11 @@
 
 		public function getOwner(): User;
 
-		public function getName(): ?string;
+		public function getName(): string;
 
 		public function getDescription(): ?string;
 
-		public function setName(?string $name) :static;
+		public function setName(string $name) :static;
 
 		public function setDescription(?string $description): static;
 

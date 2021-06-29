@@ -11,11 +11,11 @@
 	trait PlaythroughStepTrait {
 
 		/**
-		 * @var string|null
+		 * @var string
 		 *
 		 * @ORM\Column(type="string", length=64)
 		 */
-		private ?string $name;
+		private string $name;
 
 		/**
 		 * @var string|null
@@ -27,10 +27,10 @@
 		//getters and setters
 
 		/**
-		 * @param string|null $name
+		 * @param string $name
 		 * @return static
 		 */
-		public function setName(?string $name): static {
+		public function setName(string $name): static {
 			$this->name = $name;
 			return $this;
 		}
@@ -45,9 +45,9 @@
 		}
 
 		/**
-		 * @return string|null
+		 * @return string
 		 */
-		public function getName(): ?string {
+		public function getName(): string {
 			return $this->name;
 		}
 

@@ -18,9 +18,9 @@
 		/**
 		 * @ORM\Column(type="string", length=128)
 		 *
-		 * @var string|null
+		 * @var string
 		 */
-		private ?string $title;
+		private string $title;
 
 		/**
 		 * @ORM\Column(type="string", length 64)
@@ -37,12 +37,12 @@
 		private \DateTimeImmutable $releaseDate;
 
 		/**
-		 * @var Genre
+		 * @var string|null
+		 * @see Genre
 		 *
-		 * @ORM\ManyToOne(targetEntity="App\Entity\Genre", inversedBy="games")
-		 * @ORM\JoinColumn(nullable=false)
+		 * @ORM\Column(type="string", length 64)
 		 */
-		private Genre $genre;
+		private ?string $genre;
 
 		/**
 		 * @ORM\OneToMany(targetEntity="App\Entity\PlaythroughTemplate", mappedBy="game", cascade={"all"}, orphanRemoval=true)
