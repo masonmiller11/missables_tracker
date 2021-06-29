@@ -6,6 +6,7 @@
 	use Doctrine\Common\Collections\Selectable;
 	use Doctrine\ORM\Mapping as ORM;
 	use JetBrains\PhpStorm\Pure;
+	use App\Genre;
 
 	/**
 	 * @ORM\Entity()
@@ -58,7 +59,7 @@
 		 */
 		private Collection|Selectable|array $playthroughs;
 
-		#[Pure] public function __construct (Genre $genre, string $title, \DateTimeImmutable $releaseDate) {//TODO add developer to construct sig
+		#[Pure] public function __construct (string $genre, string $title, \DateTimeImmutable $releaseDate) {//TODO add developer to construct sig
 
 			$this->playthroughTemplates = new ArrayCollection();
 			$this->playthroughs = new ArrayCollection();
@@ -102,9 +103,9 @@
 		}
 
 		/**
-		 * @return Genre
+		 * @return string|null
 		 */
-		public function getGenre(): Genre {
+		public function getGenre(): ?string {
 			return $this->genre;
 		}
 
