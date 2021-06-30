@@ -24,7 +24,7 @@
 		private string $title;
 
 		/**
-		 * @ORM\Column(type="string", length 64)
+		 * @ORM\Column(type="string", length=64)
 		 *
 		 * @var string|null
 		 */
@@ -41,7 +41,7 @@
 		 * @var string|null
 		 * @see Genre
 		 *
-		 * @ORM\Column(type="string", length 64)
+		 * @ORM\Column(type="string", length=64)
 		 */
 		private ?string $genre;
 
@@ -59,11 +59,15 @@
 		 */
 		private Collection|Selectable|array $playthroughs;
 
-		#[Pure] public function __construct (string $genre, string $title, \DateTimeImmutable $releaseDate) {//TODO add developer to construct sig
+		#[Pure] public function __construct (string $genre,
+		                                     string $title,
+		                                     string $developer,
+		                                     \DateTimeImmutable $releaseDate) {
 
 			$this->playthroughTemplates = new ArrayCollection();
 			$this->playthroughs = new ArrayCollection();
 
+			$this->developer = $developer;
 			$this->genre = $genre;
 			$this->title = $title;
 			$this->releaseDate = $releaseDate;
@@ -71,10 +75,10 @@
 		}
 
 		/**
-		 * @param string|null $title
+		 * @param string $title
 		 * @return static
 		 */
-		public function setTitle(?string $title): static {
+		public function setTitle(string $title): static {
 			$this->title = $title;
 			return $this;
 		}
@@ -85,6 +89,15 @@
 		 */
 		public function setReleaseDate(\DateTimeImmutable $releaseDate): static {
 			$this->releaseDate = $releaseDate;
+			return $this;
+		}
+
+		/**
+		 * @param string|null $genre
+		 * @return static
+		 */
+		public function setGenre(?string $genre): static {
+			$this->genre = $genre;
 			return $this;
 		}
 
