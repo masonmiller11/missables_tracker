@@ -1,7 +1,8 @@
 <?php
 	namespace App\Command;
 
-	use App\Entity\User;
+	use App\Entity\Game;
+	use DateTimeImmutable;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Symfony\Component\Console\Command\Command;
 	use Symfony\Component\Console\Input\InputArgument;
@@ -11,37 +12,39 @@
 	use Symfony\Component\Console\Style\SymfonyStyle;
 	use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-	class UserCreateCommand extends Command {
+	class GameCreateCommand extends Command {
 
-		protected static $defaultName = 'app:user:create';
-		protected static $defaultDescription = 'This is for creating users to test the app with';
+		protected static $defaultName = 'app:game:create';
+		protected static $defaultDescription = 'This is for creating games to test the app with';
 
 		private EntityManagerInterface $entityManager;
-		private UserPasswordHasherInterface $encoder;
 
-		public function __construct (EntityManagerInterface $entityManager, UserPasswordHasherInterface $encoder) {
+		public function __construct (EntityManagerInterface $entityManager) {
 			parent::__construct();
 			$this->entityManager = $entityManager;
-			$this->encoder = $encoder;
 		}
 
 		protected function configure() {
-			$this->addArgument('email', InputArgument::REQUIRED, 'this is a user\'s email address');
-			$this->addOption('password', 'p', InputOption::VALUE_NONE,'this is a user\'s password');
+			$this->addArgument('title', InputArgument::REQUIRED,
+				'this is the game\'s title');
+			$this->addArgument('release', InputArgument::REQUIRED,
+				'this is the game\'s release date in Y-m-d');
+			$this->addArgument('genre', InputArgument::REQUIRED,
+				'this is the genre that this game belongs to');
+			$this->addArgument('developer', InputArgument::REQUIRED,
+				'this is the developer who made the game');
 		}
 
 		protected function execute(InputInterface $input, OutputInterface $output) :int {
 
-			$user = new User($input->getArgument('email'));
+			$game = new Game(
+				$input->getArgument('genre'),
+				$input->getArgument('title'),
+				$input->getArgument('developer'),
+				DateTimeImmutable::createFromFormat('Y-m-d',$input->getArgument('release'))
+			);
 
-			if ($password = $input->getOption('password')) {
-
-				$password = $this->encoder->hashPassword($user,$password);
-				$user->setPassword($password);
-
-			}
-
-			$this->entityManager->persist($user);
+			$this->entityManager->persist($game);
 			$this->entityManager->flush();
 
 			return ExitCode::OK;
@@ -49,11 +52,25 @@
 
 		protected function interact(InputInterface $input, OutputInterface $output) {
 			$io = new SymfonyStyle($input, $output);
-			if (!$input->getArgument('email')) {
-				$input->setArgument('email', $io->ask('What is the email of the test user?'));
+			if (!$input->getArgument('title')) {
+				$input->setArgument('title', $io->ask(
+					'What is the title of the game you are trying to add?'
+				));
 			}
-			if ($input->getOption('password')) {
-				$input->setOption('password', $io->askHidden('What is the user\'s password going to be?'));
+			if (!$input->getArgument('genre')) {
+				$input->setArgument('genre', $io->ask(
+					'What is the genre of the game you are trying to add?'
+				));
+			}
+			if (!$input->getArgument('release')) {
+				$input->setArgument('release', $io->ask(
+					'What is the release date of the game you are trying to add? om Y-m-d?'
+				));
+			}
+			if (!$input->getArgument('developer')) {
+				$input->setArgument('developer', $io->ask(
+					'What company or person was responsible for developing the game?'
+				));
 			}
 		}
 	}
