@@ -111,13 +111,6 @@
 		}
 
 		/**
-		 * @return bool
-		 */
-		public function isVisible(): bool {
-			return $this->visibility;
-		}
-
-		/**
 		 * @return PlaythroughTemplateStep[]|Collection|Selectable
 		 */
 		public function getSteps(): Collection|array|Selectable {
@@ -129,6 +122,13 @@
 		 */
 		public function getPlaythroughs(): Collection|array|Selectable {
 			return $this->playthroughs;
+		}
+
+		/**
+		 * @return bool
+		 */
+		public function isVisible(): bool {
+			return $this->visibility;
 		}
 
 	}
