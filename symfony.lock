@@ -2,9 +2,6 @@
     "composer/package-versions-deprecated": {
         "version": "1.11.99.2"
     },
-    "dbstudios/php-api-common": {
-        "version": "1.5.3"
-    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {

@@ -1,11 +1,7 @@
 <?php
 	namespace App;
 
-	use DaybreakStudios\RestApiCommon\Utility\ConstantsClassTrait;
-
 	final class Genre {
-
-		use ConstantsClassTrait;
 
 		public const ACTION = 'action';
 		public const ARPG = 'arpg';
