@@ -11,7 +11,7 @@
 	 * @ORM\Entity()
 	 * @ORM\Table(name="playthrough_templates")
 	 */
-	class PlaythroughTemplate implements PlaythroughInterface {
+	class PlaythroughTemplate implements PlaythroughInterface { //TODO add comments entity.
 
 		use EntityTrait;
 
@@ -39,6 +39,13 @@
 		private bool $visibility;
 
 		/**
+		 * @var int
+		 *
+		 * @ORM\Column(type="integer")
+		 */
+		private int $votes;
+
+		/**
 		 * @var Collection|Selectable|PlaythroughTemplateStep[]
 		 *
 		 * @ORM\OneToMany(targetEntity="App\Entity\PlaythroughTemplateStep", mappedBy="template", cascade={"all"}, orphanRemoval=true)
@@ -60,6 +67,7 @@
 			$this->owner = $owner;
 			$this->game = $game;
 			$this->visibility = $visibility;
+			$this->votes = 0;
 
 		}
 
@@ -69,6 +77,15 @@
 		 */
 		public function setVisibility(bool $visibility): static {
 			$this->visibility = $visibility;
+			return $this;
+		}
+
+		/**
+		 * @param int $votes
+		 * @return static
+		 */
+		public function setVotes(int $votes): static {
+			$this->votes = $votes;
 			return $this;
 		}
 
@@ -84,6 +101,13 @@
 		 */
 		public function getOwner(): User {
 			return $this->owner;
+		}
+
+		/**
+		 * @return int
+		 */
+		public function getVotes(): int {
+			return $this->votes;
 		}
 
 		/**
