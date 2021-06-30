@@ -122,4 +122,11 @@
 			return $this->genre;
 		}
 
+		/**
+		 * @return PlaythroughTemplate[]|Collection|Selectable
+		 */
+		public function getTemplates(): Collection|array|Selectable {
+			return $this->playthroughTemplates;
+		}
+		
 	}
