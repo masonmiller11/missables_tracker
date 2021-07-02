@@ -41,7 +41,7 @@
 				$input->getArgument('genre'),
 				$input->getArgument('title'),
 				$input->getArgument('developer'),
-				DateTimeImmutable::createFromFormat('Y-m-d',$input->getArgument('release'))
+				\DateTimeImmutable::createFromFormat('Y-m-d',$input->getArgument('release'))
 			);
 
 			$this->entityManager->persist($game);
