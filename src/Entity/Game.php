@@ -9,7 +9,7 @@
 	use App\Genre;
 
 	/**
-	 * @ORM\Entity()
+	 * @ORM\Entity(repositoryClass="App\Repository\GameRepository")
 	 * @ORM\Table(name="games")
 	 */
 	class Game implements EntityInterface {//TODO create a CustomGame entity
@@ -38,12 +38,12 @@
 		private \DateTimeImmutable $releaseDate;
 
 		/**
-		 * @var string|null
+		 * @var string
 		 * @see Genre
 		 *
 		 * @ORM\Column(type="string", length=64)
 		 */
-		private ?string $genre;
+		private string $genre;
 
 		/**
 		 * @ORM\OneToMany(targetEntity="App\Entity\PlaythroughTemplate", mappedBy="game", cascade={"all"}, orphanRemoval=true)
@@ -93,18 +93,18 @@
 		}
 
 		/**
-		 * @param string|null $genre
+		 * @param string $genre
 		 * @return static
 		 */
-		public function setGenre(?string $genre): static {
+		public function setGenre(string $genre): static {
 			$this->genre = $genre;
 			return $this;
 		}
 
 		/**
-		 * @return string|null
+		 * @return string
 		 */
-		public function getTitle(): ?string {
+		public function getTitle(): string {
 			return $this->title;
 		}
 
@@ -116,9 +116,9 @@
 		}
 
 		/**
-		 * @return string|null
+		 * @return string
 		 */
-		public function getGenre(): ?string {
+		public function getGenre(): string {
 			return $this->genre;
 		}
 
