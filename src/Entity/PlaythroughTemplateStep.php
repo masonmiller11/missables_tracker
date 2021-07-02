@@ -19,7 +19,7 @@
 		 * @ORM\ManyToOne(targetEntity="App\Entity\PlaythroughTemplate", inversedBy="playthroughTemplateSteps")
 		 * @ORM\JoinColumn(nullable=false)
 		 */
-		private PlaythroughTemplate $playthroughTemplate;
+		private PlaythroughTemplate $template;
 
 		/**
 		 * @var User
@@ -45,7 +45,7 @@
 		 * @return PlaythroughTemplate
 		 */
 		public function getPlaythrough(): PlaythroughTemplate {
-			return $this->playthroughTemplate;
+			return $this->template;
 		}
 
 		/**
