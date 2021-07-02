@@ -8,21 +8,21 @@
 		/**
 		 * @Assert\NotBlank()
 		 */
-		public string $title;
+		public mixed $title;
 
 		/**
 		 * @Assert\NotBlank()
 		 */
-		public string $releaseDate;
+		public mixed $releaseDate;
 
 		/**
 		 * @Assert\NotBlank()
 		 */
-		public string $genre;
+		public mixed $genre;
 
 		/**
 		 * @Assert\NotBlank()
 		 */
-		public array $playthroughTemplates;
+		public mixed $playthroughTemplates;
 
 	}
