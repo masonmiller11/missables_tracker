@@ -3,9 +3,13 @@
 	namespace App\Controller;
 
 	use App\DTO\Transformer\GameResponseDTOTransformer;
+	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
 	use App\Entity\Game;
 	use App\Entity\PlaythroughTemplate;
 	use App\Repository\GameRepository;
+	use Doctrine\ORM\EntityManager;
+	use Doctrine\ORM\EntityManagerInterface;
+	use Doctrine\ORM\ORMException;
 	use JetBrains\PhpStorm\ArrayShape;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,14 +31,25 @@
 		 * @var ValidatorInterface
 		 */
 		private ValidatorInterface $validator;
+
 		private GameResponseDTOTransformer $gameResponseDTOTransformer;
+
+		private GameRequestDTOTransformer $gameRequestDTOTransformer;
+
+		private EntityManagerInterface $entityManager;
 
 		public function __construct (GameRepository $gameRepository,
 		                             ValidatorInterface $validator,
-		                             GameResponseDTOTransformer $gameResponseDTOTransformer) {
+		                             GameResponseDTOTransformer $gameResponseDTOTransformer,
+									 GameRequestDTOTransformer $gameRequestDTOTransformer,
+									 EntityManagerInterface $entityManager) {
+
 			$this->gameRepository = $gameRepository;
 			$this->validator = $validator;
 			$this->gameResponseDTOTransformer = $gameResponseDTOTransformer;
+			$this->gameRequestDTOTransformer = $gameRequestDTOTransformer;
+			$this->entityManager = $entityManager;
+
 		}
 
 		/**
@@ -76,16 +91,36 @@
 		}
 
 		/**
-		 * @Route(path="/games/{id<\d+>}", methods={"POST"}, name="games.create")
+		 * @Route(path="/games", methods={"POST"}, name="games.create")
 		 *
 		 * @param Request $request
+		 *
 		 * @return Response
+		 * @throws ORMException
 		 */
 		public function create(Request $request): Response {
-			$data = json_decode($request->getContent(),true);
+
+			$dto = $this->gameRequestDTOTransformer->transformFromRequest($request);
+
+			$errors = $this->validator->validate($dto);
+
+			if (count($errors) > 0) {
+				$errorString = (string)$errors;
+				return new Response($errorString);
+			}
+
+			$game = new Game(
+				$dto->genre,
+				$dto->title,
+				$dto->developer,
+				$dto->releaseDate,
+			);
+
+			$this->entityManager->persist($game);
+			$this->entityManager->flush();
 
 			return new JsonResponse([
-				'status' => 'ok'
+				'status' => 'game created'
 			],
 			Response::HTTP_CREATED);
 		}
