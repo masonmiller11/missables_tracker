@@ -20,9 +20,6 @@
 		 */
 		public mixed $genre;
 
-		/**
-		 * @Assert\NotBlank()
-		 */
 		public mixed $playthroughTemplates;
 
 	}
