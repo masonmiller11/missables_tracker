@@ -11,7 +11,7 @@
 		public mixed $title;
 
 		/**
-		 * @Assert\NotBlank()
+		 * @Assert\DateTime(format="Y-m-d")
 		 */
 		public mixed $releaseDate;
 
@@ -20,6 +20,9 @@
 		 */
 		public mixed $genre;
 
+		/**
+		 * @Assert\Type('array')
+		 */
 		public mixed $playthroughTemplates;
 
 	}
