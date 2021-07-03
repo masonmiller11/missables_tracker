@@ -1,7 +1,11 @@
 <?php
 	namespace App;
 
+	use App\Utility\ConstantsClassTrait;
+
 	final class Genre {
+
+		use ConstantsClassTrait;
 
 		public const ACTION = 'action';
 		public const ARPG = 'arpg';
