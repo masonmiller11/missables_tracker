@@ -1,8 +1,8 @@
 <?php
-
 	namespace App\DTO\Request;
 
 	use Symfony\Component\Validator\Constraints as Assert;
+	use App\Genre;
 
 	class GameRequestDTO {
 
@@ -12,12 +12,12 @@
 		public mixed $title;
 
 		/**
-		 * @Assert\NotBlank()
+		 * @Assert\DateTime(format="Y-m-d")
 		 */
 		public mixed $releaseDate;
 
 		/**
-		 * @Assert\NotBlank()
+		 * @Assert\Choice(callback: [Genre::class, 'values'], message = "Choose a valid genre.")]
 		 */
 		public mixed $genre;
 
