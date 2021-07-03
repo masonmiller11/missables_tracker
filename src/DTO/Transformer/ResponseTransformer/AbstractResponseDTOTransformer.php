@@ -1,5 +1,5 @@
 <?php
-	namespace App\DTO\Transformer;
+	namespace App\DTO\Transformer\ResponseTransformer;
 
 	abstract class AbstractResponseDTOTransformer implements ResponseDTOTransformerInterface {
 
