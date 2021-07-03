@@ -1,11 +1,10 @@
 <?php
-
 	namespace App\DTO\Transformer\RequestTransformer;
 
 	use App\DTO\Request\GameRequestDTO;
 	use Symfony\Component\HttpFoundation\Request;
 
-	class GameRequestDTOTransformer {
+	class GameRequestDTOTransformer extends AbstractRequestDTOTransformer {
 
 		public function transformFromRequest(Request $request): GameRequestDTO {
 
