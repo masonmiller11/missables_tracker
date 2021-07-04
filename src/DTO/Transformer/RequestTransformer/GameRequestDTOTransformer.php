@@ -15,7 +15,7 @@
 			$dto->title = $data['title'];
 			$dto->developer = $data['developer'];
 			$dto->genre = $data['genre'];
-			$dto->releaseDate = \DateTimeImmutable::createFromFormat('Y-m-d',$data['release_date']);
+			$dto->releaseDate = $data['release_date'];
 
 			return $dto;
 

@@ -100,6 +100,8 @@
 
 			$errors = $this->validator->validate($dto);
 
+			$dto->releaseDate = \DateTimeImmutable::createFromFormat('Y-m-d',$dto->releaseDate);
+
 			if (count($errors) > 0) {
 				$errorString = (string)$errors;
 				return new Response($errorString);
