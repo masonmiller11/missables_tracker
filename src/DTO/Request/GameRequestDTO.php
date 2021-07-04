@@ -16,9 +16,7 @@
 		 */
 		public mixed $releaseDate;
 
-		/**
-		 * @Assert\Choice(callback: [Genre::class, 'values'], message = "Choose a valid genre.")]
-		 */
+		#[Assert\Choice(callback: [Genre::class, 'values'])]
 		public mixed $genre;
 
 		/**
