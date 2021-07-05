@@ -92,7 +92,6 @@
 		 * @param Request $request
 		 *
 		 * @return Response
-		 * @throws ORMException
 		 */
 		public function create(Request $request): Response {
 
