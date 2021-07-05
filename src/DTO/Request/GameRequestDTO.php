@@ -12,6 +12,7 @@
 		public mixed $title;
 
 		/**
+		 * @Assert\NotNull 
 		 * @Assert\DateTime(format="Y-m-d")
 		 */
 		public mixed $releaseDate;
