@@ -11,6 +11,7 @@
 		public mixed $title;
 
 		/**
+		 * @Assert\NotNull
 		 * @Assert\DateTime(format="Y-m-d")
 		 */
 		public mixed $releaseDate;
@@ -21,7 +22,8 @@
 		public mixed $genre;
 
 		/**
-		 * @Assert\Type('array')
+		 * @Assert\NotNull
+		 * @Assert\Type("array")
 		 */
 		public mixed $playthroughTemplates;
 

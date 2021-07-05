@@ -7,7 +7,6 @@
 	use App\Entity\Game;
 	use App\Repository\GameRepository;
 	use Doctrine\ORM\EntityManagerInterface;
-	use Doctrine\ORM\ORMException;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\HttpFoundation\Request;
