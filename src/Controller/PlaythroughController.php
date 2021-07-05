@@ -2,6 +2,7 @@
 
 	namespace App\Controller;
 
+	use App\DTO\Transformer\ResponseTransformer\PlaythroughResponseDTOTransformer;
 	use App\Entity\Game;
 	use App\Entity\Playthrough;
 	use App\Entity\PlaythroughTemplate;
@@ -11,8 +12,20 @@
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
+	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	class PlaythroughController extends AbstractController {
+
+		private ValidatorInterface $validator;
+		private PlaythroughResponseDTOTransformer $playthroughResponseDTOTransformer;
+
+		public function __construct (ValidatorInterface $validator,
+		                             PlaythroughResponseDTOTransformer $playthroughResponseDTOTransformer) {
+
+			$this->validator = $validator;
+			$this->playthroughResponseDTOTransformer = $playthroughResponseDTOTransformer;
+
+		}
 
 		/**
 		 * @Route(path="/playthroughs/{page<\d+>?1}", methods={"GET"}, name="playthroughs.read")
@@ -25,12 +38,18 @@
 		public function list(string|int $page, SerializerInterface $serializer): Response {
 
 			$user = $this->getUser();
-
 			assert($user instanceof User);
 
 			$playthroughs = $user->getPlaythroughs();
+			$dto = $this->playthroughResponseDTOTransformer->transformFromObjects($playthroughs);
 
-			return new Response($serializer->serialize($this->normalizeMany($playthroughs), 'json',[
+			$errors = $this->validator->validate($dto);
+			if (count($errors) > 0) {
+				$errorString = (string)$errors;
+				return new Response($errorString);
+			}
+
+			return new Response($serializer->serialize($dto, 'json',[
 				'circular_reference_handler' => function ($object) {
 					return $object->getId();
 				}
@@ -40,21 +59,4 @@
 
 		}
 
-		protected function normalizeMany(Collection $entities) :array {
-			return [
-				$entities->map(
-					fn (Playthrough $playthrough) => [
-						'id'=>$playthrough->getId(),
-						'visibility'=>$playthrough->isVisible(),
-						'owner'=>$playthrough->getOwner()->getUsername(),
-						'game'=> [
-							'id'=>$playthrough->getGame()->getId(),
-							'title'=>$playthrough->getGame()->getTitle()
-						],
-						'template'=>$playthrough->getTemplate()->getId()
-					]
-				)->toArray()
-			];
-
-		}
 	}
