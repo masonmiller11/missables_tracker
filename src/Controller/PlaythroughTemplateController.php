@@ -48,6 +48,8 @@
 			// 		}
 			// 	}
 			// }
+			//TODO UGHHHHHHHHHHHHHH actually what we should do here is create a query builder. get from where game id
+			// equals whatever but visibility is 0. THEN transform and validate it as normal.
 
 			$user = $this->getUser();
 			assert($user instanceof User);
