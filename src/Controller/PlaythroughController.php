@@ -3,11 +3,18 @@
 
 	use App\DTO\Transformer\ResponseTransformer\PlaythroughResponseDTOTransformer;
 	use App\Entity\User;
+	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Serializer\SerializerInterface;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+	/**
+	 * Class PlaythroughController
+	 *
+	 * @package App\Controller
+	 * @Route(path="/playthroughs", name="playthroughs.")
+	 */
 	class PlaythroughController extends AbstractController {
 
 		private ValidatorInterface $validator;
@@ -22,7 +29,7 @@
 		}
 
 		/**
-		 * @Route(path="/playthroughs/{page<\d+>?1}", methods={"GET"}, name="playthroughs.read")
+		 * @Route(path="/{page<\d+>?1}", methods={"GET"}, name="list")
 		 *
 		 * @param string|int          $page
 		 * @param SerializerInterface $serializer

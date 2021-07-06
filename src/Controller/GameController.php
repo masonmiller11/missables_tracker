@@ -14,6 +14,12 @@
 	use Symfony\Component\Serializer\SerializerInterface;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+	/**
+	 * Class GameController
+	 *
+	 * @package App\Controller
+	 * @Route(path="/games", name="games.")
+	 */
 	class GameController extends AbstractController {
 
 		/**
@@ -47,7 +53,7 @@
 		}
 
 		/**
-		 * @Route(path="/games/{id<\d+>}", methods={"GET"}, name="games.read")
+		 * @Route(path="/{id<\d+>}", methods={"GET"}, name="read")
 		 *
 		 * @param string|int $id
 		 * @param SerializerInterface $serializer
@@ -85,7 +91,7 @@
 		}
 
 		/**
-		 * @Route(path="/games", methods={"POST"}, name="games.create")
+		 * @Route(methods={"POST"}, name="create")
 		 *
 		 * @param Request $request
 		 *
