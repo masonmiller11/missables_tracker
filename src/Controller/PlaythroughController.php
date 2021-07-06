@@ -1,16 +1,10 @@
 <?php
-
 	namespace App\Controller;
 
 	use App\DTO\Transformer\ResponseTransformer\PlaythroughResponseDTOTransformer;
-	use App\Entity\Game;
-	use App\Entity\Playthrough;
-	use App\Entity\PlaythroughTemplate;
 	use App\Entity\User;
-	use Doctrine\Common\Collections\Collection;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\Response;
-	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
