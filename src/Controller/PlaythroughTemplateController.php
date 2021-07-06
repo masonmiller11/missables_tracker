@@ -38,6 +38,16 @@
 		 * @return Response
 		 */
 		public function list(string|int $page, SerializerInterface $serializer): Response {
+			//TODO list either my templates or all public templates by author or game.
+			//TODO, we can use this to get rid of the private before transforming them!
+			// foreach($array as $elementKey => $element) {
+			// 	foreach($element as $valueKey => $value) {
+			// 		if($valueKey == 'id' && $value == 'searched_value'){
+			// 			//delete this particular object from the $array
+			// 			unset($array[$elementKey]);
+			// 		}
+			// 	}
+			// }
 
 			$user = $this->getUser();
 			assert($user instanceof User);
