@@ -1,10 +1,11 @@
 <?php
 	namespace App\DTO\Request;
 
+	use App\DTO\DTOInterface;
 	use Symfony\Component\Validator\Constraints as Assert;
 	use App\Genre;
 
-	class GameRequestDTO {
+	class GameRequestDTO implements DTOInterface {
 
 		/**
 		 * @Assert\NotBlank()

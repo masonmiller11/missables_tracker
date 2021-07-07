@@ -3,12 +3,12 @@
 
 	use App\DTO\Transformer\ResponseTransformer\PlaythroughResponseDTOTransformer;
 	use App\Entity\User;
+	use App\Utility\Responder;
+	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
-
 	/**
 	 * Class PlaythroughController
 	 *
@@ -17,13 +17,10 @@
 	 */
 	class PlaythroughController extends AbstractController {
 
-		private ValidatorInterface $validator;
 		private PlaythroughResponseDTOTransformer $playthroughResponseDTOTransformer;
 
-		public function __construct (ValidatorInterface $validator,
-		                             PlaythroughResponseDTOTransformer $playthroughResponseDTOTransformer) {
+		public function __construct (PlaythroughResponseDTOTransformer $playthroughResponseDTOTransformer) {
 
-			$this->validator = $validator;
 			$this->playthroughResponseDTOTransformer = $playthroughResponseDTOTransformer;
 
 		}
@@ -42,21 +39,8 @@
 			assert($user instanceof User);
 
 			$playthroughs = $user->getPlaythroughs();
-			$dto = $this->playthroughResponseDTOTransformer->transformFromObjects($playthroughs);
 
-			$errors = $this->validator->validate($dto);
-			if (count($errors) > 0) {
-				$errorString = (string)$errors;
-				return new Response($errorString);
-			}
-
-			return new Response($serializer->serialize($dto, 'json',[
-				'circular_reference_handler' => function ($object) {
-					return $object->getId();
-				}
-			]), Response::HTTP_OK, [
-				'Content-Type' => 'application/json'
-			]) ;
+			return Responder::createResponse($playthroughs, $this->playthroughResponseDTOTransformer);
 
 		}
 
