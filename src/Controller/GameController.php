@@ -5,6 +5,7 @@
 	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
 	use App\Entity\Game;
 	use App\Repository\GameRepository;
+	use App\Utility\Responder;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\JsonResponse;
@@ -74,20 +75,7 @@
 
 			$dto = $this->gameResponseDTOTransformer->transformFromObject($game);
 
-			$errors = $this->validator->validate($dto);
-
-			if (count($errors) > 0) {
-				$errorString = (string)$errors;
-				return new Response($errorString);
-			}
-
-			return new Response($serializer->serialize($dto, 'json',[
-				'circular_reference_handler' => function ($object) {
-					return $object->getId();
-				}
-			]), Response::HTTP_OK, [
-				'Content-Type' => 'application/json'
-			]) ;
+			return Responder::createResponse($dto);
 		}
 
 		/**

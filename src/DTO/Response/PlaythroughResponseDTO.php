@@ -1,9 +1,10 @@
 <?php
 	namespace App\DTO\Response;
 
+	use App\DTO\DTOInterface;
 	use Symfony\Component\Validator\Constraints as Assert;
 
-	class PlaythroughResponseDTO {
+	class PlaythroughResponseDTO implements DTOInterface {
 
 		/**
 		 * @Assert\NotNull()

@@ -11,7 +11,10 @@
 		public function transformFromObject($object): GameResponseDTO {
 
 			if (!$object instanceof Game) {
-				throw new UnexpectedTypeException('Expected type of Game but got' . \get_class($object));
+				if (!$object) {
+					throw new UnexpectedTypeException('Resource not found');
+				}
+					throw new UnexpectedTypeException('Expected type of Game but got' . \get_class($object));
 			}
 
 			$dto = new GameResponseDTO();
