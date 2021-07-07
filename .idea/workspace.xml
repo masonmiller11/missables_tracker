@@ -2,8 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3cf1ede0-50ad-4f5c-9157-fb8dcc6a3ff3" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/DTO/DTOInterface.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Repository/PlaythroughTemplateRepository.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Utility/Responder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/GameController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/GameController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controller/PlaythroughController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/PlaythroughController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/PlaythroughTemplateController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/PlaythroughTemplateController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/DTO/Request/GameRequestDTO.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/Request/GameRequestDTO.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DTO/Response/GameResponseDTO.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/Response/GameResponseDTO.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DTO/Response/PlaythroughResponseDTO.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/Response/PlaythroughResponseDTO.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DTO/Response/PlaythroughTemplateResponseDTO.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/Response/PlaythroughTemplateResponseDTO.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DTO/Transformer/ResponseTransformer/GameResponseDTOTransformer.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/Transformer/ResponseTransformer/GameResponseDTOTransformer.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DTO/Transformer/ResponseTransformer/PlaythroughTemplateResponseDTOTransformer.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/Transformer/ResponseTransformer/PlaythroughTemplateResponseDTOTransformer.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -11,10 +22,19 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="ComposerSettings">
+    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
     <execution />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="PhpWorkspaceProjectConfiguration">
     <include_path>
@@ -98,7 +118,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/Repository" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -109,6 +129,11 @@
     <property name="settings.editor.selected.configurable" value="reference.webide.settings.project.settings.php" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\ovid_files\projects\dev_projects\missables_tracker\src\Repository" />
+    </key>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -118,6 +143,7 @@
       <option name="presentableId" value="Default" />
       <updated>1624401389549</updated>
       <workItem from="1624401390569" duration="6023000" />
+      <workItem from="1625587222982" duration="12875000" />
     </task>
     <servers />
   </component>
