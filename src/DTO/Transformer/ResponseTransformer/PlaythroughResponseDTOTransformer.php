@@ -1,17 +1,15 @@
 <?php
 	namespace App\DTO\Transformer\ResponseTransformer;
 
-	use App\DTO\Exception\UnexpectedTypeException;
 	use App\DTO\Response\PlaythroughResponseDTO;
-	use App\Entity\Playthrough;
 
 	class PlaythroughResponseDTOTransformer extends AbstractResponseDTOTransformer {
 
+		/**
+		 * @param $object
+		 * @return PlaythroughResponseDTO
+		 */
 		public function transformFromObject($object) :PlaythroughResponseDTO{
-
-			if (!$object instanceof Playthrough) {
-				throw new UnexpectedTypeException('Expected type of Playthrough but got' . \get_class($object));
-			}
 
 			$dto = new PlaythroughResponseDTO();
 			$dto->id = $object->getId();
