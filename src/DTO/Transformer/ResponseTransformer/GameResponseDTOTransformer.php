@@ -1,21 +1,16 @@
 <?php
 	namespace App\DTO\Transformer\ResponseTransformer;
 
-	use App\DTO\Exception\UnexpectedTypeException;
 	use App\DTO\Response\GameResponseDTO;
-	use App\Entity\Game;
 	use App\Entity\PlaythroughTemplate;
 
 	class GameResponseDTOTransformer extends AbstractResponseDTOTransformer {
 
+		/**
+		 * @param $object
+		 * @return GameResponseDTO
+		 */
 		public function transformFromObject($object): GameResponseDTO {
-
-			if (!$object instanceof Game) {
-				if (!$object) {
-					throw new UnexpectedTypeException('Resource not found');
-				}
-					throw new UnexpectedTypeException('Expected type of Game but got' . \get_class($object));
-			}
 
 			$dto = new GameResponseDTO();
 			$dto->genre = $object->getGenre();
