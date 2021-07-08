@@ -33,10 +33,19 @@
 		 */
 		private ValidatorInterface $validator;
 
+		/**
+		 * @var GameResponseDTOTransformer
+		 */
 		private GameResponseDTOTransformer $gameResponseDTOTransformer;
 
+		/**
+		 * @var GameRequestDTOTransformer
+		 */
 		private GameRequestDTOTransformer $gameRequestDTOTransformer;
 
+		/**
+		 * @var EntityManagerInterface
+		 */
 		private EntityManagerInterface $entityManager;
 
 		public function __construct (GameRepository $gameRepository,
