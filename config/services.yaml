@@ -31,6 +31,11 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
+    App\Service\IGDBHelper:
+        bind:
+            string $apiID: '%env(API_ID)%'
+            string $apiSecret: '%env(API_SECRET)%'
+
     app.serializer.normalizers.datetime:
         class: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
 
