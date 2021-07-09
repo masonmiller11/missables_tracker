@@ -97,7 +97,7 @@
 		/**
 		 * @var int
 		 *
-		 * @ORM\Column(type="integer", options={"unsigned":true})
+		 * @ORM\Column(type="integer", unique=true, options={"unsigned":true})
 		 */
 		private int $internetGameDatabaseID;
 
@@ -274,5 +274,5 @@
 		}
 
 
-		
+
 	}
