@@ -162,12 +162,12 @@
 
 		}
 
-		public function isIGDBGameInDatabase (IGDBResponseDTO $internetGameDatabaseDTO) {
+		public function isIGDBGameInDatabase (IGDBResponseDTO $internetGameDatabaseDTO): Game|bool {
 
 			$game = $this->gameRepository->findGameByInternetGameDatabaseID($internetGameDatabaseDTO->id);
 
 			if ($game) {
-				return true;
+				return $game;
 				//game already in database.
 			} else {
 				return false;
