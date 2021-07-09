@@ -1,6 +1,8 @@
 <?php
 	namespace App\Service;
 
+	use App\DTO\Response\IGDBResponseDTO;
+	use App\DTO\Transformer\ResponseTransformer\IGDBResponseDTOTransformer;
 	use App\Entity\Game;
 	use App\Entity\IGDBConfig;
 	use App\Utility\InternetGameDatabaseEndpoints;
@@ -59,17 +61,24 @@
 		 */
 		private array $headers;
 
+		/**
+		 * @var IGDBResponseDTOTransformer
+		 */
+		private IGDBResponseDTOTransformer $IGDBResponseDTOTransformer;
+
 		public function __construct(HttpClientInterface $client,
 		                            string $apiID,
 		                            string $apiSecret,
 		                            IGDBConfigRepository $IGDBConfigRepository,
 		                            EntityManagerInterface $entityManager,
-									GameRepository $gameRepository) {
+									GameRepository $gameRepository,
+									IGDBResponseDTOTransformer $IGDBResponseDTOTransformer) {
 
 			$this->client = $client;
 			$this->apiID = $apiID;
 			$this->apiSecret = $apiSecret;
 			$this->IGDBConfigRepository = $IGDBConfigRepository;
+			$this->IGDBResponseDTOTransformer = $IGDBResponseDTOTransformer;
 			$this->gameRepository = $gameRepository;
 			$this->entityManager = $entityManager;
 			$this->IGDBConfig = $IGDBConfigRepository->find(1);
@@ -100,29 +109,6 @@
 			]);
 
 			return $response->toArray();
-
-		}
-
-		/**
-		 * @throws TransportExceptionInterface
-		 * @throws ServerExceptionInterface
-		 * @throws RedirectionExceptionInterface
-		 * @throws DecodingExceptionInterface
-		 * @throws ClientExceptionInterface
-		 */
-		public function getGame (int $ID): array {
-
-			$response = $this->client->request( 'POST', InternetGameDatabaseEndpoints::GAMES, [
-				'headers' => $this->headers,
-				'body' => 'fields name, id, rating, summary, storyline, slug, screenshots, platforms, first_release_date,
-				 cover, artworks; where id = ' . $ID . ';'
-			]);
-
-			return $response->toArray();
-
-			//$game[0]["id"]
-			//TODO create a responseDTO and return it here, and put type hint DTO below in the addGameToDatabase method below. Call both
-			//TODO both of these methods in the game controller, specifically the getGameFromIGDB action.
 
 		}
 
@@ -158,14 +144,35 @@
 
 		}
 
-		public function addGameToDatabaseIfEmpty (int $internetGameDatabaseID) {
+		/**
+		 * @param int $ID
+		 *
+		 * @return IGDBResponseDTO
+		 * @throws TransportExceptionInterface
+		 */
+		public function getGame (int $ID): IGDBResponseDTO {
 
-			$isGameInDatabase = $this->gameRepository->findGameByInternetGameDatabaseID($internetGameDatabaseID);
+			$response = $this->client->request( 'POST', InternetGameDatabaseEndpoints::GAMES, [
+				'headers' => $this->headers,
+				'body' => 'fields name, id, rating, summary, storyline, slug, screenshots, platforms, first_release_date,
+				 cover, artworks; where id = ' . $ID . ';'
+			]);
 
-			if ($isGameInDatabase) {
-				return; //TODO return some sort of success message
+			return $this->IGDBResponseDTOTransformer->transformFromObject($response);
+
+		}
+
+		public function isIGDBGameInDatabase (IGDBResponseDTO $internetGameDatabaseDTO) {
+
+			$game = $this->gameRepository->findGameByInternetGameDatabaseID($internetGameDatabaseDTO->id);
+
+			if ($game) {
+				return true;
+				//game already in database.
+			} else {
+				return false;
 			}
 
-	}
+		}
 
 	}
