@@ -1,9 +1,20 @@
 <?php
 	namespace App\Controller;
 
+	use App\Entity\IGDBConfig;
+	use App\Repository\IGDBConfigRepository;
 	use App\Service\IGDBHelper;
+	use Doctrine\ORM\EntityManagerInterface;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\JsonResponse;
+	use Symfony\Component\HttpFoundation\Response;
+	use Symfony\Component\Routing\Annotation\Route;
+	use Symfony\Component\Validator\Constraints\Date;
+	use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface as ClientExceptionInterfaceAlias;
+	use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 	/**
 	 * Class IGDBController
@@ -27,9 +38,19 @@
 		 * @return JsonResponse
 		 */
 		public function refreshToken(): JsonResponse {
-			$response = $this->IGDBHelper->refreshToken();
 
-			return new JsonResponse($response);
+			try {
+
+				$response = $this->IGDBHelper->getToken();
+				return $this->IGDBHelper->refreshTokenInDatabase($response);
+
+
+			} catch (ClientExceptionInterfaceAlias | DecodingExceptionInterface |
+				RedirectionExceptionInterface | ServerExceptionInterface | TransportExceptionInterface $e) {
+
+				return new JsonResponse(['status' => 'error', 'errors' => $e], Response::HTTP_INTERNAL_SERVER_ERROR);
+
+			}
 
 		}
 

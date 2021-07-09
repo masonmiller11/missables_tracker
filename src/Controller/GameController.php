@@ -5,6 +5,7 @@
 	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
 	use App\Entity\Game;
 	use App\Repository\GameRepository;
+	use App\Service\IGDBHelper;
 	use App\Utility\Responder;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -48,17 +49,24 @@
 		 */
 		private EntityManagerInterface $entityManager;
 
+		/**
+		 * @var IGDBHelper
+		 */
+		private IGDBHelper $IGDBHelper;
+
 		public function __construct (GameRepository $gameRepository,
 		                             ValidatorInterface $validator,
 		                             GameResponseDTOTransformer $gameResponseDTOTransformer,
 									 GameRequestDTOTransformer $gameRequestDTOTransformer,
-									 EntityManagerInterface $entityManager) {
+									 EntityManagerInterface $entityManager,
+									 IGDBHelper $IGDBHelper	) {
 
 			$this->gameRepository = $gameRepository;
 			$this->validator = $validator;
 			$this->gameResponseDTOTransformer = $gameResponseDTOTransformer;
 			$this->gameRequestDTOTransformer = $gameRequestDTOTransformer;
 			$this->entityManager = $entityManager;
+			$this->IGDBHelper = $IGDBHelper;
 
 		}
 
@@ -82,9 +90,7 @@
 				);
 			}
 
-			$dto = $this->gameResponseDTOTransformer->transformFromObject($game);
-
-			return Responder::createResponse($dto);
+			return Responder::createResponse($game, $this->gameResponseDTOTransformer);
 		}
 
 		/**
@@ -111,16 +117,39 @@
 				$dto->genre,
 				$dto->title,
 				$dto->developer,
-				$dto->releaseDate,
+				1, //TODO this is a placeholder!
+				$dto->releaseDate
 			);
 
 			$this->entityManager->persist($game);
 			$this->entityManager->flush();
 
-			return new JsonResponse([
-				'status' => 'game created'
-			],
-			Response::HTTP_CREATED);
+			return new JsonResponse(['status' => 'game created'], Response::HTTP_CREATED);
 		}
+
+		/**
+		 * @Route(path="/igdf/{internetGameDatabaseID<\d+>}", methods={"GET"}, name="get_game_from_igdb")
+		 *
+		 * @param string|int $internetGameDatabaseID
+		 * @param SerializerInterface $serializer
+		 * @return Response
+		 */
+		public function getGameFromIGDB(string|int $internetGameDatabaseID, SerializerInterface $serializer): Response {
+
+			$game = $this->IGDBHelper->getGame($internetGameDatabaseID);
+
+			if (!$game) {
+				return new JsonResponse([
+					'status' => 'error',
+					'errors' => 'resource not found'
+				],
+					Response::HTTP_NOT_FOUND
+				);
+			}
+
+			return new JsonResponse($game, Response::HTTP_OK);
+		}//$game[0]["id"]
+		//id, rating, name, storyline, summary, slug, screenshots, platforms, release date, cover, artworks
+
 
 	}
