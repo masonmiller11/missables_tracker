@@ -1,15 +1,11 @@
 <?php
 	namespace App\Controller;
 
-	use App\Entity\IGDBConfig;
-	use App\Repository\IGDBConfigRepository;
 	use App\Service\IGDBHelper;
-	use Doctrine\ORM\EntityManagerInterface;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
-	use Symfony\Component\Validator\Constraints\Date;
 	use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface as ClientExceptionInterfaceAlias;
 	use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -27,9 +23,7 @@
 		private IGDBHelper $IGDBHelper;
 
 		public function __construct(IGDBHelper $IGDBHelper) {
-
 			$this->IGDBHelper = $IGDBHelper;
-
 		}
 
 		/**
@@ -43,7 +37,6 @@
 
 				$response = $this->IGDBHelper->getToken();
 				return $this->IGDBHelper->refreshTokenInDatabase($response);
-
 
 			} catch (ClientExceptionInterfaceAlias | DecodingExceptionInterface |
 				RedirectionExceptionInterface | ServerExceptionInterface | TransportExceptionInterface $e) {

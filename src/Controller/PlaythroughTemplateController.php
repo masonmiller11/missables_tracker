@@ -68,7 +68,6 @@
 		 * @Route(path="/byauthor/{authorID<\d+>}", methods={"GET"}, name="list_by_author")
 		 *
 		 * @param int $authorID
-		 * @param SerializerInterface $serializer
 		 *
 		 * @return Response
 		 */
