@@ -20,9 +20,7 @@
 		private PlaythroughResponseDTOTransformer $playthroughResponseDTOTransformer;
 
 		public function __construct (PlaythroughResponseDTOTransformer $playthroughResponseDTOTransformer) {
-
 			$this->playthroughResponseDTOTransformer = $playthroughResponseDTOTransformer;
-
 		}
 
 		/**
