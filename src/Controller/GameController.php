@@ -92,6 +92,8 @@
 			return Responder::createResponseFromObject($game, $this->gameResponseDTOTransformer);
 		}
 
+		//TODO read from IGDF ID (if game goes back, yay, if not get from IGDF and create. Then read from IGDF again.
+
 		/**
 		 * @Route(path="/read/igdf/{internetGameDatabaseID<\d+>}", methods={"GET"}, name="get_game_from_igdb")
 		 *
