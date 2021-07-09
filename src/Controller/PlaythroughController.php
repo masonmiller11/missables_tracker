@@ -40,7 +40,7 @@
 
 			$playthroughs = $user->getPlaythroughs();
 
-			return Responder::createResponse($playthroughs, $this->playthroughResponseDTOTransformer);
+			return Responder::createResponseFromObject($playthroughs, $this->playthroughResponseDTOTransformer);
 
 		}
 

@@ -45,7 +45,7 @@
 
 			$templates = $user->getPlaythroughTemplates();
 
-			return Responder::createResponse($templates, $this->templateResponseDTOTransformer);
+			return Responder::createResponseFromObject($templates, $this->templateResponseDTOTransformer);
 
 		}
 
@@ -60,7 +60,7 @@
 
 			$templates = $this->playthroughTemplateRepository->findByGame($gameID);
 
-			return Responder::createResponse($templates, $this->templateResponseDTOTransformer);
+			return Responder::createResponseFromObject($templates, $this->templateResponseDTOTransformer);
 
 		}
 
@@ -76,7 +76,7 @@
 
 			$templates = $this->playthroughTemplateRepository->findByAuthor($authorID);
 
-			return Responder::createResponse($templates, $this->templateResponseDTOTransformer);
+			return Responder::createResponseFromObject($templates, $this->templateResponseDTOTransformer);
 
 		}
 
