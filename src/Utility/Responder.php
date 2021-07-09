@@ -3,6 +3,7 @@
 
 	use App\DTO\DTOInterface;
 	use App\DTO\Transformer\ResponseTransformer\ResponseDTOTransformerInterface;
+	use App\Entity\EntityInterface;
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -13,11 +14,11 @@
 	class Responder {
 
 		/**
-		 * @param DTOInterface|iterable|null $object
+		 * @param EntityInterface|iterable|null $object
 		 * @param ResponseDTOTransformerInterface $transformer
 		 * @return Response
 		 */
-		public static function createResponse (DTOInterface|iterable|null $object, ResponseDTOTransformerInterface $transformer): Response {
+		public static function createResponse (EntityInterface|iterable|null $object, ResponseDTOTransformerInterface $transformer): Response {
 
 			if (is_iterable($object)) {
 				$dto = $transformer->transformFromObjects($object);
