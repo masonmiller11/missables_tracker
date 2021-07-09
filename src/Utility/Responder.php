@@ -18,10 +18,12 @@
 		 * @param ResponseDTOTransformerInterface $transformer
 		 * @return Response
 		 */
-		public static function createResponse (EntityInterface|iterable|null $object, ResponseDTOTransformerInterface $transformer): Response {
+		public static function createResponseFromObject (EntityInterface|iterable|null $object, ResponseDTOTransformerInterface $transformer): Response {
 
 			if (is_iterable($object)) {
+
 				$dto = $transformer->transformFromObjects($object);
+
 				if ($object === []) {
 					return new JsonResponse([
 						'status' => 'error',
@@ -31,7 +33,9 @@
 					);
 				}
 			} else {
+
 				$dto = $transformer->transformFromObject($object);
+
 				if (!$object) {
 					return new JsonResponse([
 						'status' => 'error',
@@ -62,6 +66,7 @@
 			]), Response::HTTP_OK, [
 				'Content-Type' => 'application/json'
 			]) ;
+
 		}
 
 	}
