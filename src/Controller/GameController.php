@@ -15,6 +15,11 @@
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
+	use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 	/**
 	 * Class GameController
@@ -40,11 +45,6 @@
 		private GameResponseDTOTransformer $gameResponseDTOTransformer;
 
 		/**
-		 * @var GameRequestDTOTransformer
-		 */
-		private GameRequestDTOTransformer $gameRequestDTOTransformer;
-
-		/**
 		 * @var EntityManagerInterface
 		 */
 		private EntityManagerInterface $entityManager;
@@ -57,14 +57,12 @@
 		public function __construct (GameRepository $gameRepository,
 		                             ValidatorInterface $validator,
 		                             GameResponseDTOTransformer $gameResponseDTOTransformer,
-									 GameRequestDTOTransformer $gameRequestDTOTransformer,
 									 EntityManagerInterface $entityManager,
 									 IGDBHelper $IGDBHelper	) {
 
 			$this->gameRepository = $gameRepository;
 			$this->validator = $validator;
 			$this->gameResponseDTOTransformer = $gameResponseDTOTransformer;
-			$this->gameRequestDTOTransformer = $gameRequestDTOTransformer;
 			$this->entityManager = $entityManager;
 			$this->IGDBHelper = $IGDBHelper;
 
@@ -90,66 +88,47 @@
 				);
 			}
 
-			return Responder::createResponse($game, $this->gameResponseDTOTransformer);
+			//TODO redo this DTO and transformer
+			return Responder::createResponseFromObject($game, $this->gameResponseDTOTransformer);
 		}
 
 		/**
-		 * @Route(methods={"POST"}, name="create")
+		 * @Route(path="/read/igdf/{internetGameDatabaseID<\d+>}", methods={"GET"}, name="get_game_from_igdb")
 		 *
-		 * @param Request $request
-		 *
+		 * @param string|int          $internetGameDatabaseID
+		 * @param SerializerInterface $serializer
 		 * @return Response
+		 * @throws TransportExceptionInterface
 		 */
-		public function create(Request $request): Response {
+		public function getGameFromIGDB(string|int $internetGameDatabaseID, SerializerInterface $serializer): Response {
 
-			$dto = $this->gameRequestDTOTransformer->transformFromRequest($request);
+			$dto = $this->IGDBHelper->getGame($internetGameDatabaseID);
 
 			$errors = $this->validator->validate($dto);
-
-			$dto->releaseDate = \DateTimeImmutable::createFromFormat('Y-m-d',$dto->releaseDate);
 
 			if (count($errors) > 0) {
 				$errorString = (string)$errors;
 				return new Response($errorString);
 			}
 
-			$game = new Game(
-				$dto->genre,
-				$dto->title,
-				$dto->developer,
-				1, //TODO this is a placeholder!
-				$dto->releaseDate
-			);
+			if ($this->IGDBHelper->isIGDBGameInDatabase($dto)) {
 
-			$this->entityManager->persist($game);
-			$this->entityManager->flush();
+				return new JsonResponse([$dto, 'status' => 'game already in database'], Response::HTTP_OK);
 
-			return new JsonResponse(['status' => 'game created'], Response::HTTP_CREATED);
-		}
+			} else {
 
-		/**
-		 * @Route(path="/igdf/{internetGameDatabaseID<\d+>}", methods={"GET"}, name="get_game_from_igdb")
-		 *
-		 * @param string|int $internetGameDatabaseID
-		 * @param SerializerInterface $serializer
-		 * @return Response
-		 */
-		public function getGameFromIGDB(string|int $internetGameDatabaseID, SerializerInterface $serializer): Response {
-
-			$game = $this->IGDBHelper->getGame($internetGameDatabaseID);
-
-			if (!$game) {
-				return new JsonResponse([
-					'status' => 'error',
-					'errors' => 'resource not found'
-				],
-					Response::HTTP_NOT_FOUND
+				$game = new Game('placeholder', $dto->title, $dto->id, $dto->screenshots, $dto->artworks, $dto->cover,
+								$dto->platforms,$dto->slug, $dto->rating, $dto->summary, $dto->storyline,
+								$dto->releaseDate
 				);
+
+				$this->entityManager->persist($game);
+				$this->entityManager->flush();
+
+				return new JsonResponse([$dto, 'status' => 'game added to database'], Response::HTTP_CREATED);
 			}
 
-			return new JsonResponse($game, Response::HTTP_OK);
-		}//$game[0]["id"]
-		//id, rating, name, storyline, summary, slug, screenshots, platforms, release date, cover, artworks
+		}
 
 
 	}
