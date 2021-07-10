@@ -16,7 +16,7 @@
 
 			$dto = new IGDBResponseDTO();
 
-			$dto->releaseDate = $object["first_release_date"];
+			$dto->releaseDate = new \DateTimeImmutable(date('Y/m/d H:i:s', $object["first_release_date"]));
 			$dto->title = $object["name"];
 			$dto->artworks = $object["artworks"];
 			$dto->cover = $object["cover"];
