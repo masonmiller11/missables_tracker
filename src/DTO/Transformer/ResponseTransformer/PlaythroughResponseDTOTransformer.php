@@ -1,17 +1,18 @@
 <?php
 	namespace App\DTO\Transformer\ResponseTransformer;
 
-	use App\DTO\Response\PlaythroughResponseDTO;
+	use App\DTO\Response\PlaythroughDTO;
 
 	class PlaythroughResponseDTOTransformer extends AbstractResponseDTOTransformer {
 
 		/**
 		 * @param $object
-		 * @return PlaythroughResponseDTO
+		 *
+		 * @return PlaythroughDTO
 		 */
-		public function transformFromObject($object) :PlaythroughResponseDTO{
+		public function transformFromObject($object): PlaythroughDTO{
 
-			$dto = new PlaythroughResponseDTO();
+			$dto = new PlaythroughDTO();
 			$dto->id = $object->getId();
 			$dto->visibility = $object->isVisible();
 			$dto->owner = $object->getOwner()->getUsername();

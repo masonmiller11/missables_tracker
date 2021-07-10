@@ -4,7 +4,7 @@
 	use App\DTO\DTOInterface;
 	use Symfony\Component\Validator\Constraints as Assert;
 
-	class GameResponseDTO implements DTOInterface {
+	class GameDTO implements DTOInterface {
 
 		/**
 		 * @Assert\NotBlank()
@@ -16,6 +16,12 @@
 		 * @Assert\Type("integer")
 		 */
 		public mixed $id;
+
+		/**
+		 * @Assert\NotNull
+		 * @Assert\Type("integer")
+		 */
+		public mixed $internetGameDatabaseID;
 
 		/**
 		 * @Assert\NotNull
