@@ -6,6 +6,7 @@
 	use App\Entity\Game;
 	use App\Repository\GameRepository;
 	use App\Service\IGDBHelper;
+	use App\Service\ResponseHelper;
 	use App\Utility\Responder;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -54,17 +55,24 @@
 		 */
 		private IGDBHelper $IGDBHelper;
 
+		/**
+		 * @var ResponseHelper
+		 */
+		private ResponseHelper $responseHelper;
+
 		public function __construct (GameRepository $gameRepository,
 		                             ValidatorInterface $validator,
 		                             GameResponseDTOTransformer $gameResponseDTOTransformer,
 									 EntityManagerInterface $entityManager,
-									 IGDBHelper $IGDBHelper	) {
+									 IGDBHelper $IGDBHelper,
+									 ResponseHelper $responseHelper) {
 
 			$this->gameRepository = $gameRepository;
 			$this->validator = $validator;
 			$this->gameResponseDTOTransformer = $gameResponseDTOTransformer;
 			$this->entityManager = $entityManager;
 			$this->IGDBHelper = $IGDBHelper;
+			$this->responseHelper = $responseHelper;
 
 		}
 
@@ -79,17 +87,8 @@
 
 			$game = $this->gameRepository->find($id);
 
-			if (!$game) {
-				return new JsonResponse([
-					'status' => 'error',
-					'errors' => 'resource not found'
-				],
-					Response::HTTP_NOT_FOUND
-				);
-			}
+			return $this->responseHelper->validateAndTransformOne($game, $this->gameResponseDTOTransformer);
 
-			//TODO redo this DTO and transformer
-			return Responder::createResponseFromObject($game, $this->gameResponseDTOTransformer);
 		}
 
 		//TODO read from IGDF ID (if game goes back, yay, if not get from IGDF and create. Then read from IGDF again.
@@ -113,13 +112,15 @@
 				return new Response($errorString);
 			}
 
-			if ($this->IGDBHelper->isIGDBGameInDatabase($dto)) {
+			$gameIfInDatabase = $this->IGDBHelper->isIGDBGameInDatabase($dto);
 
-				return new JsonResponse([$dto, 'status' => 'game already in database'], Response::HTTP_OK);
+			if ($gameIfInDatabase) {
+
+				return $this->responseHelper->validateAndTransformOne($gameIfInDatabase, $this->gameResponseDTOTransformer);
 
 			} else {
 
-				$game = new Game('placeholder', $dto->title, $dto->id, $dto->screenshots, $dto->artworks, $dto->cover,
+				$game = new Game($dto->genre, $dto->title, $dto->id, $dto->screenshots, $dto->artworks, $dto->cover,
 								$dto->platforms,$dto->slug, $dto->rating, $dto->summary, $dto->storyline,
 								$dto->releaseDate
 				);
@@ -127,7 +128,8 @@
 				$this->entityManager->persist($game);
 				$this->entityManager->flush();
 
-				return new JsonResponse([$dto, 'status' => 'game added to database'], Response::HTTP_CREATED);
+				return $this->responseHelper->validateAndTransformOne($game, $this->gameResponseDTOTransformer);
+
 			}
 
 		}
