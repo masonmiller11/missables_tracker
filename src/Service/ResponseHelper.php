@@ -33,8 +33,8 @@
 		 * @param ResponseDTOTransformerInterface $transformer
 		 * @return iterable|JsonResponse|Response
 		 */
-		public function validateAndTransformMany (iterable $objects,
-		                                          ResponseDTOTransformerInterface $transformer): iterable|JsonResponse|Response {
+		public function createResponseForMany (iterable $objects,
+		                                       ResponseDTOTransformerInterface $transformer): iterable|JsonResponse|Response {
 
 			if ($objects === []) {
 				return new JsonResponse([
@@ -68,8 +68,8 @@
 		 * @param ResponseDTOTransformerInterface $transformer
 		 * @return iterable|JsonResponse|Response
 		 */
-		public function validateAndTransformOne (EntityInterface $object,
-		                                          ResponseDTOTransformerInterface $transformer): iterable|JsonResponse|Response {
+		public function createResponseForOne (EntityInterface $object,
+		                                      ResponseDTOTransformerInterface $transformer): iterable|JsonResponse|Response {
 
 			if (!$object) {
 				return new JsonResponse([

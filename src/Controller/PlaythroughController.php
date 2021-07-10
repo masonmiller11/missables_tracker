@@ -46,7 +46,7 @@
 
 			$playthroughs = $user->getPlaythroughs();
 
-			return $this->responseHelper->validateAndTransformMany($playthroughs, $this->playthroughResponseDTOTransformer);
+			return $this->responseHelper->createResponseForMany($playthroughs, $this->playthroughResponseDTOTransformer);
 
 		}
 
