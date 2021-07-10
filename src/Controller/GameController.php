@@ -6,6 +6,7 @@
 	use App\DTO\Transformer\ResponseTransformer\GameResponseDTOTransformer;
 	use App\Entity\Game;
 	use App\Repository\GameRepository;
+	use App\Service\EntityHelper;
 	use App\Service\IGDBHelper;
 	use App\Service\ResponseHelper;
 	use Doctrine\ORM\EntityManagerInterface;
@@ -56,7 +57,15 @@
 		 */
 		private ResponseHelper $responseHelper;
 
+		/**
+		 * @var GameRequestDTOTransformer
+		 */
 		private GameRequestDTOTransformer $gameRequestDTOTransformer;
+
+		/**
+		 * @var EntityHelper
+		 */
+		private EntityHelper $entityHelper;
 
 		public function __construct (GameRepository $gameRepository,
 		                             ValidatorInterface $validator,
@@ -64,7 +73,8 @@
 									 EntityManagerInterface $entityManager,
 									 IGDBHelper $IGDBHelper,
 									 ResponseHelper $responseHelper,
-									 GameRequestDTOTransformer $gameRequestDTOTransformer) {
+									 GameRequestDTOTransformer $gameRequestDTOTransformer,
+									 EntityHelper $entityHelper) {
 
 			$this->gameRepository = $gameRepository;
 			$this->validator = $validator;
@@ -73,6 +83,7 @@
 			$this->IGDBHelper = $IGDBHelper;
 			$this->responseHelper = $responseHelper;
 			$this->gameRequestDTOTransformer = $gameRequestDTOTransformer;
+			$this->entityHelper = $entityHelper;
 
 		}
 
@@ -103,31 +114,10 @@
 
 			$dto = $this->gameRequestDTOTransformer->transformFromRequest($request);
 
-			$errors = $this->validator->validate($dto);
+			return $this->entityHelper->createGame($dto);
 
-			if (count($errors) > 0) {
-				$errorString = (string)$errors;
-				return new Response($errorString);
-			}
-
-			$releaseDateTimeImmutable = new \DateTimeImmutable(date('Y/m/d H:i:s', $dto->releaseDate));
-
-
-			$game = new Game(
-				$dto->genre, $dto->title, $dto->internetGameDatabaseID, $dto->screenshots, $dto->artworks, $dto->cover,
-				$dto->platforms, $dto->slug, $dto->rating, $dto->summary, $dto->storyline, $releaseDateTimeImmutable
-			);
-
-			$this->entityManager->persist($game);
-			$this->entityManager->flush();
-
-			return new JsonResponse([
-				'status' => 'game created'
-			],
-				Response::HTTP_CREATED);
 		}
-
-
+		
 		/**
 		 * @Route(path="/read/igdf/{internetGameDatabaseID<\d+>}", methods={"GET"}, name="get_game_from_igdb")
 		 *
