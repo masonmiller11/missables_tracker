@@ -2,6 +2,7 @@
 	namespace App\Controller;
 
 	use App\DTO\Response\IGDBResponseDTO;
+	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
 	use App\DTO\Transformer\ResponseTransformer\GameResponseDTOTransformer;
 	use App\Entity\Game;
 	use App\Repository\GameRepository;
@@ -9,6 +10,8 @@
 	use App\Service\ResponseHelper;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+	use Symfony\Component\HttpFoundation\JsonResponse;
+	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
@@ -53,12 +56,15 @@
 		 */
 		private ResponseHelper $responseHelper;
 
+		private GameRequestDTOTransformer $gameRequestDTOTransformer;
+
 		public function __construct (GameRepository $gameRepository,
 		                             ValidatorInterface $validator,
 		                             GameResponseDTOTransformer $gameResponseDTOTransformer,
 									 EntityManagerInterface $entityManager,
 									 IGDBHelper $IGDBHelper,
-									 ResponseHelper $responseHelper) {
+									 ResponseHelper $responseHelper,
+									 GameRequestDTOTransformer $gameRequestDTOTransformer) {
 
 			$this->gameRepository = $gameRepository;
 			$this->validator = $validator;
@@ -66,11 +72,12 @@
 			$this->entityManager = $entityManager;
 			$this->IGDBHelper = $IGDBHelper;
 			$this->responseHelper = $responseHelper;
+			$this->gameRequestDTOTransformer = $gameRequestDTOTransformer;
 
 		}
 
 		/**
-		 * @Route(path="/{id<\d+>}", methods={"GET"}, name="read")
+		 * @Route(path="read/{id<\d+>}", methods={"GET"}, name="read")
 		 *
 		 * @param string|int $id
 		 * @param SerializerInterface $serializer
@@ -83,6 +90,43 @@
 			return $this->responseHelper->createResponseForOne($game, $this->gameResponseDTOTransformer);
 
 		}
+
+		/**
+		 * @Route(path="/create", methods={"POST"}, name="games.create")
+		 *
+		 * @param Request $request
+		 *
+		 * @return Response
+		 * @throws \Exception
+		 */
+		public function create(Request $request): Response {
+
+			$dto = $this->gameRequestDTOTransformer->transformFromRequest($request);
+
+			$errors = $this->validator->validate($dto);
+
+			if (count($errors) > 0) {
+				$errorString = (string)$errors;
+				return new Response($errorString);
+			}
+
+			$releaseDateTimeImmutable = new \DateTimeImmutable(date('Y/m/d H:i:s', $dto->releaseDate));
+
+
+			$game = new Game(
+				$dto->genre, $dto->title, $dto->internetGameDatabaseID, $dto->screenshots, $dto->artworks, $dto->cover,
+				$dto->platforms, $dto->slug, $dto->rating, $dto->summary, $dto->storyline, $releaseDateTimeImmutable
+			);
+
+			$this->entityManager->persist($game);
+			$this->entityManager->flush();
+
+			return new JsonResponse([
+				'status' => 'game created'
+			],
+				Response::HTTP_CREATED);
+		}
+
 
 		/**
 		 * @Route(path="/read/igdf/{internetGameDatabaseID<\d+>}", methods={"GET"}, name="get_game_from_igdb")
