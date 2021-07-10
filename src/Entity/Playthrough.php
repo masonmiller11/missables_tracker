@@ -9,7 +9,7 @@
 
 	/**
 	 * @ORM\Entity()
-	 * @ORM\Table(name="playthroughts")
+	 * @ORM\Table(name="playthroughs")
 	 */
 	class Playthrough implements PlaythroughInterface {
 
@@ -24,7 +24,7 @@
 		private Game $game;
 
 		/**
-		 * @var \App\Entity\PlaythroughTemplate
+		 * @var PlaythroughTemplate
 		 *
 		 * @ORM\ManyToOne(targetEntity="App\Entity\PlaythroughTemplate", inversedBy="playthroughs")
 		 * @ORM\JoinColumn(nullable=false)

@@ -20,6 +20,41 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
             - '../src/Tests/'
+            - '../src/Command/'
+
+    # controllers are imported separately to make sure services can be injected
+    # as action arguments even if you don't extend any base controller class
+    App\Controller\:
+        resource: '../src/Controller/'
+        tags: [ 'controller.service_arguments' ]
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+
+    App\Service\IGDBHelper:
+        bind:
+            string $apiID: '%env(API_ID)%'
+            string $apiSecret: '%env(API_SECRET)%'
+
+    app.serializer.normalizers.datetime:
+        class: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
+
+    app.serializer.normalizers.object:
+        class: Symfony\Component\Serializer\Normalizer\ObjectNormalizer
+
+    app.serializer.encoders.json:
+        class: Symfony\Component\Serializer\Encoder\JsonEncoder
+
+    app.serializer:
+        class: Symfony\Component\Serializer\Serializer
+        arguments:
+            -
+                - '@app.serializer.normalizers.datetime'
+                - '@app.serializer.normalizers.object'
+            -
+                - '@app.serializer.encoders.json'
+
+    Symfony\Component\Serializer\SerializerInterface: '@app.serializer'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
