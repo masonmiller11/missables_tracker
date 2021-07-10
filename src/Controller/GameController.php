@@ -87,7 +87,7 @@
 
 			$game = $this->gameRepository->find($id);
 
-			return $this->responseHelper->validateAndTransformOne($game, $this->gameResponseDTOTransformer);
+			return $this->responseHelper->createResponseForOne($game, $this->gameResponseDTOTransformer);
 
 		}
 
@@ -116,7 +116,7 @@
 
 			if ($gameIfInDatabase) {
 
-				return $this->responseHelper->validateAndTransformOne($gameIfInDatabase, $this->gameResponseDTOTransformer);
+				return $this->responseHelper->createResponseForOne($gameIfInDatabase, $this->gameResponseDTOTransformer);
 
 			} else {
 
@@ -128,7 +128,7 @@
 				$this->entityManager->persist($game);
 				$this->entityManager->flush();
 
-				return $this->responseHelper->validateAndTransformOne($game, $this->gameResponseDTOTransformer);
+				return $this->responseHelper->createResponseForOne($game, $this->gameResponseDTOTransformer);
 
 			}
 

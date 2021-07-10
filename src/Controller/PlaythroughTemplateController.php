@@ -76,7 +76,7 @@
 
 			$templates = $user->getPlaythroughTemplates();
 
-			return $this->responseHelper->validateAndTransformMany($templates, $this->templateResponseDTOTransformer);
+			return $this->responseHelper->createResponseForMany($templates, $this->templateResponseDTOTransformer);
 
 		}
 
@@ -91,7 +91,7 @@
 
 			$templates = $this->playthroughTemplateRepository->findByGame($gameID);
 
-			return $this->responseHelper->validateAndTransformMany($templates, $this->templateResponseDTOTransformer);
+			return $this->responseHelper->createResponseForMany($templates, $this->templateResponseDTOTransformer);
 		}
 
 		/**
@@ -105,7 +105,7 @@
 
 			$templates = $this->playthroughTemplateRepository->findByAuthor($authorID);
 
-			return $this->responseHelper->validateAndTransformMany($templates, $this->templateResponseDTOTransformer);
+			return $this->responseHelper->createResponseForMany($templates, $this->templateResponseDTOTransformer);
 
 		}
 
