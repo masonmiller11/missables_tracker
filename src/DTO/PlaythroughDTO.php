@@ -4,7 +4,7 @@
 	use App\DTO\DTOInterface;
 	use Symfony\Component\Validator\Constraints as Assert;
 
-	class PlaythroughResponseDTO implements DTOInterface {
+	class PlaythroughDTO implements DTOInterface {
 
 		/**
 		 * @Assert\NotNull()
