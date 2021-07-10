@@ -67,4 +67,9 @@
 		 */
 		public mixed $artworks;
 
+		/**
+		 * @Assert\NotBlank()
+		 */
+		public mixed $genre;
+
 	}
