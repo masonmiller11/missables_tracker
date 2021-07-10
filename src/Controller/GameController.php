@@ -1,25 +1,18 @@
 <?php
 	namespace App\Controller;
 
+	use App\DTO\Response\IGDBResponseDTO;
 	use App\DTO\Transformer\ResponseTransformer\GameResponseDTOTransformer;
-	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
 	use App\Entity\Game;
 	use App\Repository\GameRepository;
 	use App\Service\IGDBHelper;
 	use App\Service\ResponseHelper;
-	use App\Utility\Responder;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-	use Symfony\Component\HttpFoundation\JsonResponse;
-	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
-	use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-	use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
-	use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-	use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 	/**
@@ -91,8 +84,6 @@
 
 		}
 
-		//TODO read from IGDF ID (if game goes back, yay, if not get from IGDF and create. Then read from IGDF again.
-
 		/**
 		 * @Route(path="/read/igdf/{internetGameDatabaseID<\d+>}", methods={"GET"}, name="get_game_from_igdb")
 		 *
@@ -100,39 +91,57 @@
 		 * @param SerializerInterface $serializer
 		 * @return Response
 		 * @throws TransportExceptionInterface
+		 *
+		 * Gets a game from IGDB. If it's already in our database, return Game entity, if it's not in our database,
+		 * create it with the data from IGDB and then return that new Game entity.
 		 */
 		public function getGameFromIGDB(string|int $internetGameDatabaseID, SerializerInterface $serializer): Response {
 
+			/**
+			 * returns an IGDBResponseDTO with data from IGDB
+			 * @see IGDBResponseDTO
+			 */
 			$dto = $this->IGDBHelper->getGame($internetGameDatabaseID);
 
+			/**
+			 * Validate DTO
+			 */
 			$errors = $this->validator->validate($dto);
-
 			if (count($errors) > 0) {
 				$errorString = (string)$errors;
 				return new Response($errorString);
 			}
 
+			/**
+			 * Returns a Game entity if it's in database.
+			 * @see Game
+			 */
 			$gameIfInDatabase = $this->IGDBHelper->isIGDBGameInDatabase($dto);
 
-			if ($gameIfInDatabase) {
+			/**
+			 * If $gameIfInDatabase is not present, then create a new Game entity and return it in response.
+			 */
+			if (!$gameIfInDatabase) {
 
-				return $this->responseHelper->createResponseForOne($gameIfInDatabase, $this->gameResponseDTOTransformer);
-
-			} else {
+				//TODO update gameRequestDTO, create EntityHelper with CreateEntity method.
 
 				$game = new Game($dto->genre, $dto->title, $dto->id, $dto->screenshots, $dto->artworks, $dto->cover,
-								$dto->platforms,$dto->slug, $dto->rating, $dto->summary, $dto->storyline,
-								$dto->releaseDate
+					$dto->platforms,$dto->slug, $dto->rating, $dto->summary, $dto->storyline,
+					$dto->releaseDate
 				);
 
 				$this->entityManager->persist($game);
 				$this->entityManager->flush();
 
 				return $this->responseHelper->createResponseForOne($game, $this->gameResponseDTOTransformer);
-
 			}
 
-		}
+			/**
+			 * Otherwise, return the Game entity in response.
+			 */
+			return $this->responseHelper->createResponseForOne($gameIfInDatabase, $this->gameResponseDTOTransformer);
 
+
+		}
 
 	}
