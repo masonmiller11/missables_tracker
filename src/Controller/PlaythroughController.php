@@ -3,6 +3,7 @@
 
 	use App\DTO\Transformer\ResponseTransformer\PlaythroughResponseDTOTransformer;
 	use App\Entity\User;
+	use App\Service\ResponseHelper;
 	use App\Utility\Responder;
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\Routing\Annotation\Route;
@@ -19,8 +20,15 @@
 
 		private PlaythroughResponseDTOTransformer $playthroughResponseDTOTransformer;
 
-		public function __construct (PlaythroughResponseDTOTransformer $playthroughResponseDTOTransformer) {
+		/**
+		 * @var ResponseHelper
+		 */
+		private ResponseHelper $responseHelper;
+
+		public function __construct (PlaythroughResponseDTOTransformer $playthroughResponseDTOTransformer,
+		                             ResponseHelper $responseHelper) {
 			$this->playthroughResponseDTOTransformer = $playthroughResponseDTOTransformer;
+			$this->responseHelper = $responseHelper;
 		}
 
 		/**
@@ -38,8 +46,10 @@
 
 			$playthroughs = $user->getPlaythroughs();
 
-			return Responder::createResponseFromObject($playthroughs, $this->playthroughResponseDTOTransformer);
+			return $this->responseHelper->validateAndTransformMany($playthroughs, $this->playthroughResponseDTOTransformer);
 
 		}
+
+
 
 	}

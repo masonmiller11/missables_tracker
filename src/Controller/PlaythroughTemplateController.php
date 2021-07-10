@@ -2,14 +2,17 @@
 	namespace App\Controller;
 
 	use App\DTO\Transformer\ResponseTransformer\PlaythroughTemplateResponseDTOTransformer;
+	use App\Entity\EntityInterface;
 	use App\Entity\User;
 	use App\Repository\PlaythroughTemplateRepository;
+	use App\Service\ResponseHelper;
 	use App\Utility\Responder;
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Serializer\SerializerInterface;
+	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	/**
 	 * Class PlaythroughTemplateController
@@ -20,14 +23,42 @@
 	class PlaythroughTemplateController extends AbstractController {
 
 
+		/**
+		 * @var PlaythroughTemplateResponseDTOTransformer
+		 */
 		private PlaythroughTemplateResponseDTOTransformer $templateResponseDTOTransformer;
+
+		/**
+		 * @var PlaythroughTemplateRepository
+		 */
 		private PlaythroughTemplateRepository $playthroughTemplateRepository;
 
+		/**
+		 * @var ValidatorInterface
+		 */
+		private ValidatorInterface $validator;
+
+		/**
+		 * @var SerializerInterface
+		 */
+		private SerializerInterface $serializer;
+
+		/**
+		 * @var ResponseHelper
+		 */
+		private ResponseHelper $responseHelper;
+
 		public function __construct (playthroughTemplateResponseDTOTransformer $playthroughTemplateResponseDTOTransformer,
-									 PlaythroughTemplateRepository $playthroughTemplateRepository) {
+		                             ValidatorInterface $validator,
+									 SerializerInterface $serializer,
+									 PlaythroughTemplateRepository $playthroughTemplateRepository,
+									 ResponseHelper $responseHelper) {
 
 			$this->templateResponseDTOTransformer = $playthroughTemplateResponseDTOTransformer;
 			$this->playthroughTemplateRepository = $playthroughTemplateRepository;
+			$this->validator = $validator;
+			$this->serializer = $serializer;
+			$this->responseHelper = $responseHelper;
 
 		}
 
@@ -45,7 +76,7 @@
 
 			$templates = $user->getPlaythroughTemplates();
 
-			return Responder::createResponseFromObject($templates, $this->templateResponseDTOTransformer);
+			return $this->responseHelper->validateAndTransformMany($templates, $this->templateResponseDTOTransformer);
 
 		}
 
@@ -60,8 +91,7 @@
 
 			$templates = $this->playthroughTemplateRepository->findByGame($gameID);
 
-			return Responder::createResponseFromObject($templates, $this->templateResponseDTOTransformer);
-
+			return $this->responseHelper->validateAndTransformMany($templates, $this->templateResponseDTOTransformer);
 		}
 
 		/**
@@ -75,7 +105,7 @@
 
 			$templates = $this->playthroughTemplateRepository->findByAuthor($authorID);
 
-			return Responder::createResponseFromObject($templates, $this->templateResponseDTOTransformer);
+			return $this->responseHelper->validateAndTransformMany($templates, $this->templateResponseDTOTransformer);
 
 		}
 
