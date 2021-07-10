@@ -22,10 +22,12 @@
 			$dto->cover = $object["cover"];
 			$dto->rating = $object["rating"];
 			$dto->summary = $object["summary"];
-			$dto->storyline = $object["storyline"];
+			$dto->storyline = $object["storyline"] ?? 'No story available';
 			$dto->slug = $object["slug"];
 			$dto->screenshots = $object["screenshots"];
 			$dto->platforms = $object["platforms"];
+			$dto->id = $object["id"];
+			$dto->genre = $object["genre"] ?? 'No genre available'; //TODO let's fix these at some point
 
 			return $dto;
 
