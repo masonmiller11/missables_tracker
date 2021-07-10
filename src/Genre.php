@@ -1,7 +1,7 @@
 <?php
 	namespace App;
 
-	use DaybreakStudios\RestApiCommon\Utility\ConstantsClassTrait;
+	use App\Utility\ConstantsClassTrait;
 
 	final class Genre {
 
