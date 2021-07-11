@@ -164,7 +164,7 @@
 		 * @return IGDBResponseDTO|\RuntimeException
 		 * @throws TransportExceptionInterface
 		 */
-		public function getGame (int $ID): IGDBResponseDTO | \RuntimeException {
+		private function getGame (int $ID): IGDBResponseDTO | \RuntimeException {
 
 			$response = $this->client->request( 'POST', InternetGameDatabaseEndpoints::GAMES, [
 				'headers' => $this->headers,
@@ -179,7 +179,7 @@
 		/**
 		 * @throws NonUniqueResultException
 		 */
-		public function isIGDBGameInDatabase (IGDBResponseDTO $internetGameDatabaseDTO): Game | NonUniqueResultException | null {
+		private function isIGDBGameInDatabase (IGDBResponseDTO $internetGameDatabaseDTO): Game | NonUniqueResultException | null {
 
 			return $this->gameRepository->findGameByInternetGameDatabaseID($internetGameDatabaseDTO->id);
 
