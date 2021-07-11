@@ -3,6 +3,7 @@
 
 	use App\Entity\Game;
 	use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+	use Doctrine\ORM\NonUniqueResultException;
 	use Doctrine\Persistence\ManagerRegistry;
 
 	/**
@@ -18,14 +19,15 @@
 			parent::__construct($registry, Game::class);
 		}
 
-		public function findGameByInternetGameDatabaseID (int $internetGameDatabaseID) {
+		/**
+		 * @throws NonUniqueResultException
+		 */
+		public function findGameByInternetGameDatabaseID (int $internetGameDatabaseID): Game | null {
 			$qb = $this->createQueryBuilder('game')
 				->andWhere('game.internetGameDatabaseID = :internetGameDatabaseID')
 				->setParameter('internetGameDatabaseID', $internetGameDatabaseID);
 
-			$query = $qb->getQuery();
-
-			return $query->execute();
+			return $qb->getQuery()->getOneOrNullResult();
 		}
 
 	}
