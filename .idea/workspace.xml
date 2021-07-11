@@ -3,21 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="3cf1ede0-50ad-4f5c-9157-fb8dcc6a3ff3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/GameController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/GameController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/PlaythroughController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/PlaythroughController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/PlaythroughTemplateController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/PlaythroughTemplateController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DTO/GameDTO.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/GameDTO.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DTO/IGDBResponseDTO.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/IGDBResponseDTO.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DTO/PlaythroughDTO.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/PlaythroughDTO.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DTO/PlaythroughTemplateDTO.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/PlaythroughTemplateDTO.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DTO/Transformer/RequestTransformer/GameRequestDTOTransformer.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/Transformer/RequestTransformer/GameRequestDTOTransformer.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DTO/Transformer/ResponseTransformer/GameResponseDTOTransformer.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/Transformer/ResponseTransformer/GameResponseDTOTransformer.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DTO/Transformer/ResponseTransformer/IGDBResponseDTOTransformer.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/Transformer/ResponseTransformer/IGDBResponseDTOTransformer.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DTO/Transformer/ResponseTransformer/PlaythroughResponseDTOTransformer.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/Transformer/ResponseTransformer/PlaythroughResponseDTOTransformer.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DTO/Transformer/ResponseTransformer/PlaythroughTemplateResponseDTOTransformer.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/Transformer/ResponseTransformer/PlaythroughTemplateResponseDTOTransformer.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Repository/GameRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/GameRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Service/EntityHelper.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Service/EntityHelper.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Service/IGDBHelper.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Service/IGDBHelper.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -160,7 +145,7 @@
       <workItem from="1625766382312" duration="3776000" />
       <workItem from="1625777771013" duration="14020000" />
       <workItem from="1625935219770" duration="2117000" />
-      <workItem from="1625939481810" duration="4161000" />
+      <workItem from="1625939481810" duration="4386000" />
     </task>
     <servers />
   </component>
