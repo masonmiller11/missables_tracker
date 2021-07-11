@@ -12,7 +12,6 @@
 		public mixed $title;
 
 		/**
-		 * @Assert\NotNull
 		 * @Assert\Type("integer")
 		 */
 		public mixed $id;
