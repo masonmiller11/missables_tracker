@@ -1,7 +1,7 @@
 <?php
 	namespace App\DTO\Transformer\ResponseTransformer;
 
-	use App\DTO\Response\PlaythroughTemplateDTO;
+	use App\DTO\PlaythroughTemplateDTO;
 
 	class PlaythroughTemplateResponseDTOTransformer extends AbstractResponseDTOTransformer {
 

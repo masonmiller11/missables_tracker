@@ -1,7 +1,7 @@
 <?php
 	namespace App\Controller;
 
-	use App\DTO\Response\IGDBResponseDTO;
+	use App\DTO\IGDBResponseDTO;
 	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
 	use App\DTO\Transformer\ResponseTransformer\GameResponseDTOTransformer;
 	use App\Entity\Game;

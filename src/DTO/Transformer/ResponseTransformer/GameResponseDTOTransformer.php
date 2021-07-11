@@ -1,7 +1,7 @@
 <?php
 	namespace App\DTO\Transformer\ResponseTransformer;
 
-	use App\DTO\Response\GameDTO;
+	use App\DTO\GameDTO;
 	use App\Entity\EntityInterface;
 	use App\Entity\Game;
 	use App\Entity\PlaythroughTemplate;

@@ -4,7 +4,6 @@
 	use App\DTO\Transformer\ResponseTransformer\PlaythroughResponseDTOTransformer;
 	use App\Entity\User;
 	use App\Service\ResponseHelper;
-	use App\Utility\Responder;
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
