@@ -9,6 +9,7 @@
 	use App\Service\EntityHelper;
 	use App\Service\IGDBHelper;
 	use App\Service\ResponseHelper;
+	use Doctrine\DBAL\Exception;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\JsonResponse;
@@ -114,7 +115,15 @@
 
 			$dto = $this->gameRequestDTOTransformer->transformFromRequest($request);
 
-			return $this->entityHelper->createGame($dto);
+			try {
+				$this->entityHelper->createGame($dto);
+				return new JsonResponse([
+					'status' => 'game created'
+				],
+					Response::HTTP_CREATED);
+			} catch (\Exception $e) {
+				return new Response($e);
+			}
 
 		}
 		
@@ -131,50 +140,19 @@
 		 */
 		public function getGameFromIGDB(string|int $internetGameDatabaseID, SerializerInterface $serializer): Response {
 
-			/**
-			 * returns an IGDBResponseDTO with data from IGDB
-			 * @see IGDBResponseDTO
-			 */
-			$dto = $this->IGDBHelper->getGame($internetGameDatabaseID);
+			try{
 
-			/**
-			 * Validate DTO
-			 */
-			$errors = $this->validator->validate($dto);
-			if (count($errors) > 0) {
-				$errorString = (string)$errors;
-				return new Response($errorString);
+				$game = $this->IGDBHelper->getGameAndSave($internetGameDatabaseID);
+
+			} catch (\Exception $e) {
+
+				return new JsonResponse(['status' => 'error', 'errors' => strval($e)], Response::HTTP_INTERNAL_SERVER_ERROR);
+
+//				return new Response('There was an issue with this request. ' . $e);
+
 			}
 
-			/**
-			 * Returns a Game entity if it's in database.
-			 * @see Game
-			 */
-			$gameIfInDatabase = $this->IGDBHelper->isIGDBGameInDatabase($dto);
-
-			/**
-			 * If $gameIfInDatabase is not present, then create a new Game entity and return it in response.
-			 */
-			if (!$gameIfInDatabase) {
-
-				//TODO update gameRequestDTO, create EntityHelper with CreateEntity method.
-
-				$game = new Game($dto->genre, $dto->title, $dto->id, $dto->screenshots, $dto->artworks, $dto->cover,
-					$dto->platforms,$dto->slug, $dto->rating, $dto->summary, $dto->storyline,
-					$dto->releaseDate
-				);
-
-				$this->entityManager->persist($game);
-				$this->entityManager->flush();
-
-				return $this->responseHelper->createResponseForOne($game, $this->gameResponseDTOTransformer);
-			}
-
-			/**
-			 * Otherwise, return the Game entity in response.
-			 */
-			return $this->responseHelper->createResponseForOne($gameIfInDatabase, $this->gameResponseDTOTransformer);
-
+			return $this->responseHelper->createResponseForOne($game, $this->gameResponseDTOTransformer);
 
 		}
 
