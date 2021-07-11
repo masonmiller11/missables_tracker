@@ -1,7 +1,7 @@
 <?php
 	namespace App\Service;
 
-	use App\DTO\Response\GameDTO;
+	use App\DTO\GameDTO;
 	use App\Entity\Game;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,10 +28,10 @@
 
 			if (count($errors) > 0) {
 				$errorString = (string)$errors;
-				return new Response($errorString);
+				throw new \RuntimeException($errorString);
 			}
 
-			$releaseDateTimeImmutable = new \DateTimeImmutable(date('Y/m/d H:i:s', $dto->releaseDate));
+			$releaseDateTimeImmutable = new \DateTimeImmutable(date('Y-m-d', ((int)$dto->releaseDate)));
 
 
 			$game = new Game(
@@ -42,10 +42,7 @@
 			$this->entityManager->persist($game);
 			$this->entityManager->flush();
 
-			return new JsonResponse([
-				'status' => 'game created'
-			],
-				Response::HTTP_CREATED);
+			return new $game;
 
 		}
 
