@@ -1,7 +1,7 @@
 <?php
 	namespace App\DTO\Transformer\ResponseTransformer;
 
-	use App\DTO\Response\IGDBResponseDTO;
+	use App\DTO\IGDBResponseDTO;
 
 	class IGDBResponseDTOTransformer extends AbstractResponseDTOTransformer {
 

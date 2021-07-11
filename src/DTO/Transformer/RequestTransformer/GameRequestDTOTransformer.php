@@ -1,7 +1,7 @@
 <?php
 	namespace App\DTO\Transformer\RequestTransformer;
 
-	use App\DTO\Response\GameDTO;
+	use App\DTO\GameDTO;
 	use Symfony\Component\HttpFoundation\Request;
 
 	class GameRequestDTOTransformer extends AbstractRequestDTOTransformer {
