@@ -2,6 +2,7 @@
 	namespace App\Command;
 
 	use App\Entity\Game;
+	use App\Service\IGDBHelper;
 	use DateTimeImmutable;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Symfony\Component\Console\Command\Command;
@@ -19,57 +20,39 @@
 
 		private EntityManagerInterface $entityManager;
 
-		public function __construct (EntityManagerInterface $entityManager) {
+		private IGDBHelper $IGDBHelper;
+
+		public function __construct (EntityManagerInterface $entityManager,
+									 IGDBHelper $IGDBHelper) {
 			parent::__construct();
 			$this->entityManager = $entityManager;
+			$this->IGDBHelper = $IGDBHelper;
 		}
 
 		protected function configure() {
-			$this->addArgument('title', InputArgument::REQUIRED,
-				'this is the game\'s title');
-			$this->addArgument('release', InputArgument::REQUIRED,
-				'this is the game\'s release date in Y-m-d');
-			$this->addArgument('genre', InputArgument::REQUIRED,
-				'this is the genre that this game belongs to');
-			$this->addArgument('developer', InputArgument::REQUIRED,
-				'this is the developer who made the game');
+			$this->addArgument('igdb_id', InputArgument::REQUIRED,
+				'this is the id for the game on Internet Game Database');
+
 		}
 
 		protected function execute(InputInterface $input, OutputInterface $output) :int {
 
-			$game = new Game(
-				$input->getArgument('genre'),
-				$input->getArgument('title'),
-				$input->getArgument('developer'),
-				\DateTimeImmutable::createFromFormat('Y-m-d',$input->getArgument('release'))
-			);
+			try {
 
-			$this->entityManager->persist($game);
-			$this->entityManager->flush();
+				$this->IGDBHelper->getGameAndSave($input->getArgument('igdb_id'));
+				return ExitCode::OK;
 
-			return ExitCode::OK;
+			} catch(\Exception) {
+				return ExitCode::ERROR;
+			}
+
 		}
 
 		protected function interact(InputInterface $input, OutputInterface $output) {
 			$io = new SymfonyStyle($input, $output);
-			if (!$input->getArgument('title')) {
-				$input->setArgument('title', $io->ask(
-					'What is the title of the game you are trying to add?'
-				));
-			}
-			if (!$input->getArgument('genre')) {
-				$input->setArgument('genre', $io->ask(
-					'What is the genre of the game you are trying to add?'
-				));
-			}
-			if (!$input->getArgument('release')) {
-				$input->setArgument('release', $io->ask(
-					'What is the release date of the game you are trying to add? om Y-m-d?'
-				));
-			}
-			if (!$input->getArgument('developer')) {
-				$input->setArgument('developer', $io->ask(
-					'What company or person was responsible for developing the game?'
+			if (!$input->getArgument('igdb_id')) {
+				$input->setArgument('igdb_id', $io->ask(
+					'What is the id of the game on the Internet Game Database?'
 				));
 			}
 		}
