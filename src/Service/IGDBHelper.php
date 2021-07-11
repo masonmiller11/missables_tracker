@@ -1,7 +1,7 @@
 <?php
 	namespace App\Service;
 
-	use App\DTO\Response\IGDBResponseDTO;
+	use App\DTO\IGDBResponseDTO;
 	use App\DTO\Transformer\ResponseTransformer\IGDBResponseDTOTransformer;
 	use App\Entity\Game;
 	use App\Entity\IGDBConfig;
@@ -9,8 +9,11 @@
 	use App\Repository\GameRepository;
 	use App\Repository\IGDBConfigRepository;
 	use Doctrine\ORM\EntityManagerInterface;
+	use Doctrine\ORM\NonUniqueResultException;
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\HttpFoundation\Response;
+	use Symfony\Component\Validator\Exception\ValidationFailedException;
+	use Symfony\Component\Validator\Validator\ValidatorInterface;
 	use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -66,12 +69,18 @@
 		 */
 		private IGDBResponseDTOTransformer $IGDBResponseDTOTransformer;
 
+		/**
+		 * @var ValidatorInterface
+		 */
+		private ValidatorInterface $validator;
+
 		public function __construct(HttpClientInterface $client,
 		                            string $apiID,
 		                            string $apiSecret,
 		                            IGDBConfigRepository $IGDBConfigRepository,
 		                            EntityManagerInterface $entityManager,
 									GameRepository $gameRepository,
+									ValidatorInterface $validator,
 									IGDBResponseDTOTransformer $IGDBResponseDTOTransformer) {
 
 			$this->client = $client;
@@ -82,6 +91,8 @@
 			$this->gameRepository = $gameRepository;
 			$this->entityManager = $entityManager;
 			$this->IGDBConfig = $IGDBConfigRepository->find(1);
+			$this->validator = $validator;
+
 
 			$this->headers = [
 				'Authorization' => 'Bearer ' . $this->IGDBConfig->getToken(),
@@ -112,6 +123,9 @@
 
 		}
 
+		/**
+		 * @throws \Exception
+		 */
 		public function refreshTokenInDatabase ($response): JsonResponse {
 
 			$timeToExpirationInSeconds = $response["expires_in"];
@@ -147,10 +161,10 @@
 		/**
 		 * @param int $ID
 		 *
-		 * @return IGDBResponseDTO
+		 * @return IGDBResponseDTO|\RuntimeException
 		 * @throws TransportExceptionInterface
 		 */
-		public function getGame (int $ID): IGDBResponseDTO {
+		public function getGame (int $ID): IGDBResponseDTO | \RuntimeException {
 
 			$response = $this->client->request( 'POST', InternetGameDatabaseEndpoints::GAMES, [
 				'headers' => $this->headers,
@@ -162,16 +176,64 @@
 
 		}
 
-		public function isIGDBGameInDatabase (IGDBResponseDTO $internetGameDatabaseDTO): Game|bool {
+		/**
+		 * @throws NonUniqueResultException
+		 */
+		public function isIGDBGameInDatabase (IGDBResponseDTO $internetGameDatabaseDTO): Game | NonUniqueResultException | null {
 
-			$game = $this->gameRepository->findGameByInternetGameDatabaseID($internetGameDatabaseDTO->id);
+			return $this->gameRepository->findGameByInternetGameDatabaseID($internetGameDatabaseDTO->id);
 
-			if ($game) {
-				return $game;
-				//game already in database.
-			} else {
-				return false;
+		}
+
+		/**
+		 * @throws TransportExceptionInterface
+		 * @throws \Exception
+		 */
+		public function getGameAndSave (string|int $internetGameDatabaseID): Game {
+
+			/**
+			 * returns an IGDBResponseDTO with data from IGDB, does not touch our database
+			 * @see IGDBResponseDTO
+			 */
+			$dto = $this->getGame($internetGameDatabaseID);
+
+			/**
+			 * Validate DTO, throw an error if not valid
+			 */
+			$errors = $this->validator->validate($dto);
+
+			if (count($errors) > 0) {
+				$errorString = (string)$errors;
+				throw new \RuntimeException($errorString);
 			}
+
+			/**
+			 * Returns a Game entity if it's in database. Throws NonUniqueResultException if there's more than one entry.
+			 * Returns null if it does not find Game.
+			 * @see Game
+			 */
+			$gameIfInDatabase = $this->isIGDBGameInDatabase($dto);
+
+			/**
+			 * If $gameIfInDatabase is not present, then create a new Game entity and return it in response.
+			 */
+			if (!$gameIfInDatabase) {
+
+				$game = new Game($dto->genre, $dto->title, $dto->id, $dto->screenshots, $dto->artworks, $dto->cover,
+					$dto->platforms,$dto->slug, $dto->rating, $dto->summary, $dto->storyline,
+					$dto->releaseDate
+				);
+
+				$this->entityManager->persist($game);
+				$this->entityManager->flush();
+
+				return $game;
+			}
+
+			/**
+			 * Otherwise, return the Game entity in response.
+			 */
+			return $gameIfInDatabase;
 
 		}
 
