@@ -117,7 +117,7 @@
 		}
 
 		/**
-		 * @Route(path="/search/igdb", methods={"GET"}, name="search")
+		 * @Route(path="/search/igdb", methods={"GET"}, name="search_igdb")
 		 *
 		 * @param SerializerInterface $serializer
 		 * @return Response
