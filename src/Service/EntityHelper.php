@@ -22,7 +22,7 @@
 
 		}
 
-		public function createGame (GameDTO $dto): Response {
+		public function createGame (GameDTO $dto): Game {
 
 			$errors = $this->validator->validate($dto);
 
@@ -42,7 +42,7 @@
 			$this->entityManager->persist($game);
 			$this->entityManager->flush();
 
-			return new $game;
+			return $game;
 
 		}
 
