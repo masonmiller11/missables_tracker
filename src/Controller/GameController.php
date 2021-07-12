@@ -127,7 +127,7 @@
 		 * @throws RedirectionExceptionInterface
 		 * @throws ServerExceptionInterface
 		 */
-		public function searchIGDBgames(SerializerInterface $serializer): Response {
+		public function searchIGDB(SerializerInterface $serializer): Response {
 
 			try {
 

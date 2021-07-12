@@ -5,7 +5,7 @@
 	use App\DTO\DTOInterface;
 	use Symfony\Component\Validator\Constraints as Assert;
 
-	class IGDBResponseDTO implements DTOInterface {
+	class IGDBGameResponseDTO implements DTOInterface {
 
 		/**
 		 * @Assert\NotBlank()

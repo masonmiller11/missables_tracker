@@ -1,22 +1,22 @@
 <?php
 	namespace App\DTO\Transformer\ResponseTransformer;
 
-	use App\DTO\IGDBResponseDTO;
+	use App\DTO\IGDBGameResponseDTO;
 	use Lcobucci\JWT\Exception;
 
-	class IGDBResponseDTOTransformer extends AbstractResponseDTOTransformer {
+	class IGDBGameResponseDTOTransformer extends AbstractResponseDTOTransformer {
 
 		/**
 		 * @param $object
 		 *
-		 * @return IGDBResponseDTO
+		 * @return IGDBGameResponseDTO
 		 * @throws \Exception
 		 */
-		public function transformFromObject($object): IGDBResponseDTO {
+		public function transformFromObject($object): IGDBGameResponseDTO {
 
 			$object = $object->toArray()[0];
 
-			$dto = new IGDBResponseDTO();
+			$dto = new IGDBGameResponseDTO();
 
 			try {
 
