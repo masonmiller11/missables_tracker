@@ -2,10 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3cf1ede0-50ad-4f5c-9157-fb8dcc6a3ff3" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Command/GameDeleteCommand.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/services.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/services.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Command/GameCreateCommand.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Command/GameCreateCommand.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/GameController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/GameController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/IGDBController.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DTO/IGDBResponseDTO.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/IGDBGameResponseDTO.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DTO/Transformer/ResponseTransformer/IGDBResponseDTOTransformer.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/Transformer/ResponseTransformer/IGDBGameResponseDTOTransformer.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Service/EntityHelper.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Service/EntityHelper.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Service/IGDBHelper.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Service/IGDBHelper.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

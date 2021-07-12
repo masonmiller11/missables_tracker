@@ -1,7 +1,7 @@
 <?php
 	namespace App\Controller;
 
-	use App\DTO\IGDBResponseDTO;
+	use App\DTO\IGDBGameResponseDTO;
 	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
 	use App\DTO\Transformer\ResponseTransformer\GameResponseDTOTransformer;
 	use App\Entity\Game;
@@ -11,13 +11,19 @@
 	use App\Service\ResponseHelper;
 	use Doctrine\DBAL\Exception;
 	use Doctrine\ORM\EntityManagerInterface;
+	use Lcobucci\JWT\Signer\Ecdsa\ConversionFailed;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\HttpFoundation\Request;
+	use Symfony\Component\HttpFoundation\RequestStack;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
+	use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 	/**
@@ -68,6 +74,11 @@
 		 */
 		private EntityHelper $entityHelper;
 
+		/**
+		 * @var RequestStack
+		 */
+		private RequestStack $request;
+
 		public function __construct (GameRepository $gameRepository,
 		                             ValidatorInterface $validator,
 		                             GameResponseDTOTransformer $gameResponseDTOTransformer,
@@ -75,7 +86,8 @@
 									 IGDBHelper $IGDBHelper,
 									 ResponseHelper $responseHelper,
 									 GameRequestDTOTransformer $gameRequestDTOTransformer,
-									 EntityHelper $entityHelper) {
+									 EntityHelper $entityHelper,
+									 RequestStack $request) {
 
 			$this->gameRepository = $gameRepository;
 			$this->validator = $validator;
@@ -85,11 +97,12 @@
 			$this->responseHelper = $responseHelper;
 			$this->gameRequestDTOTransformer = $gameRequestDTOTransformer;
 			$this->entityHelper = $entityHelper;
+			$this->request = $request;
 
 		}
 
 		/**
-		 * @Route(path="read/{id<\d+>}", methods={"GET"}, name="read")
+		 * @Route(path="/read/{id<\d+>}", methods={"GET"}, name="read")
 		 *
 		 * @param string|int $id
 		 * @param SerializerInterface $serializer
@@ -101,6 +114,33 @@
 
 			return $this->responseHelper->createResponseForOne($game, $this->gameResponseDTOTransformer);
 
+		}
+
+		/**
+		 * @Route(path="/search/igdb", methods={"GET"}, name="search")
+		 *
+		 * @param SerializerInterface $serializer
+		 * @return Response
+		 * @throws TransportExceptionInterface
+		 * @throws ClientExceptionInterface
+		 * @throws DecodingExceptionInterface
+		 * @throws RedirectionExceptionInterface
+		 * @throws ServerExceptionInterface
+		 */
+		public function searchIGDBgames(SerializerInterface $serializer): Response {
+
+			try {
+
+				$searchTerm = $this->request->getCurrentRequest()->query->get('game');
+
+				$games = $this->IGDBHelper->searchIGDB($searchTerm);
+
+				return new JsonResponse($games);
+
+			} catch (\Exception $e) {
+				return new JsonResponse(['status' => 'error', 'errors' => strval($e)], Response::HTTP_INTERNAL_SERVER_ERROR);
+
+			}
 		}
 
 		/**
@@ -122,7 +162,7 @@
 				],
 					Response::HTTP_CREATED);
 			} catch (\Exception $e) {
-				return new Response($e);
+				return new JsonResponse(['status' => 'error', 'errors' => strval($e)], Response::HTTP_INTERNAL_SERVER_ERROR);
 			}
 
 		}
