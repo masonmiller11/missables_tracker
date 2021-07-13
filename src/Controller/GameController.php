@@ -151,7 +151,7 @@
 		 */
 		public function search(SerializerInterface $serializer): Response {
 
-//			try {
+			try {
 
 				$searchTerm = $this->request->getCurrentRequest()->query->get('game');
 
@@ -159,11 +159,11 @@
 
 				return $this->responseHelper->createResponseForMany($games, $this->gameResponseDTOTransformer);
 
-//			} catch (\Exception $e) {
-//
-//				return new JsonResponse(['status' => 'error', 'errors' => strval($e)], Response::HTTP_INTERNAL_SERVER_ERROR);
-//
-//			}
+			} catch (\Exception $e) {
+
+				return new JsonResponse(['status' => 'error', 'errors' => strval($e)], Response::HTTP_INTERNAL_SERVER_ERROR);
+
+			}
 		}
 
 		/**
