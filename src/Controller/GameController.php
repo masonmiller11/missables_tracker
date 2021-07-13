@@ -40,19 +40,9 @@
 		private GameRepository $gameRepository;
 
 		/**
-		 * @var ValidatorInterface
-		 */
-		private ValidatorInterface $validator;
-
-		/**
 		 * @var GameResponseDTOTransformer
 		 */
 		private GameResponseDTOTransformer $gameResponseDTOTransformer;
-
-		/**
-		 * @var EntityManagerInterface
-		 */
-		private EntityManagerInterface $entityManager;
 
 		/**
 		 * @var IGDBHelper
@@ -80,9 +70,7 @@
 		private RequestStack $request;
 
 		public function __construct (GameRepository $gameRepository,
-		                             ValidatorInterface $validator,
 		                             GameResponseDTOTransformer $gameResponseDTOTransformer,
-									 EntityManagerInterface $entityManager,
 									 IGDBHelper $IGDBHelper,
 									 ResponseHelper $responseHelper,
 									 GameRequestDTOTransformer $gameRequestDTOTransformer,
@@ -90,9 +78,7 @@
 									 RequestStack $request) {
 
 			$this->gameRepository = $gameRepository;
-			$this->validator = $validator;
 			$this->gameResponseDTOTransformer = $gameResponseDTOTransformer;
-			$this->entityManager = $entityManager;
 			$this->IGDBHelper = $IGDBHelper;
 			$this->responseHelper = $responseHelper;
 			$this->gameRequestDTOTransformer = $gameRequestDTOTransformer;
@@ -110,9 +96,16 @@
 		 */
 		public function read(string|int $id, SerializerInterface $serializer): Response {
 
-			$game = $this->gameRepository->find($id);
+			try {
 
-			return $this->responseHelper->createResponseForOne($game, $this->gameResponseDTOTransformer);
+				$game = $this->gameRepository->find($id);
+				return $this->responseHelper->createResponseForOne($game, $this->gameResponseDTOTransformer);
+
+			} catch (\Exception $e) {
+
+				return $this->responseHelper->createErrorResponse($e);
+
+			}
 
 		}
 
@@ -129,13 +122,17 @@
 			$dto = $this->gameRequestDTOTransformer->transformFromRequest($request);
 
 			try {
+
 				$this->entityHelper->createGame($dto);
 				return new JsonResponse([
 					'status' => 'game created'
 				],
 					Response::HTTP_CREATED);
+
 			} catch (\Exception $e) {
-				return new JsonResponse(['status' => 'error', 'errors' => strval($e)], Response::HTTP_INTERNAL_SERVER_ERROR);
+
+				return $this->responseHelper->createErrorResponse($e);
+
 			}
 
 		}
@@ -154,14 +151,35 @@
 			try {
 
 				$searchTerm = $this->request->getCurrentRequest()->query->get('game');
-
 				$games = $this->gameRepository->searchByName($searchTerm);
-
 				return $this->responseHelper->createResponseForMany($games, $this->gameResponseDTOTransformer);
 
 			} catch (\Exception $e) {
 
-				return new JsonResponse(['status' => 'error', 'errors' => strval($e)], Response::HTTP_INTERNAL_SERVER_ERROR);
+				return $this->responseHelper->createErrorResponse($e);
+
+			}
+		}
+
+		/**
+		 * @Route(path="/popular", methods={"GET"}, name="list_popular")
+		 *
+		 * @param SerializerInterface $serializer
+		 * @return Response
+		 * @throws ClientExceptionInterface
+		 * @throws RedirectionExceptionInterface
+		 * @throws ServerExceptionInterface
+		 */
+		public function listPopular(SerializerInterface $serializer): Response {
+
+			try {
+
+				$games = $this->gameRepository->topTenByNumberOfTemplates();
+				return $this->responseHelper->createResponseForMany($games, $this->gameResponseDTOTransformer);
+
+			} catch (\Exception $e) {
+
+				return $this->responseHelper->createErrorResponse($e);
 
 			}
 		}
@@ -182,13 +200,12 @@
 			try {
 
 				$searchTerm = $this->request->getCurrentRequest()->query->get('game');
-
 				$games = $this->IGDBHelper->searchIGDB($searchTerm);
-
 				return new JsonResponse($games);
 
 			} catch (\Exception $e) {
-				return new JsonResponse(['status' => 'error', 'errors' => strval($e)], Response::HTTP_INTERNAL_SERVER_ERROR);
+
+				return $this->responseHelper->createErrorResponse($e);
 
 			}
 		}
@@ -209,16 +226,13 @@
 			try{
 
 				$game = $this->IGDBHelper->getGameAndSave($internetGameDatabaseID);
+				return $this->responseHelper->createResponseForOne($game, $this->gameResponseDTOTransformer);
 
 			} catch (\Exception $e) {
 
-				return new JsonResponse(['status' => 'error', 'errors' => strval($e)], Response::HTTP_INTERNAL_SERVER_ERROR);
-
-//				return new Response('There was an issue with this request. ' . $e);
+				return $this->responseHelper->createErrorResponse($e);
 
 			}
-
-			return $this->responseHelper->createResponseForOne($game, $this->gameResponseDTOTransformer);
 
 		}
 
