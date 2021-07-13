@@ -38,4 +38,15 @@
 			return $qb->getQuery()->getResult();
 		}
 
+		public function topTenByNumberOfTemplates (): array | null {
+			$qb = $this->createQueryBuilder('game')
+				->select('COUNT(template) AS HIDDEN myCount', 'game')
+				->leftJoin('game.playthroughTemplates', 'template')
+				->orderBy('myCount', 'DESC')
+				->groupBy('game')
+				->setMaxResults(10);
+
+			return $qb->getQuery()->getResult();
+		}
+
 	}
