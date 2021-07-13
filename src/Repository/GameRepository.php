@@ -30,4 +30,12 @@
 			return $qb->getQuery()->getOneOrNullResult();
 		}
 
+		public function searchByName (string $term): array | null {
+			$qb = $this->createQueryBuilder('game')
+				->andWhere('game.title LIKE :searchTerm')
+				->setParameter('searchTerm','%' . $term . '%');
+
+			return $qb->getQuery()->getResult();
+		}
+
 	}

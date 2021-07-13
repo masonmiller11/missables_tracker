@@ -117,6 +117,56 @@
 		}
 
 		/**
+		 * @Route(path="/create", methods={"POST"}, name="games.create")
+		 *
+		 * @param Request $request
+		 *
+		 * @return Response
+		 * @throws \Exception
+		 */
+		public function create(Request $request): Response {
+
+			$dto = $this->gameRequestDTOTransformer->transformFromRequest($request);
+
+			try {
+				$this->entityHelper->createGame($dto);
+				return new JsonResponse([
+					'status' => 'game created'
+				],
+					Response::HTTP_CREATED);
+			} catch (\Exception $e) {
+				return new JsonResponse(['status' => 'error', 'errors' => strval($e)], Response::HTTP_INTERNAL_SERVER_ERROR);
+			}
+
+		}
+
+		/**
+		 * @Route(path="/search", methods={"GET"}, name="search_game")
+		 *
+		 * @param SerializerInterface $serializer
+		 * @return Response
+		 * @throws ClientExceptionInterface
+		 * @throws RedirectionExceptionInterface
+		 * @throws ServerExceptionInterface
+		 */
+		public function search(SerializerInterface $serializer): Response {
+
+//			try {
+
+				$searchTerm = $this->request->getCurrentRequest()->query->get('game');
+
+				$games = $this->gameRepository->searchByName($searchTerm);
+
+				return $this->responseHelper->createResponseForMany($games, $this->gameResponseDTOTransformer);
+
+//			} catch (\Exception $e) {
+//
+//				return new JsonResponse(['status' => 'error', 'errors' => strval($e)], Response::HTTP_INTERNAL_SERVER_ERROR);
+//
+//			}
+		}
+
+		/**
 		 * @Route(path="/search/igdb", methods={"GET"}, name="search_igdb")
 		 *
 		 * @param SerializerInterface $serializer
@@ -141,30 +191,6 @@
 				return new JsonResponse(['status' => 'error', 'errors' => strval($e)], Response::HTTP_INTERNAL_SERVER_ERROR);
 
 			}
-		}
-
-		/**
-		 * @Route(path="/create", methods={"POST"}, name="games.create")
-		 *
-		 * @param Request $request
-		 *
-		 * @return Response
-		 * @throws \Exception
-		 */
-		public function create(Request $request): Response {
-
-			$dto = $this->gameRequestDTOTransformer->transformFromRequest($request);
-
-			try {
-				$this->entityHelper->createGame($dto);
-				return new JsonResponse([
-					'status' => 'game created'
-				],
-					Response::HTTP_CREATED);
-			} catch (\Exception $e) {
-				return new JsonResponse(['status' => 'error', 'errors' => strval($e)], Response::HTTP_INTERNAL_SERVER_ERROR);
-			}
-
 		}
 		
 		/**
