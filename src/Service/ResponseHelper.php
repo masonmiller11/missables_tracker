@@ -98,4 +98,15 @@
 
 		}
 
+		/**
+		 * @param \Exception $exception
+		 * @return JsonResponse
+		 */
+		public function createErrorResponse (\Exception $exception): JsonResponse {
+
+			return new JsonResponse(['status' => 'error','code' => $exception->getCode(),
+				'message' => $exception->getMessage(), 'file' => $exception->getFile()], Response::HTTP_INTERNAL_SERVER_ERROR);
+
+		}
+
 	}
