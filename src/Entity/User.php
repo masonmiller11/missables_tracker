@@ -1,6 +1,10 @@
 <?php
 	namespace App\Entity;
 
+	use App\Entity\Playthrough\Playthrough;
+	use App\Entity\Playthrough\PlaythroughTemplate;
+	use App\Entity\Step\PlaythroughStep;
+	use App\Entity\Step\PlaythroughTemplateStep;
 	use Doctrine\Common\Collections\ArrayCollection;
 	use Doctrine\Common\Collections\Collection;
 	use Doctrine\Common\Collections\Selectable;

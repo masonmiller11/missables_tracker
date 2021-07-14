@@ -1,6 +1,9 @@
 <?php
-	namespace App\Entity;
+	namespace App\Entity\Step;
 
+	use App\Entity\EntityTrait;
+	use App\Entity\Playthrough\Playthrough;
+	use App\Entity\User;
 	use Doctrine\ORM\Mapping as ORM;
 
 	/**

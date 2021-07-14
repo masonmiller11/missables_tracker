@@ -1,5 +1,10 @@
 <?php
-	namespace App\Entity;
+	namespace App\Entity\Step;
+
+	use App\Entity\EntityInterface;
+	use App\Entity\Playthrough\Playthrough;
+	use App\Entity\Playthrough\PlaythroughTemplate;
+	use App\Entity\User;
 
 	interface PlaythroughStepInterface extends EntityInterface {
 
