@@ -1,10 +1,10 @@
 <?php
-	namespace App\DTO\Response;
+	namespace App\DTO;
 
 	use App\DTO\DTOInterface;
 	use Symfony\Component\Validator\Constraints as Assert;
 
-	class PlaythroughResponseDTO implements DTOInterface {
+	class PlaythroughTemplateDTO implements DTOInterface {
 
 		/**
 		 * @Assert\NotNull()
@@ -36,6 +36,12 @@
 		 * @Assert\NotNull()
 		 * @Assert\Type("int")
 		 */
-		public mixed $templateId;
+		public mixed $howManyPlaythroughs;
+
+		/**
+		 * @Assert\NotNull()
+		 * @Assert\Type("int")
+		 */
+		public mixed $votes;
 
 	}

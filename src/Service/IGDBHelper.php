@@ -1,23 +1,23 @@
 <?php
 	namespace App\Service;
 
-	use App\DTO\Response\IGDBResponseDTO;
-	use App\DTO\Transformer\ResponseTransformer\IGDBResponseDTOTransformer;
+	use App\DTO\Exception\ValidationException;
+	use App\DTO\IGDBGameResponseDTO;
+	use App\DTO\Transformer\ResponseTransformer\IGDBGameResponseDTOTransformer;
 	use App\Entity\Game;
 	use App\Entity\IGDBConfig;
 	use App\Utility\InternetGameDatabaseEndpoints;
 	use App\Repository\GameRepository;
 	use App\Repository\IGDBConfigRepository;
 	use Doctrine\ORM\EntityManagerInterface;
-	use Symfony\Component\HttpFoundation\JsonResponse;
-	use Symfony\Component\HttpFoundation\Response;
+	use Doctrine\ORM\NonUniqueResultException;
+	use Symfony\Component\Validator\Validator\ValidatorInterface;
 	use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 	use Symfony\Contracts\HttpClient\HttpClientInterface;
-	use Symfony\Contracts\HttpClient\ResponseInterface;
 
 	class IGDBHelper {
 
@@ -62,26 +62,49 @@
 		private array $headers;
 
 		/**
-		 * @var IGDBResponseDTOTransformer
+		 * @var IGDBGameResponseDTOTransformer
 		 */
-		private IGDBResponseDTOTransformer $IGDBResponseDTOTransformer;
+		private IGDBGameResponseDTOTransformer $IGDBGameResponseDTOTransformer;
 
+		/**
+		 * @var ValidatorInterface
+		 */
+		private ValidatorInterface $validator;
+
+		/**
+		 * @throws \Exception
+		 */
 		public function __construct(HttpClientInterface $client,
 		                            string $apiID,
 		                            string $apiSecret,
 		                            IGDBConfigRepository $IGDBConfigRepository,
 		                            EntityManagerInterface $entityManager,
-									GameRepository $gameRepository,
-									IGDBResponseDTOTransformer $IGDBResponseDTOTransformer) {
+		                            GameRepository $gameRepository,
+		                            ValidatorInterface $validator,
+		                            IGDBGameResponseDTOTransformer $IGDBGameResponseDTOTransformer) {
 
 			$this->client = $client;
+
+			/**
+			 * $apiID and $apiSecret are bound in services.yaml to environment variables
+			 */
 			$this->apiID = $apiID;
 			$this->apiSecret = $apiSecret;
+
 			$this->IGDBConfigRepository = $IGDBConfigRepository;
-			$this->IGDBResponseDTOTransformer = $IGDBResponseDTOTransformer;
+			$this->IGDBGameResponseDTOTransformer = $IGDBGameResponseDTOTransformer;
 			$this->gameRepository = $gameRepository;
 			$this->entityManager = $entityManager;
 			$this->IGDBConfig = $IGDBConfigRepository->find(1);
+			$this->validator = $validator;
+
+			// $diff is time until expiration.
+			$diff = (new \DateTimeImmutable('now'))->diff($this->IGDBConfig->getExpiration());
+
+			//If the token expires sometime within the next day, let's refresh it.
+			if (!$diff->days >1) {
+				$this->IGDBConfig = $this->refreshTokenInDatabase();
+			}
 
 			$this->headers = [
 				'Authorization' => 'Bearer ' . $this->IGDBConfig->getToken(),
@@ -98,7 +121,7 @@
 		 * @throws ClientExceptionInterface
 		 * @throws DecodingExceptionInterface
 		 */
-		public function getToken (): array {
+		private function getToken (): array {
 
 			$response = $this->client->request('POST', InternetGameDatabaseEndpoints::TOKEN, [
 				'query' => [
@@ -112,45 +135,81 @@
 
 		}
 
-		public function refreshTokenInDatabase ($response): JsonResponse {
+		/**
+		 * @throws \Exception
+		 *
+		 * Creates token if it ins't already in database, otherwise refreshes it.
+		 */
+		public function refreshTokenInDatabase (): IGDBConfig {
 
-			$timeToExpirationInSeconds = $response["expires_in"];
-			$now = new \DateTimeImmutable();
-			$expiration = $now->add(new \DateInterval('PT' . $timeToExpirationInSeconds . 'S'));
+			try {
+				$tokenResponse = $this->getToken();
 
-			$currentConfig = $this->IGDBConfigRepository->find(1);
+				$timeToExpirationInSeconds = $tokenResponse["expires_in"];
+				$now = new \DateTimeImmutable();
+				$expiration = $now->add(new \DateInterval('PT' . $timeToExpirationInSeconds . 'S'));
 
-			if (!$currentConfig) {
+				$currentConfig = $this->IGDBConfigRepository->find(1);
 
-				$config = new IGDBConfig($response["access_token"], $expiration,$now);
+				if (!$currentConfig) {
 
-				$this->entityManager->persist($config);
-				$this->entityManager->flush();
+					$config = new IGDBConfig($tokenResponse["access_token"], $expiration, $now);
 
-				return new JsonResponse(['status' => 'token created'], Response::HTTP_CREATED);
+					$this->entityManager->persist($config);
+					$this->entityManager->flush();
 
-			} else {
+					return $config;
 
-				$currentConfig->setToken($response["access_token"]);
+				}
+
+				$currentConfig->setToken($tokenResponse["access_token"]);
 				$currentConfig->setGeneratedAt($now);
 				$currentConfig->setExpiration($expiration);
 
 				$this->entityManager->persist($currentConfig);
 				$this->entityManager->flush();
 
-				return new JsonResponse(['status' => 'token refreshed'], Response::HTTP_CREATED);
+				return $currentConfig;
+
+
+			} catch (ClientExceptionInterface | DecodingExceptionInterface | RedirectionExceptionInterface
+					 | ServerExceptionInterface | TransportExceptionInterface $e) {
+
+				throw new \Exception($e);
 
 			}
 
 		}
 
 		/**
+		 * @throws TransportExceptionInterface
+		 * @throws ServerExceptionInterface
+		 * @throws RedirectionExceptionInterface
+		 * @throws DecodingExceptionInterface
+		 * @throws ClientExceptionInterface
+		 */
+		public function searchIGDB (string $term, int $limit = 20): array{
+
+			$response = $this->client->request('POST', InternetGameDatabaseEndpoints::GAMES, [
+				'headers' => $this->headers,
+				'body' => 'fields name, id, cover, platforms, summary, first_release_date;
+				search "' . $term . '";
+				where version_parent = null;
+				limit ' . $limit .';'
+			]);
+
+			return $response->toArray();
+
+		}
+
+		/**
 		 * @param int $ID
 		 *
-		 * @return IGDBResponseDTO
+		 * @return IGDBGameResponseDTO|\RuntimeException
 		 * @throws TransportExceptionInterface
+		 * @throws \Exception
 		 */
-		public function getGame (int $ID): IGDBResponseDTO {
+		private function getGame (int $ID): IGDBGameResponseDTO | \RuntimeException {
 
 			$response = $this->client->request( 'POST', InternetGameDatabaseEndpoints::GAMES, [
 				'headers' => $this->headers,
@@ -158,20 +217,68 @@
 				 cover, artworks; where id = ' . $ID . ';'
 			]);
 
-			return $this->IGDBResponseDTOTransformer->transformFromObject($response);
+			return $this->IGDBGameResponseDTOTransformer->transformFromObject($response);
 
 		}
 
-		public function isIGDBGameInDatabase (IGDBResponseDTO $internetGameDatabaseDTO): Game|bool {
+		/**
+		 * @throws NonUniqueResultException
+		 */
+		private function isIGDBGameInDatabase (IGDBGameResponseDTO $internetGameDatabaseDTO): Game | NonUniqueResultException | null {
 
-			$game = $this->gameRepository->findGameByInternetGameDatabaseID($internetGameDatabaseDTO->id);
+			return $this->gameRepository->findGameByInternetGameDatabaseID($internetGameDatabaseDTO->id);
 
-			if ($game) {
-				return $game;
-				//game already in database.
-			} else {
-				return false;
+		}
+
+		/**
+		 * @throws TransportExceptionInterface
+		 * @throws \Exception
+		 */
+		public function getGameAndSave (string|int $internetGameDatabaseID): Game {
+
+			/**
+			 * returns an IGDBResponseDTO with data from IGDB, does not touch our database
+			 * @see IGDBGameResponseDTO
+			 */
+			$dto = $this->getGame($internetGameDatabaseID);
+
+			/**
+			 * Validate DTO, throw an error if not valid
+			 */
+			$errors = $this->validator->validate($dto);
+
+			if (count($errors) > 0) {
+				$errorString = (string)$errors;
+				throw new ValidationException($errorString);
 			}
+
+			/**
+			 * Returns a Game entity if it's in database. Throws NonUniqueResultException if there's more than one entry.
+			 * Returns null if it does not find Game.
+			 * @see Game
+			 */
+			$gameIfInDatabase = $this->isIGDBGameInDatabase($dto);
+
+			/**
+			 * If $gameIfInDatabase is not present, then create a new Game entity and return it in response.
+			 */
+			if (!$gameIfInDatabase) {
+
+				$game = new Game($dto->genre, $dto->title, $dto->id, $dto->screenshots, $dto->artworks, $dto->cover,
+					$dto->platforms,$dto->slug, $dto->rating, $dto->summary, $dto->storyline,
+					$dto->releaseDate
+				);
+
+				$this->entityManager->persist($game);
+				$this->entityManager->flush();
+
+				return $game;
+			}
+
+			/**
+			 * Otherwise, return the Game entity in response.
+			 */
+			return $gameIfInDatabase;
 
 		}
 

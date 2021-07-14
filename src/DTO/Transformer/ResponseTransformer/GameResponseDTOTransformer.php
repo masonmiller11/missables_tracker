@@ -1,7 +1,7 @@
 <?php
 	namespace App\DTO\Transformer\ResponseTransformer;
 
-	use App\DTO\Response\GameResponseDTO;
+	use App\DTO\GameDTO;
 	use App\Entity\EntityInterface;
 	use App\Entity\Game;
 	use App\Entity\PlaythroughTemplate;
@@ -10,13 +10,14 @@
 
 		/**
 		 * @param Game $object
-		 * @return GameResponseDTO
+		 *
+		 * @return GameDTO
 		 */
-		public function transformFromObject($object): GameResponseDTO {
+		public function transformFromObject($object): GameDTO {
 
 			Assert($object instanceof Game);
 
-			$dto = new GameResponseDTO();
+			$dto = new GameDTO();
 			$dto->genre = $object->getGenre();
 			$dto->title = $object->getTitle();
 			$dto->id = $object->getId();
@@ -29,6 +30,7 @@
 			$dto->cover = $object->getCover();
 			$dto->artworks = $object->getArtworks();
 			$dto->releaseDate = $object->getReleaseDate()->format('Y-m-d');
+			$dto->internetGameDatabaseID = $object->getInternetGameDatabaseID();
 			$dto->playthroughTemplates = $object->getTemplates()->map(
 				fn(PlaythroughTemplate $playthroughTemplate) => [
 					'id'=>$playthroughTemplate->getId(),
