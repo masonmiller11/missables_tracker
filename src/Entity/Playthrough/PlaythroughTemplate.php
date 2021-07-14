@@ -1,6 +1,10 @@
 <?php
-	namespace App\Entity;
+	namespace App\Entity\Playthrough;
 
+	use App\Entity\EntityTrait;
+	use App\Entity\Game;
+	use App\Entity\Step\PlaythroughTemplateStep;
+	use App\Entity\User;
 	use Doctrine\Common\Collections\ArrayCollection;
 	use Doctrine\Common\Collections\Collection;
 	use Doctrine\Common\Collections\Selectable;
