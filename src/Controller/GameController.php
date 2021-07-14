@@ -1,17 +1,12 @@
 <?php
 	namespace App\Controller;
 
-	use App\DTO\IGDBGameResponseDTO;
 	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
 	use App\DTO\Transformer\ResponseTransformer\GameResponseDTOTransformer;
-	use App\Entity\Game;
 	use App\Repository\GameRepository;
 	use App\Service\EntityHelper;
 	use App\Service\IGDBHelper;
 	use App\Service\ResponseHelper;
-	use Doctrine\DBAL\Exception;
-	use Doctrine\ORM\EntityManagerInterface;
-	use Lcobucci\JWT\Signer\Ecdsa\ConversionFailed;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +14,6 @@
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 	use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -93,11 +87,19 @@
 		 * @param string|int $id
 		 * @param SerializerInterface $serializer
 		 * @return Response
+		 *
+		 * Reads a single game from our database based on its id.
 		 */
 		public function read(string|int $id, SerializerInterface $serializer): Response {
 
 			try {
 
+				/**
+				 * Gets a a game and runs it through ResponseHelper. Inside ResponseHelper, we take the game object,
+				 * turn it into a DTO and then validate it before returning.
+				 * @See GameResponseDTOTransformer
+				 * @See ResponseHelper
+				 */
 				$game = $this->gameRepository->find($id);
 				return $this->responseHelper->createResponseForOne($game, $this->gameResponseDTOTransformer);
 
@@ -116,6 +118,8 @@
 		 *
 		 * @return Response
 		 * @throws \Exception
+		 *
+		 * Creates a game based off of request body.
 		 */
 		public function create(Request $request): Response {
 
@@ -123,6 +127,9 @@
 
 			try {
 
+				/**
+				 * entityHelper->createGame validates gameRequestDTO before submitting to database. Returns Game entity
+				 */
 				$this->entityHelper->createGame($dto);
 				return new JsonResponse([
 					'status' => 'game created'
@@ -142,9 +149,9 @@
 		 *
 		 * @param SerializerInterface $serializer
 		 * @return Response
-		 * @throws ClientExceptionInterface
-		 * @throws RedirectionExceptionInterface
-		 * @throws ServerExceptionInterface
+		 *
+		 * Searches our database for title that includes the combination of letters in query.
+		 * Such as ?game=halo returning Halo and Halo 4 or ?game=final returning Final Fantasy and Final Fight.
 		 */
 		public function search(SerializerInterface $serializer): Response {
 
@@ -152,6 +159,12 @@
 
 				$searchTerm = $this->request->getCurrentRequest()->query->get('game');
 				$games = $this->gameRepository->searchByName($searchTerm);
+
+				/**
+				 * Inside ResponseHelper, we take the game object, turn it into a DTO and then validate it before returning.
+				 * @See GameResponseDTOTransformer
+				 * @See ResponseHelper
+				 */
 				return $this->responseHelper->createResponseForMany($games, $this->gameResponseDTOTransformer);
 
 			} catch (\Exception $e) {
@@ -166,15 +179,20 @@
 		 *
 		 * @param SerializerInterface $serializer
 		 * @return Response
-		 * @throws ClientExceptionInterface
-		 * @throws RedirectionExceptionInterface
-		 * @throws ServerExceptionInterface
+		 *
+		 * Queries the database for games, orders them by number of playthroughTemplates belonging and returns 10.
 		 */
 		public function listPopular(SerializerInterface $serializer): Response {
 
 			try {
 
 				$games = $this->gameRepository->topTenByNumberOfTemplates();
+
+				/**
+				 * Inside ResponseHelper, we take the game objects, turn them into an array of DTOs and then validate it before returning.
+				 * @See GameResponseDTOTransformer
+				 * @See ResponseHelper
+				 */
 				return $this->responseHelper->createResponseForMany($games, $this->gameResponseDTOTransformer);
 
 			} catch (\Exception $e) {
@@ -194,14 +212,21 @@
 		 * @throws DecodingExceptionInterface
 		 * @throws RedirectionExceptionInterface
 		 * @throws ServerExceptionInterface
+		 *
+		 * This controller action looks at the URL query, searches IGDB and returns whatever IGDB sends us.
+		 * So ?halo will return whatever IGDB poops up if we searched for Halo.
 		 */
 		public function searchIGDB(SerializerInterface $serializer): Response {
 
 			try {
 
 				$searchTerm = $this->request->getCurrentRequest()->query->get('game');
+
+				/**
+				 * This converts the response from IGDB to an array and returns it.
+				 */
 				$games = $this->IGDBHelper->searchIGDB($searchTerm);
-				return new JsonResponse($games);
+				return new JsonResponse($games); //TODO what happens if we search for gibberish?
 
 			} catch (\Exception $e) {
 
@@ -209,7 +234,7 @@
 
 			}
 		}
-		
+
 		/**
 		 * @Route(path="/read/igdf/{internetGameDatabaseID<\d+>}", methods={"GET"}, name="get_game_from_igdb")
 		 *
@@ -218,13 +243,20 @@
 		 * @return Response
 		 * @throws TransportExceptionInterface
 		 *
-		 * Gets a game from IGDB. If it's already in our database, return Game entity, if it's not in our database,
+		 * Gets a game from IGDB. If it's already in our database, return Game entity from, if it's not in our database,
 		 * create it with the data from IGDB and then return that new Game entity.
 		 */
 		public function getGameFromIGDB(string|int $internetGameDatabaseID, SerializerInterface $serializer): Response {
 
 			try{
-
+				/**
+				 * getGameAndSave uses the ID to retrieve data from IGDB, transforms it into a
+				 * IGDBResponseDTO, then validates it before using that DTO to create a Game entity or to retrieve a
+				 * Game entity from our database.
+				 *
+				 * createResponseForOne takes the Game, transforms it into a DTO, validates it, and then returns
+				 * the gameResponseDTO.
+				 */
 				$game = $this->IGDBHelper->getGameAndSave($internetGameDatabaseID);
 				return $this->responseHelper->createResponseForOne($game, $this->gameResponseDTOTransformer);
 

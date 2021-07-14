@@ -1,6 +1,7 @@
 <?php
 	namespace App\Service;
 
+	use App\DTO\Exception\ValidationException;
 	use App\DTO\IGDBGameResponseDTO;
 	use App\DTO\Transformer\ResponseTransformer\IGDBGameResponseDTOTransformer;
 	use App\Entity\Game;
@@ -10,9 +11,6 @@
 	use App\Repository\IGDBConfigRepository;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Doctrine\ORM\NonUniqueResultException;
-	use Symfony\Component\HttpFoundation\JsonResponse;
-	use Symfony\Component\HttpFoundation\Response;
-	use Symfony\Component\Validator\Exception\ValidationFailedException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 	use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
@@ -20,7 +18,6 @@
 	use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 	use Symfony\Contracts\HttpClient\HttpClientInterface;
-	use Symfony\Contracts\HttpClient\ResponseInterface;
 
 	class IGDBHelper {
 
@@ -104,7 +101,7 @@
 			// $diff is time until expiration.
 			$diff = (new \DateTimeImmutable('now'))->diff($this->IGDBConfig->getExpiration());
 
-			//if the token expires sometime within the next day, let's refresh it.
+			//If the token expires sometime within the next day, let's refresh it.
 			if (!$diff->days >1) {
 				$this->IGDBConfig = $this->refreshTokenInDatabase();
 			}
@@ -140,6 +137,8 @@
 
 		/**
 		 * @throws \Exception
+		 *
+		 * Creates token if it ins't already in database, otherwise refreshes it.
 		 */
 		public function refreshTokenInDatabase (): IGDBConfig {
 
@@ -161,18 +160,18 @@
 
 					return $config;
 
-				} else {
-
-					$currentConfig->setToken($tokenResponse["access_token"]);
-					$currentConfig->setGeneratedAt($now);
-					$currentConfig->setExpiration($expiration);
-
-					$this->entityManager->persist($currentConfig);
-					$this->entityManager->flush();
-
-					return $currentConfig;
-
 				}
+
+				$currentConfig->setToken($tokenResponse["access_token"]);
+				$currentConfig->setGeneratedAt($now);
+				$currentConfig->setExpiration($expiration);
+
+				$this->entityManager->persist($currentConfig);
+				$this->entityManager->flush();
+
+				return $currentConfig;
+
+
 			} catch (ClientExceptionInterface | DecodingExceptionInterface | RedirectionExceptionInterface
 					 | ServerExceptionInterface | TransportExceptionInterface $e) {
 
@@ -250,7 +249,7 @@
 
 			if (count($errors) > 0) {
 				$errorString = (string)$errors;
-				throw new \RuntimeException($errorString);
+				throw new ValidationException($errorString);
 			}
 
 			/**
