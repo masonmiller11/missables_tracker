@@ -1,10 +1,11 @@
 <?php
-	namespace App\DTO\Response;
+
+	namespace App\DTO;
 
 	use App\DTO\DTOInterface;
 	use Symfony\Component\Validator\Constraints as Assert;
 
-	class GameResponseDTO implements DTOInterface {
+	class IGDBGameResponseDTO implements DTOInterface {
 
 		/**
 		 * @Assert\NotBlank()
@@ -53,6 +54,11 @@
 		/**
 		 * @Assert\NotBlank()
 		 */
+		public mixed $releaseDate;
+
+		/**
+		 * @Assert\NotBlank()
+		 */
 		public mixed $cover;
 
 		/**
@@ -62,20 +68,8 @@
 		public mixed $artworks;
 
 		/**
-		 * @Assert\NotNull
-		 * @Assert\DateTime(format="Y-m-d")
-		 */
-		public mixed $releaseDate;
-
-		/**
 		 * @Assert\NotBlank()
 		 */
 		public mixed $genre;
-
-		/**
-		 * @Assert\NotNull
-		 * @Assert\Type("array")
-		 */
-		public mixed $playthroughTemplates;
 
 	}

@@ -3,9 +3,9 @@
 
 	use JetBrains\PhpStorm\Pure;
 
-	class UnexpectedTypeException extends \RuntimeException {
+	class ResourceNotFoundExceptionTypeException extends \RuntimeException {
 
-		private const CODE = 113;
+		private const CODE = 404;
 
 		#[Pure]
 		public function __construct(string $message)

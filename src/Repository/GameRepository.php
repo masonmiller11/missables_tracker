@@ -3,6 +3,7 @@
 
 	use App\Entity\Game;
 	use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+	use Doctrine\ORM\NonUniqueResultException;
 	use Doctrine\Persistence\ManagerRegistry;
 
 	/**
@@ -18,14 +19,34 @@
 			parent::__construct($registry, Game::class);
 		}
 
-		public function findGameByInternetGameDatabaseID (int $internetGameDatabaseID) {
+		/**
+		 * @throws NonUniqueResultException
+		 */
+		public function findGameByInternetGameDatabaseID (int $internetGameDatabaseID): Game | null {
 			$qb = $this->createQueryBuilder('game')
 				->andWhere('game.internetGameDatabaseID = :internetGameDatabaseID')
 				->setParameter('internetGameDatabaseID', $internetGameDatabaseID);
 
-			$query = $qb->getQuery();
+			return $qb->getQuery()->getOneOrNullResult();
+		}
 
-			return $query->execute();
+		public function searchByName (string $term): array | null {
+			$qb = $this->createQueryBuilder('game')
+				->andWhere('game.title LIKE :searchTerm')
+				->setParameter('searchTerm','%' . $term . '%');
+
+			return $qb->getQuery()->getResult();
+		}
+
+		public function topTenByNumberOfTemplates (): array | null {
+			$qb = $this->createQueryBuilder('game')
+				->select('COUNT(template) AS HIDDEN myCount', 'game')
+				->leftJoin('game.playthroughTemplates', 'template')
+				->orderBy('myCount', 'DESC')
+				->groupBy('game')
+				->setMaxResults(10);
+
+			return $qb->getQuery()->getResult();
 		}
 
 	}

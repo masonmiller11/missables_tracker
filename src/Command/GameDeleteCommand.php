@@ -2,7 +2,7 @@
 	namespace App\Command;
 
 	use App\Entity\Game;
-	use App\Service\IGDBHelper;
+	use App\Repository\GameRepository;
 	use DateTimeImmutable;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Symfony\Component\Console\Command\Command;
@@ -13,46 +13,50 @@
 	use Symfony\Component\Console\Style\SymfonyStyle;
 	use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-	class GameCreateCommand extends Command {
+	class GameDeleteCommand extends Command {
 
-		protected static $defaultName = 'app:game:create';
-		protected static $defaultDescription = 'This is for creating games to test the app with';
+		protected static $defaultName = 'app:game:delete';
+		protected static $defaultDescription = 'This is for removing games from the database';
 
+		/**
+		 * @var EntityManagerInterface
+		 */
 		private EntityManagerInterface $entityManager;
 
-		private IGDBHelper $IGDBHelper;
+		/**
+		 * @var GameRepository
+		 */
+		private GameRepository $gameRepository;
 
 		public function __construct (EntityManagerInterface $entityManager,
-									 IGDBHelper $IGDBHelper) {
+									 GameRepository $gameRepository) {
 			parent::__construct();
 			$this->entityManager = $entityManager;
-			$this->IGDBHelper = $IGDBHelper;
+			$this->gameRepository = $gameRepository;
 		}
 
 		protected function configure() {
-			$this->addArgument('igdb_id', InputArgument::REQUIRED,
-				'this is the id for the game on Internet Game Database');
+			$this->addArgument('id', InputArgument::REQUIRED,
+				'this is the game\'s id');
 
 		}
 
 		protected function execute(InputInterface $input, OutputInterface $output) :int {
 
-			try {
+			$game = $this->gameRepository->find($input->getArgument('id'));
 
-				$this->IGDBHelper->getGameAndSave($input->getArgument('igdb_id'));
-				return ExitCode::OK;
+			$this->entityManager->remove($game);
 
-			} catch(\Exception) {
-				return ExitCode::ERROR;
-			}
+			$this->entityManager->flush();
 
+			return ExitCode::OK;
 		}
 
 		protected function interact(InputInterface $input, OutputInterface $output) {
 			$io = new SymfonyStyle($input, $output);
-			if (!$input->getArgument('igdb_id')) {
-				$input->setArgument('igdb_id', $io->ask(
-					'What is the id of the game on the Internet Game Database?'
+			if (!$input->getArgument('id')) {
+				$input->setArgument('id', $io->ask(
+					'What is the id of the game you are trying to delete?'
 				));
 			}
 		}
