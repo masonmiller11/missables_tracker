@@ -1,11 +1,10 @@
 <?php
 	namespace App\Service;
 
+	use App\DTO\Exception\ValidationException;
 	use App\DTO\GameDTO;
 	use App\Entity\Game;
 	use Doctrine\ORM\EntityManagerInterface;
-	use Symfony\Component\HttpFoundation\JsonResponse;
-	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	class EntityHelper {
@@ -22,13 +21,21 @@
 
 		}
 
+		/**
+		 * @param GameDTO $dto
+		 *
+		 * @return Game
+		 * @throws \Exception
+		 *
+		 * Validates DTO, creates Game entity based off DTO and then returns new Game entity.
+		 */
 		public function createGame (GameDTO $dto): Game {
 
 			$errors = $this->validator->validate($dto);
 
 			if (count($errors) > 0) {
 				$errorString = (string)$errors;
-				throw new \RuntimeException($errorString);
+				throw new ValidationException($errorString);
 			}
 
 			$releaseDateTimeImmutable = new \DateTimeImmutable(date('Y-m-d', ((int)$dto->releaseDate)));
