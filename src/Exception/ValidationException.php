@@ -1,5 +1,5 @@
 <?php
-	namespace App\DTO\Exception;
+	namespace App\Exception;
 
 	use JetBrains\PhpStorm\Pure;
 

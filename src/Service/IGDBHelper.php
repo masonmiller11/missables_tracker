@@ -1,7 +1,7 @@
 <?php
 	namespace App\Service;
 
-	use App\DTO\Exception\ValidationException;
+	use App\Exception\ValidationException;
 	use App\DTO\IGDBGameResponseDTO;
 	use App\DTO\Transformer\ResponseTransformer\IGDBGameResponseDTOTransformer;
 	use App\Entity\Game;
