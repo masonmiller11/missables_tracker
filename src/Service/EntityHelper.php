@@ -1,7 +1,7 @@
 <?php
 	namespace App\Service;
 
-	use App\DTO\Exception\ValidationException;
+	use App\Exception\ValidationException;
 	use App\DTO\GameDTO;
 	use App\Entity\Game;
 	use Doctrine\ORM\EntityManagerInterface;

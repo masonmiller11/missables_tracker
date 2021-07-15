@@ -1,7 +1,7 @@
 <?php
 	namespace App\Service;
 
-	use App\DTO\Exception\ValidationException;
+	use App\Exception\ValidationException;
 	use App\DTO\Transformer\ResponseTransformer\ResponseDTOTransformerInterface;
 	use App\Entity\EntityInterface;
 	use Symfony\Component\HttpFoundation\JsonResponse;
