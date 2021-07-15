@@ -4,7 +4,8 @@
 	use App\DTO\GameDTO;
 	use App\Entity\EntityInterface;
 	use App\Entity\Game;
-	use App\Entity\PlaythroughTemplate;
+	use App\Entity\Playthrough\PlaythroughTemplate;
+	use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 	class GameResponseDTOTransformer extends AbstractResponseDTOTransformer {
 
@@ -15,7 +16,9 @@
 		 */
 		public function transformFromObject($object): GameDTO {
 
-			Assert($object instanceof Game);
+			if (!($object instanceof Game)) {
+				throw new UnexpectedTypeException($object, 'Game');
+			}
 
 			$dto = new GameDTO();
 			$dto->genre = $object->getGenre();
@@ -39,6 +42,7 @@
 					'owner'=>$playthroughTemplate->getOwner()->getId(),
 				]
 			)->toArray();
+
 			return $dto;
 
 		}
