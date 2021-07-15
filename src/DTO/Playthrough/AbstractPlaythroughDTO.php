@@ -32,4 +32,10 @@
 		 */
 		public mixed $game;
 
+		/**
+		 * @Assert\NotNull
+		 * @Assert\Type("array")
+		 */
+		public mixed $sections;
+
 	}
