@@ -8,7 +8,7 @@
 	 * @package App\Entity
 	 * for use with {@see \App\Entity\PlaythroughStepInterface}
 	 */
-	trait PlaythroughStepTrait {
+	trait StepTrait {
 
 		/**
 		 * @var string
@@ -23,8 +23,6 @@
 		 * @ORM\Column(type="text")
 		 */
 		private ?string $description;
-
-		//getters and setters
 
 		/**
 		 * @param string $name

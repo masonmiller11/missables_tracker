@@ -3,7 +3,7 @@
 
 	use App\Entity\EntityTrait;
 	use App\Entity\Game;
-	use App\Entity\Step\PlaythroughStep;
+	use App\Entity\Section\Section;
 	use App\Entity\User;
 	use Doctrine\Common\Collections\ArrayCollection;
 	use Doctrine\Common\Collections\Collection;
@@ -19,6 +19,8 @@
 
 		use EntityTrait;
 
+		use PlaythroughTrait;
+
 		/**
 		 * @var Game
 		 *
@@ -30,7 +32,7 @@
 		/**
 		 * @var PlaythroughTemplate
 		 *
-		 * @ORM\ManyToOne(targetEntity="App\Entity\PlaythroughTemplate", inversedBy="playthroughs")
+		 * @ORM\ManyToOne(targetEntity="App\Entity\Playthrough\PlaythroughTemplate", inversedBy="playthroughs")
 		 * @ORM\JoinColumn(nullable=false)
 		 */
 		private PlaythroughTemplate $template;
@@ -51,15 +53,22 @@
 		private bool $visibility;
 
 		/**
-		 * @var Collection|Selectable|PlaythroughStep[]
+		 * @var Collection|Selectable|Section[]
 		 *
-		 * @ORM\OneToMany(targetEntity="App\Entity\PlaythroughStep", mappedBy="playthrough", cascade={"all"}, orphanRemoval=true)
+		 * @ORM\OneToMany(targetEntity="App\Entity\Section\Section", mappedBy="playthrough", cascade={"all"}, orphanRemoval=true)
 		 */
-		private Collection|Selectable|array $steps;
+		private Collection|Selectable|array $sections;
 
+		/**
+		 * Playthrough constructor.
+		 * @param Game $game
+		 * @param PlaythroughTemplate $template
+		 * @param User $owner
+		 * @param bool $visibility
+		 */
 		#[Pure] public function __construct(Game $game, PlaythroughTemplate $template, User $owner, bool $visibility) {
 
-			$this->steps = new ArrayCollection();
+			$this->sections = new ArrayCollection();
 
 			$this->game = $game;
 			$this->template = $template;
@@ -106,10 +115,10 @@
 		}
 
 		/**
-		 * @return PlaythroughStep[]|Collection|Selectable
+		 * @return Section[]|Collection|Selectable
 		 */
-		public function getSteps(): array|Collection|Selectable {
-			return $this->steps;
+		public function getSections(): Collection|array|Selectable {
+			return $this->sections;
 		}
 
 	}

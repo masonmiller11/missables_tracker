@@ -1,14 +1,14 @@
 <?php
-	namespace App\Entity\Playthrough;
+	namespace App\Entity\Section;
 
 	use Doctrine\ORM\Mapping as ORM;
 
 	/**
-	 * Trait PlaythroughTrait
-	 * @package App\Entity\Playthrough
-	 * for use with {@see PlaythroughInterface}
+	 * Trait PlaythroughStepTrait
+	 * @package App\Entity
+	 * for use with {@see \App\Entity\Section\SectionInterface}
 	 */
-	trait PlaythroughTrait {
+	trait SectionTrait {
 
 		/**
 		 * @var string
@@ -24,6 +24,8 @@
 		 */
 		private ?string $description;
 
+		//getters and setters
+
 		/**
 		 * @param string $name
 		 * @return static
@@ -34,10 +36,10 @@
 		}
 
 		/**
-		 * @param string $description
+		 * @param string|null $description
 		 * @return static
 		 */
-		public function setDescription(string $description): static {
+		public function setDescription(?string $description): static {
 			$this->description = $description;
 			return $this;
 		}

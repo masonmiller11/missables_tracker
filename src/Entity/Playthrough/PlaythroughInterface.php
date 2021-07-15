@@ -19,14 +19,12 @@
 
 		public function setVisibility(bool $visibility): static;
 
-		public function getTitle(): string;
+		public function getName(): string;
 
-		public function setTitle (string $title): static;
+		public function setName (string $title): static;
 
-		public function getDescription(): string;
+		public function getDescription(): ?string;
 
 		public function setDescription(string $description): static;
-
-
 
 	}
