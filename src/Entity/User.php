@@ -3,8 +3,6 @@
 
 	use App\Entity\Playthrough\Playthrough;
 	use App\Entity\Playthrough\PlaythroughTemplate;
-	use App\Entity\Step\PlaythroughStep;
-	use App\Entity\Step\PlaythroughTemplateStep;
 	use Doctrine\Common\Collections\ArrayCollection;
 	use Doctrine\Common\Collections\Collection;
 	use Doctrine\Common\Collections\Selectable;
@@ -38,37 +36,28 @@
 		/**
 		 * @var Collection|Selectable|PlaythroughTemplate[]
 		 *
-		 * @ORM\OneToMany(targetEntity="App\Entity\PlaythroughTemplate", mappedBy="owner")
+		 * @ORM\OneToMany(targetEntity="App\Entity\Playthrough\PlaythroughTemplate", mappedBy="owner")
 		 */
 		private Collection|Selectable|array $playthroughTemplates;
 
 		/**
-		 * @var Collection|Selectable|PlaythroughTemplateStep[]
-		 *
-		 * @ORM\OneToMany(targetEntity="App\Entity\PlaythroughTemplateStep", mappedBy="owner")
-		 */
-		private Collection|Selectable|array $playthroughTemplateSteps;
-
-		/**
 		 * @var Collection|Selectable|Playthrough[]
 		 *
-		 * @ORM\OneToMany(targetEntity="App\Entity\Playthrough", mappedBy="owner", cascade={"all"}, orphanRemoval=true)
+		 * @ORM\OneToMany(targetEntity="App\Entity\Playthrough\Playthrough", mappedBy="owner", cascade={"all"}, orphanRemoval=true)
 		 */
 		private Collection|Selectable|array $playthroughs;
 
 		/**
-		 * @var Collection|Selectable|PlaythroughStep[]
-		 *
-		 * @ORM\OneToMany(targetEntity="App\Entity\PlaythroughStep", mappedBy="owner", cascade={"all"}, orphanRemoval=true)
+		 * User constructor.
+		 * @param string $email
 		 */
-		private Collection|Selectable|array $playthroughSteps;
-
 		#[Pure] public function __construct(string $email) {
 
 			$this->email = $email;
 
 			$this->playthroughTemplates = new ArrayCollection();
-			$this->playthroughTemplateSteps = new ArrayCollection();
+			$this->playthroughs = new ArrayCollection();
+
 		}
 
 		/**
@@ -93,24 +82,10 @@
 		}
 
 		/**
-		 * @return PlaythroughTemplateStep[]|Collection|Selectable
-		 */
-		public function getPlaythroughTemplateSteps(): Collection|array|Selectable {
-			return $this->playthroughTemplateSteps;
-		}
-
-		/**
 		 * @return Playthrough[]|Collection|Selectable
 		 */
 		public function getPlaythroughs(): Collection|array|Selectable {
 			return $this->playthroughs;
-		}
-
-		/**
-		 * @return PlaythroughStep[]|Collection|Selectable
-		 */
-		public function getPlaythroughSteps(): Collection|array|Selectable {
-			return $this->playthroughSteps;
 		}
 
 		/**

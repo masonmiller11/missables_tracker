@@ -4,13 +4,13 @@
 	use App\Entity\EntityInterface;
 	use App\Entity\Playthrough\Playthrough;
 	use App\Entity\Playthrough\PlaythroughTemplate;
+	use App\Entity\Section\Section;
+	use App\Entity\Section\SectionTemplate;
 	use App\Entity\User;
 
-	interface PlaythroughStepInterface extends EntityInterface {
+	interface StepInterface extends EntityInterface {
 
-		public function getPlaythrough(): PlaythroughTemplate|Playthrough;
-
-		public function getOwner(): User;
+		public function getSection(): Section | SectionTemplate;
 
 		public function getName(): string;
 

@@ -104,19 +104,34 @@
 		private int $internetGameDatabaseID;
 
 		/**
-		 * @ORM\OneToMany(targetEntity="App\Entity\PlaythroughTemplate", mappedBy="game", cascade={"all"}, orphanRemoval=true)
+		 * @ORM\OneToMany(targetEntity="App\Entity\Playthrough\PlaythroughTemplate", mappedBy="game", cascade={"all"}, orphanRemoval=true)
 		 *
 		 * @var Collection|PlaythroughTemplate[]|Selectable
 		 */
 		private Collection|Selectable|array $playthroughTemplates;
 
 		/**
-		 * @ORM\OneToMany(targetEntity="App\Entity\Playthrough", mappedBy="game")
+		 * @ORM\OneToMany(targetEntity="App\Entity\Playthrough\Playthrough", mappedBy="game")
 		 *
 		 * @var Collection|Playthrough[]|Selectable
 		 */
 		private Collection|Selectable|array $playthroughs;
 
+		/**
+		 * Game constructor.
+		 * @param string $genre
+		 * @param string $title
+		 * @param int $internetGameDatabaseID
+		 * @param array $screenshots
+		 * @param array $artworks
+		 * @param string $cover
+		 * @param array $platforms
+		 * @param string $slug
+		 * @param float $rating
+		 * @param string $summary
+		 * @param string $storyline
+		 * @param \DateTimeImmutable $releaseDate
+		 */
 		#[Pure] public function __construct (string $genre,
 		                                     string $title,
 		                                     int $internetGameDatabaseID,

@@ -2,18 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3cf1ede0-50ad-4f5c-9157-fb8dcc6a3ff3" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Entity/Playthrough/PlaythroughTrait.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Entity/Section/SectionInterface.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DTO/PlaythroughDTO.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/Playthrough/PlaythroughDTO.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DTO/PlaythroughTemplateDTO.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/Playthrough/PlaythroughTemplateDTO.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Entity/Game.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Game.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/Playthrough.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Playthrough/Playthrough.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/PlaythroughInterface.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Playthrough/PlaythroughInterface.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/PlaythroughStep.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Step/PlaythroughStep.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/PlaythroughStepInterface.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Step/PlaythroughStepInterface.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/PlaythroughStepTrait.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Step/PlaythroughStepTrait.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/PlaythroughTemplate.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Playthrough/PlaythroughTemplate.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/PlaythroughTemplateStep.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Step/PlaythroughTemplateStep.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Playthrough/Playthrough.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Playthrough/Playthrough.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Playthrough/PlaythroughInterface.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Playthrough/PlaythroughInterface.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Playthrough/PlaythroughTemplate.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Playthrough/PlaythroughTemplate.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Playthrough/PlaythroughTrait.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Playthrough/PlaythroughTrait.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Step/PlaythroughStep.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Step/Step.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Step/PlaythroughStepInterface.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Step/PlaythroughStepTrait.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Step/StepTrait.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Step/PlaythroughTemplateStep.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Step/StepTemplate.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Entity/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/User.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Repository/PlaythroughTemplateRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/PlaythroughTemplateRepository.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -162,6 +164,8 @@
       <workItem from="1625935219770" duration="2117000" />
       <workItem from="1625939481810" duration="4161000" />
       <workItem from="1626196476108" duration="9750000" />
+      <workItem from="1626366519750" duration="177000" />
+      <workItem from="1626366733212" duration="7860000" />
     </task>
     <servers />
   </component>

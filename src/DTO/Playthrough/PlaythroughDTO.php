@@ -1,7 +1,6 @@
 <?php
 	namespace App\DTO;
 
-	use App\DTO\DTOInterface;
 	use Symfony\Component\Validator\Constraints as Assert;
 
 	class PlaythroughDTO implements DTOInterface {

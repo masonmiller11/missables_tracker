@@ -3,7 +3,7 @@
 
 	use App\Entity\EntityTrait;
 	use App\Entity\Game;
-	use App\Entity\Step\PlaythroughTemplateStep;
+	use App\Entity\Section\SectionTemplate;
 	use App\Entity\User;
 	use Doctrine\Common\Collections\ArrayCollection;
 	use Doctrine\Common\Collections\Collection;
@@ -19,10 +19,12 @@
 
 		use EntityTrait;
 
+		use PlaythroughTrait;
+
 		/**
 		 * @var Game
 		 *
-		 * @ORM\ManyToOne(targetEntity="App\Entity\Game", inversedBy="playthroughTemplates")
+		 * @ORM\ManyToOne(targetEntity="App\Entity\Game", inversedBy="playthroughTemplatesy")
 		 * @ORM\JoinColumn(nullable=false)
 		 */
 		private Game $game;
@@ -50,23 +52,29 @@
 		private int $votes;
 
 		/**
-		 * @var Collection|Selectable|PlaythroughTemplateStep[]
+		 * @var Collection|Selectable|SectionTemplate[]
 		 *
-		 * @ORM\OneToMany(targetEntity="App\Entity\PlaythroughTemplateStep", mappedBy="template", cascade={"all"}, orphanRemoval=true)
+		 * @ORM\OneToMany(targetEntity="App\Entity\Section\SectionTemplate", mappedBy="template", cascade={"all"}, orphanRemoval=true)
 		 */
-		private Collection|Selectable|array $templateSteps;
+		private Collection|Selectable|array $sectionTemplates;
 
 		/**
 		 * @var Collection|Selectable|Playthrough[]
 		 *
-		 * @ORM\OneToMany(targetEntity="App\Entity\Playthrough", mappedBy="template")
+		 * @ORM\OneToMany(targetEntity="App\Entity\Playthrough\Playthrough", mappedBy="template")
 		 */
 		private Collection|Selectable|array $playthroughs;
 
+		/**
+		 * PlaythroughTemplate constructor.
+		 * @param User $owner
+		 * @param Game $game
+		 * @param bool $visibility
+		 */
 		#[Pure] public function __construct(User $owner, Game $game, bool $visibility) {
 
 			$this->playthroughs = new ArrayCollection();
-			$this->templateSteps = new ArrayCollection();
+			$this->sectionTemplates = new ArrayCollection();
 
 			$this->owner = $owner;
 			$this->game = $game;
@@ -115,10 +123,10 @@
 		}
 
 		/**
-		 * @return PlaythroughTemplateStep[]|Collection|Selectable
+		 * @return SectionTemplate[]|Collection|Selectable
 		 */
-		public function getSteps(): Collection|array|Selectable {
-			return $this->templateSteps;
+		public function getSections(): Collection|array|Selectable {
+			return $this->sectionTemplates;
 		}
 
 		/**
