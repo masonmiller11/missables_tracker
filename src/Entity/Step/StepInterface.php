@@ -16,8 +16,12 @@
 
 		public function getDescription(): ?string;
 
+		public function getPosition(): int;
+
 		public function setName(string $name) :static;
 
 		public function setDescription(?string $description): static;
+
+		public function setPosition(int $position);
 
 	}

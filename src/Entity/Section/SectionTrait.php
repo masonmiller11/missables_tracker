@@ -24,7 +24,12 @@
 		 */
 		private ?string $description;
 
-		//getters and setters
+		/**
+		 * @var int
+		 *
+		 * @ORM\Column(type="integer", options={"unsigned":true})
+		 */
+		private int $position;
 
 		/**
 		 * @param string $name
@@ -45,6 +50,15 @@
 		}
 
 		/**
+		 * @param int $position
+		 * @return static
+		 */
+		public function setPosition(int $position): static {
+			$this->position = $position;
+			return $this;
+		}
+
+		/**
 		 * @return string
 		 */
 		public function getName(): string {
@@ -56,6 +70,13 @@
 		 */
 		public function getDescription(): ?string {
 			return $this->description;
+		}
+
+		/**
+		 * @return int
+		 */
+		public function getPosition(): int {
+			return $this->position;
 		}
 
 	}
