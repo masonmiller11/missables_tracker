@@ -36,8 +36,9 @@
 		 * @param string $description
 		 * @param Section $section
 		 */
-		public function __construct(string $name, string $description, Section $section) {
+		public function __construct(string $name, string $description, Section $section, int $position) {
 
+			$this->position = $position;
 			$this->name = $name;
 			$this->description = $description;
 			$this->section = $section;

@@ -44,10 +44,14 @@
 		 * @param PlaythroughTemplate $playthroughTemplate
 		 */
 		#[Pure]
-		public function __construct(string $name, string $description, PlaythroughTemplate $playthroughTemplate) {
+		public function __construct(string $name,
+									string $description,
+									PlaythroughTemplate $playthroughTemplate,
+									int $position) {
 
 			$this->stepTemplates = new ArrayCollection();
 
+			$this->position = $position;
 			$this->name = $name;
 			$this->description = $description;
 			$this->playthroughTemplate = $playthroughTemplate;

@@ -2,16 +2,23 @@
 
 namespace App\DataFixtures;
 
+use App\Service\IGDBHelper;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
 class AppFixtures extends Fixture
 {
-    public function load(ObjectManager $manager)
-    {
-        // $product = new Product();
-        // $manager->persist($product);
+	private IGDBHelper $IGDBHelper;
 
-        $manager->flush();
+	public function __construct (IGDBHelper $IGDBHelper) {
+		$this->IGDBHelper = $IGDBHelper;
+	}
+
+	/**
+	 * @throws \Exception
+	 */
+	public function load(ObjectManager $manager)
+    {
+        $this->IGDBHelper->refreshTokenInDatabase();
     }
 }
