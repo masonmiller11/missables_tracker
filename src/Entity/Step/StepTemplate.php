@@ -28,12 +28,15 @@
 		 * @param string $name
 		 * @param string $description
 		 * @param SectionTemplate $sectionTemplate
+		 * @param int $position
 		 */
 		public function __construct(string $name,
 		                            string $description,
-		                            SectionTemplate $sectionTemplate) {
+		                            SectionTemplate $sectionTemplate,
+									int $position) {
 
 			$this->name = $name;
+			$this->position = $position;
 			$this->description = $description;
 			$this->sectionTemplate = $sectionTemplate;
 

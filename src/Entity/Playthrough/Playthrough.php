@@ -66,7 +66,10 @@
 		 * @param User $owner
 		 * @param bool $visibility
 		 */
-		#[Pure] public function __construct(Game $game, PlaythroughTemplate $template, User $owner, bool $visibility) {
+		#[Pure] public function __construct(Game $game,
+										    PlaythroughTemplate $template,
+											User $owner,
+											bool $visibility) {
 
 			$this->sections = new ArrayCollection();
 
