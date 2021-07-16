@@ -15,7 +15,7 @@
 
 	/**
 	 * @ORM\Entity()
-	 * @ORM\Table(name="section_templates")
+	 * @ORM\Table(name="playthrough_template_sections")
 	 */
 	class SectionTemplate implements SectionInterface {
 

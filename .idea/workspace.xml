@@ -3,10 +3,16 @@
   <component name="ChangeListManager">
     <list default="true" id="3cf1ede0-50ad-4f5c-9157-fb8dcc6a3ff3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/Section/SectionInterface.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Section/SectionInterface.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/Section/SectionTrait.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Section/SectionTrait.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/Step/StepInterface.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Step/StepInterface.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/Step/StepTrait.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Step/StepTrait.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/PlaythroughTemplateController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/PlaythroughTemplateController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DTO/Playthrough/AbstractPlaythroughDTO.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/Playthrough/AbstractPlaythroughDTO.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DTO/Playthrough/PlaythroughTemplateDTO.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/Playthrough/PlaythroughTemplateDTO.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DTO/Transformer/ResponseTransformer/PlaythroughResponseDTOTransformer.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/Transformer/ResponseTransformer/PlaythroughResponseDTOTransformer.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DTO/Transformer/ResponseTransformer/PlaythroughTemplateResponseDTOTransformer.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/Transformer/ResponseTransformer/PlaythroughTemplateResponseDTOTransformer.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Playthrough/PlaythroughTemplate.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Playthrough/PlaythroughTemplate.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Section/Section.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Section/Section.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Section/SectionTemplate.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Section/SectionTemplate.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Step/StepTemplate.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Step/StepTemplate.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Exception/ResourceNotFoundException.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Exception/ResourceNotFoundException.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -156,7 +162,7 @@
       <workItem from="1625939481810" duration="4161000" />
       <workItem from="1626196476108" duration="9750000" />
       <workItem from="1626366519750" duration="177000" />
-      <workItem from="1626366733212" duration="11598000" />
+      <workItem from="1626366733212" duration="19333000" />
     </task>
     <servers />
   </component>

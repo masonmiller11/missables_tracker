@@ -18,7 +18,7 @@
 		/**
 		 * @var SectionTemplate
 		 *
-		 * @ORM\ManyToOne(targetEntity="App\Entity\Playthrough\PlaythroughTemplate", inversedBy="stepTemplates")
+		 * @ORM\ManyToOne(targetEntity="App\Entity\Section\SectionTemplate", inversedBy="stepTemplates")
 		 * @ORM\JoinColumn(nullable=false)
 		 */
 		private SectionTemplate $sectionTemplate;
