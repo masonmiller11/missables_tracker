@@ -13,6 +13,7 @@ class StepFixtures extends Fixture implements DependentFixtureInterface
 	public function load(ObjectManager $manager) {
 
 		for ($i = 0; $i < 20; $i++) {
+
 			$step = new Step(
 				'Test Name' . $i+1,
 				'Test Description' . $i+1,

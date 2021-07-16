@@ -15,6 +15,7 @@ class SectionTemplateFixtures extends Fixture implements DependentFixtureInterfa
 	public function load(ObjectManager $manager) {
 
 		for ($i = 0; $i < 20; $i++) {
+
 			$sectionTemplate = new SectionTemplate(
 				'Test Name' . $i+1,
 				'Test Description' . $i+1,

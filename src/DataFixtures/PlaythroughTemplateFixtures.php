@@ -13,7 +13,6 @@ class PlaythroughTemplateFixtures extends Fixture implements DependentFixtureInt
 
 	public function load(ObjectManager $manager) {
 
-
 		for ($i = 0; $i < 20; $i++) {
 
 			$playthroughTemplate = new PlaythroughTemplate('test name' . $i, 'test description'. $i, $this->getReference(UserFixtures::USER_REFERENCE),
