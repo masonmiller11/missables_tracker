@@ -4,6 +4,7 @@
 	use App\DTO\Playthrough\PlaythroughTemplateDTO;
 	use App\Entity\Playthrough\PlaythroughTemplate;
 	use App\Entity\Section\SectionTemplate;
+	use App\Entity\Step\Step;
 	use App\Entity\Step\StepTemplate;
 	use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
@@ -25,11 +26,27 @@
 			$dto->visibility = $object->isVisible();
 			$dto->owner = $object->getOwner()->getUsername();
 			$dto->votes = $object->getVotes();
-			$dto->howManyPlaythroughs = count($object->getPlaythroughs());
+			$dto->numberOfPlaythroughs = count($object->getPlaythroughs());
+
 			$dto->game = [
 				'id' => strval($object->getGame()->getId()),
 				'title' => $object->getGame()->getTitle()
 			];
+
+			$dto->sectionPositions = $object->getSections()->map(
+				fn(SectionTemplate $sectionTemplate) =>
+					$sectionTemplate->getPosition()
+			)->toArray();
+
+			$dto->stepPositions = call_user_func_array("array_merge",
+				$object->getSections()->map(
+				fn (SectionTemplate $sectionTemplate) =>
+					$sectionTemplate->getSteps()->map(
+						fn (StepTemplate $stepTemplate) =>
+						$stepTemplate->getPosition()
+					)->toArray()
+			)->toArray());
+
 			$dto->sections = $object->getSections()->map(
 				fn(SectionTemplate $sectionTemplate) => [
 					'id'=>$sectionTemplate->getId(),

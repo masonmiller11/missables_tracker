@@ -13,7 +13,6 @@
 		 * @param $object
 		 *
 		 * @return PlaythroughDTO
-		 * @throws \Exception
 		 */
 		public function transformFromObject($object): PlaythroughDTO{
 
@@ -26,10 +25,26 @@
 			$dto->visibility = $object->isVisible();
 			$dto->owner = $object->getOwner()->getUsername();
 			$dto->templateId = $object->getTemplate()->getId();
+
 			$dto->game = [
 				'id' => strval($object->getGame()->getId()),
 				'title' => $object->getGame()->getTitle()
 			];
+
+			$dto->sectionPositions = $object->getSections()->map(
+				fn(Section $section) => 
+					$section->getPosition()
+			)->toArray();
+
+			$dto->stepPositions = call_user_func_array("array_merge",
+				$object->getSections()->map(
+					fn (Section $section) =>
+					$section->getSteps()->map(
+						fn (Step $step) =>
+						$step->getPosition()
+					)->toArray()
+				)->toArray());
+
 			$dto->sections = $object->getSections()->map(
 				fn(Section $section) => [
 					'id'=>$section->getId(),

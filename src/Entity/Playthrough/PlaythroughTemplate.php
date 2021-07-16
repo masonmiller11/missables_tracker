@@ -24,7 +24,7 @@
 		/**
 		 * @var Game
 		 *
-		 * @ORM\ManyToOne(targetEntity="App\Entity\Game", inversedBy="playthroughTemplatesy")
+		 * @ORM\ManyToOne(targetEntity="App\Entity\Game", inversedBy="playthroughTemplates")
 		 * @ORM\JoinColumn(nullable=false)
 		 */
 		private Game $game;
@@ -54,7 +54,7 @@
 		/**
 		 * @var Collection|Selectable|SectionTemplate[]
 		 *
-		 * @ORM\OneToMany(targetEntity="App\Entity\Section\SectionTemplate", mappedBy="template", cascade={"all"}, orphanRemoval=true)
+		 * @ORM\OneToMany(targetEntity="App\Entity\Section\SectionTemplate", mappedBy="playthroughTemplate", cascade={"all"}, orphanRemoval=true)
 		 */
 		private Collection|Selectable|array $sectionTemplates;
 

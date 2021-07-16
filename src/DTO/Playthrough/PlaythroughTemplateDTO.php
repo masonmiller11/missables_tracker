@@ -9,7 +9,7 @@
 		 * @Assert\NotNull()
 		 * @Assert\Type("int")
 		 */
-		public mixed $howManyPlaythroughs;
+		public mixed $numberOfPlaythroughs;
 
 		/**
 		 * @Assert\NotNull()
