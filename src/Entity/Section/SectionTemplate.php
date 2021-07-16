@@ -25,7 +25,7 @@
 		/**
 		 * @var PlaythroughTemplate
 		 *
-		 * @ORM\ManyToOne(targetEntity="App\Entity\Playthrough\PlaythroughTemplate", inversedBy="sections")
+		 * @ORM\ManyToOne(targetEntity="App\Entity\Playthrough\PlaythroughTemplate", inversedBy="sectionTemplates")
 		 * @ORM\JoinColumn(nullable=false)
 		 */
 		private PlaythroughTemplate $playthroughTemplate;
