@@ -5,17 +5,12 @@
       <change afterPath="$PROJECT_DIR$/src/DataFixtures/SectionFixtures.php" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/DataFixtures/StepFixtures.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DTO/Transformer/ResponseTransformer/IGDBGameResponseDTOTransformer.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DTO/Transformer/ResponseTransformer/IGDBGameResponseDTOTransformer.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/DataFixtures/GameFixtures.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DataFixtures/GameFixtures.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/DataFixtures/PlaythroughFixtures.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DataFixtures/PlaythroughFixtures.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/DataFixtures/PlaythroughTemplateFixtures.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DataFixtures/PlaythroughTemplateFixtures.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/DataFixtures/SectionTemplateFixtures.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DataFixtures/SectionTemplateFixtures.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/DataFixtures/StepTemplateFixtures.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DataFixtures/StepTemplateFixtures.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/DataFixtures/UserFixtures.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DataFixtures/UserFixtures.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/Playthrough/Playthrough.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Playthrough/Playthrough.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/Playthrough/PlaythroughTemplate.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Playthrough/PlaythroughTemplate.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/Section/SectionTemplate.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Section/SectionTemplate.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/Step/Step.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Step/Step.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
