@@ -3,6 +3,7 @@
 
 	use App\DTO\DTOInterface;
 	use Symfony\Component\Validator\Constraints as Assert;
+	use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 	abstract class AbstractPlaythroughDTO implements DTOInterface {
 
@@ -37,5 +38,17 @@
 		 * @Assert\Type("array")
 		 */
 		public mixed $sections;
+
+		/**
+		 * @Assert\NotNull
+		 * @Assert\Unique
+		 */
+		public mixed $stepPositions;
+
+		/**
+		 * @Assert\NotNull
+		 * @Assert\Unique
+		 */
+		public mixed $sectionPositions;
 
 	}
