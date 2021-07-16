@@ -43,6 +43,8 @@
 			$this->description = $description;
 			$this->section = $section;
 
+			$this->setCompleted(false);
+
 		}
 
 		/**
