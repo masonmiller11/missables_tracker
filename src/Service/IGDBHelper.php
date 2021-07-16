@@ -95,8 +95,12 @@
 			$this->IGDBGameResponseDTOTransformer = $IGDBGameResponseDTOTransformer;
 			$this->gameRepository = $gameRepository;
 			$this->entityManager = $entityManager;
-			$this->IGDBConfig = $IGDBConfigRepository->find(1);
 			$this->validator = $validator;
+			$this->IGDBConfig = $IGDBConfigRepository->find(1);
+
+			if (!$this->IGDBConfig) {
+				$this->IGDBConfig =$this->refreshTokenInDatabase();
+			}
 
 			// $diff is time until expiration.
 			$diff = (new \DateTimeImmutable('now'))->diff($this->IGDBConfig->getExpiration());
