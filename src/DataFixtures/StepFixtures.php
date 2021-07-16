@@ -2,26 +2,25 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Step\StepTemplate;
+use App\Entity\Step\Step;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class StepTemplateFixtures extends Fixture implements DependentFixtureInterface
+class StepFixtures extends Fixture implements DependentFixtureInterface
 {
 
 	public function load(ObjectManager $manager) {
 
-
 		for ($i = 0; $i < 20; $i++) {
-			$stepTemplate = new StepTemplate(
+			$step = new Step(
 				'Test Name' . $i+1,
 				'Test Description' . $i+1,
-				$this->getReference(SectionTemplateFixtures::SECTION_TEMPLATE_REFERENCE),
+				$this->getReference(SectionFixtures::SECTION_REFERENCE),
 				$i+1
 			);
 
-			$manager->persist($stepTemplate);
+			$manager->persist($step);
 		}
 
 		$manager->flush();
@@ -30,7 +29,7 @@ class StepTemplateFixtures extends Fixture implements DependentFixtureInterface
 
 	public function getDependencies(): array {
 		return [
-			SectionTemplateFixtures::class,
+			SectionFixtures::class,
 			UserFixtures::class
 		];
 	}

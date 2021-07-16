@@ -3,42 +3,37 @@
 namespace App\DataFixtures;
 
 use App\Entity\Section\SectionTemplate;
-use App\Repository\PlaythroughTemplateRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class SectionTemplateFixtures extends Fixture
+class SectionTemplateFixtures extends Fixture implements DependentFixtureInterface
 {
 
-	private PlaythroughTemplateRepository $playthroughTemplateRepository;
-
-	public function __construct(PlaythroughTemplateRepository $playthroughTemplateRepository) {
-		$this->playthroughTemplateRepository = $playthroughTemplateRepository;
-	}
+	public const SECTION_TEMPLATE_REFERENCE = 'section template';
 
 	public function load(ObjectManager $manager) {
 
-		for ($playthroughTemplateID = 0; $playthroughTemplateID < 20; $playthroughTemplateID ++) {
-			for ($i = 0; $i < 20; $i++) {
-				$section = new SectionTemplate(
-					'Test Name' . $i+1,
-					'Test Description' . $i+1,
-					$this->playthroughTemplateRepository->find($playthroughTemplateID+1),
-					$i+1
-				);
+		for ($i = 0; $i < 20; $i++) {
+			$sectionTemplate = new SectionTemplate(
+				'Test Name' . $i+1,
+				'Test Description' . $i+1,
+				$this->getReference(PlaythroughTemplateFixtures::PLAYTHROUGH_TEMPLATE_REFERENCE),
+				$i+1
+			);
 
-				$manager->persist($section);
-			}
+			$manager->persist($sectionTemplate);
 		}
 
 		$manager->flush();
+		$this->addReference(self::SECTION_TEMPLATE_REFERENCE, $sectionTemplate);
 
     }
 
 	public function getDependencies(): array {
 		return [
 			PlaythroughTemplateFixtures::class,
-			AppFixtures::class
+			UserFixtures::class
 		];
 	}
 }
