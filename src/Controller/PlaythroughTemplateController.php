@@ -10,8 +10,6 @@
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\Response;
-	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	/**
 	 * Class PlaythroughTemplateController
@@ -33,30 +31,16 @@
 		private PlaythroughTemplateRepository $playthroughTemplateRepository;
 
 		/**
-		 * @var ValidatorInterface
-		 */
-		private ValidatorInterface $validator;
-
-		/**
-		 * @var SerializerInterface
-		 */
-		private SerializerInterface $serializer;
-
-		/**
 		 * @var ResponseHelper
 		 */
 		private ResponseHelper $responseHelper;
 
 		public function __construct (playthroughTemplateResponseDTOTransformer $playthroughTemplateResponseDTOTransformer,
-		                             ValidatorInterface $validator,
-									 SerializerInterface $serializer,
 									 PlaythroughTemplateRepository $playthroughTemplateRepository,
 									 ResponseHelper $responseHelper) {
 
 			$this->templateResponseDTOTransformer = $playthroughTemplateResponseDTOTransformer;
 			$this->playthroughTemplateRepository = $playthroughTemplateRepository;
-			$this->validator = $validator;
-			$this->serializer = $serializer;
 			$this->responseHelper = $responseHelper;
 
 		}

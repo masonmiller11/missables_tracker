@@ -1,9 +1,9 @@
 <?php
-	namespace App\DTO\Exception;
+	namespace App\Exception;
 
 	use JetBrains\PhpStorm\Pure;
 
-	class ResourceNotFoundExceptionTypeException extends \RuntimeException {
+	class ResourceNotFoundException extends \RuntimeException {
 
 		private const CODE = 404;
 

@@ -12,7 +12,7 @@
 
 	/**
 	 * @ORM\Entity()
-	 * @ORM\Table(name="sections")
+	 * @ORM\Table(name="playthrough_sections")
 	 */
 	class Section implements SectionInterface {
 
