@@ -21,15 +21,6 @@ class UserFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
 
-//		for ($i = 0; $i < 20; $i++) {
-//
-//			$user = new User('testuser' . $i+1 . '@example.com');
-//			$password = $this->encoder->hashPassword($user, 'password');
-//			$user->setPassword($password);
-//
-//			$manager->persist($user);
-//		}
-
 	    $user = new User('testuser@example.com');
 		$password = $this->encoder->hashPassword($user, 'password');
 		$user->setPassword($password);
@@ -38,5 +29,6 @@ class UserFixtures extends Fixture
 
         $manager->flush();
 		$this->addReference(self::USER_REFERENCE, $user);
+
     }
 }

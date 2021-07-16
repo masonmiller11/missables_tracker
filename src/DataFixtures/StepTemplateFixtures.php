@@ -12,7 +12,6 @@ class StepTemplateFixtures extends Fixture implements DependentFixtureInterface
 
 	public function load(ObjectManager $manager) {
 
-
 		for ($i = 0; $i < 20; $i++) {
 			$stepTemplate = new StepTemplate(
 				'Test Name' . $i+1,
