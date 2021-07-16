@@ -16,6 +16,7 @@ class SectionFixtures extends Fixture implements DependentFixtureInterface
 	public function load(ObjectManager $manager) {
 
 		for ($i = 0; $i < 20; $i++) {
+
 			$section = new Section(
 				'Test Name' . $i+1,
 				'Test Description' . $i+1,
