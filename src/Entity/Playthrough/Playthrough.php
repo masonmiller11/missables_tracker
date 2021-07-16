@@ -66,7 +66,9 @@
 		 * @param User $owner
 		 * @param bool $visibility
 		 */
-		#[Pure] public function __construct(Game $game,
+		#[Pure] public function __construct(string $name,
+		                                    string $description,
+		                                    Game $game,
 										    PlaythroughTemplate $template,
 											User $owner,
 											bool $visibility) {
@@ -77,6 +79,8 @@
 			$this->template = $template;
 			$this->owner = $owner;
 			$this->visibility = $visibility;
+			$this->name = $name;
+			$this->description = $description;
 
 		}
 
