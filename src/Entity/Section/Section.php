@@ -36,15 +36,18 @@
 
 		/**
 		 * Section constructor.
-		 * @param string $name
-		 * @param string $description
+		 *
+		 * @param string      $name
+		 * @param string      $description
 		 * @param Playthrough $playthrough
+		 * @param int         $position
 		 */
 		#[Pure]
-		public function __construct(string $name, string $description, Playthrough $playthrough) {
+		public function __construct(string $name, string $description, Playthrough $playthrough, int $position) {
 
 			$this->steps = new ArrayCollection();
 
+			$this->position = $position;
 			$this->name = $name;
 			$this->description = $description;
 			$this->playthrough = $playthrough;

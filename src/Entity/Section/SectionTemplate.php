@@ -25,7 +25,7 @@
 		/**
 		 * @var PlaythroughTemplate
 		 *
-		 * @ORM\ManyToOne(targetEntity="App\Entity\Playthrough\PlaythroughTemplate", inversedBy="sections")
+		 * @ORM\ManyToOne(targetEntity="App\Entity\Playthrough\PlaythroughTemplate", inversedBy="sectionTemplates")
 		 * @ORM\JoinColumn(nullable=false)
 		 */
 		private PlaythroughTemplate $playthroughTemplate;
@@ -44,10 +44,14 @@
 		 * @param PlaythroughTemplate $playthroughTemplate
 		 */
 		#[Pure]
-		public function __construct(string $name, string $description, PlaythroughTemplate $playthroughTemplate) {
+		public function __construct(string $name,
+									string $description,
+									PlaythroughTemplate $playthroughTemplate,
+									int $position) {
 
 			$this->stepTemplates = new ArrayCollection();
 
+			$this->position = $position;
 			$this->name = $name;
 			$this->description = $description;
 			$this->playthroughTemplate = $playthroughTemplate;
