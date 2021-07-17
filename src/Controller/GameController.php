@@ -1,16 +1,12 @@
 <?php
 	namespace App\Controller;
 
+	use App\DTO\IGDBGameResponseDTO;
 	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
 	use App\DTO\Transformer\ResponseTransformer\GameResponseDTOTransformer;
-	use App\Repository\GameRepository;
-	use App\Service\EntityHelper;
-	use App\Service\IGDBHelper;
 	use App\Service\ResponseHelper;
-	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\HttpFoundation\Request;
-	use Symfony\Component\HttpFoundation\RequestStack;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
@@ -26,60 +22,7 @@
 	 * @package App\Controller
 	 * @Route(path="/games", name="games.")
 	 */
-	class GameController extends AbstractController {
-
-		/**
-		 * @var GameRepository
-		 */
-		private GameRepository $gameRepository;
-
-		/**
-		 * @var GameResponseDTOTransformer
-		 */
-		private GameResponseDTOTransformer $gameResponseDTOTransformer;
-
-		/**
-		 * @var IGDBHelper
-		 */
-		private IGDBHelper $IGDBHelper;
-
-		/**
-		 * @var ResponseHelper
-		 */
-		private ResponseHelper $responseHelper;
-
-		/**
-		 * @var GameRequestDTOTransformer
-		 */
-		private GameRequestDTOTransformer $gameRequestDTOTransformer;
-
-		/**
-		 * @var EntityHelper
-		 */
-		private EntityHelper $entityHelper;
-
-		/**
-		 * @var RequestStack
-		 */
-		private RequestStack $request;
-
-		public function __construct (GameRepository $gameRepository,
-		                             GameResponseDTOTransformer $gameResponseDTOTransformer,
-									 IGDBHelper $IGDBHelper,
-									 ResponseHelper $responseHelper,
-									 GameRequestDTOTransformer $gameRequestDTOTransformer,
-									 EntityHelper $entityHelper,
-									 RequestStack $request) {
-
-			$this->gameRepository = $gameRepository;
-			$this->gameResponseDTOTransformer = $gameResponseDTOTransformer;
-			$this->IGDBHelper = $IGDBHelper;
-			$this->responseHelper = $responseHelper;
-			$this->gameRequestDTOTransformer = $gameRequestDTOTransformer;
-			$this->entityHelper = $entityHelper;
-			$this->request = $request;
-
-		}
+	final class GameController extends AbstractBaseApiController {
 
 		/**
 		 * @Route(path="/read/{id<\d+>}", methods={"GET"}, name="read")
@@ -95,16 +38,15 @@
 			try {
 
 				/**
-				 * Gets a a game and runs it through ResponseHelper. Inside ResponseHelper, we take the game object,
-				 * turn it into a DTO and then validate it before returning.
 				 * @See GameResponseDTOTransformer
 				 * @See ResponseHelper
 				 */
 				$game = $this->gameRepository->find($id);
 
-				$dto = $this->gameResponseDTOTransformer->transformFromObject($game);
+				$dto = $this->transformOne($game);
 
 				return $this->responseHelper->createResponseForOne($dto);
+
 			} catch (\Exception $e) {
 
 				return $this->responseHelper->createErrorResponse($e);
@@ -125,7 +67,11 @@
 		 */
 		public function create(Request $request): Response {
 
-			$dto = $this->gameRequestDTOTransformer->transformFromRequest($request);
+			if (!isset($this->requestDTOTransformer)) {
+				$this->setRequestDTOTransformer(new GameRequestDTOTransformer());
+			}
+
+			$dto = $this->requestDTOTransformer->transformFromRequest($request);
 
 			try {
 
@@ -162,13 +108,8 @@
 				$searchTerm = $this->request->getCurrentRequest()->query->get('game');
 				$games = $this->gameRepository->searchByName($searchTerm);
 
-				$dtos = $this->gameResponseDTOTransformer->transformFromObjects($games);
+				$dtos = $this->transformMany($games);
 
-				/**
-				 * Inside ResponseHelper, we take the game object, turn it into a DTO and then validate it before returning.
-				 * @See GameResponseDTOTransformer
-				 * @See ResponseHelper
-				 */
 				return $this->responseHelper->createResponseForMany($dtos);
 
 			} catch (\Exception $e) {
@@ -192,13 +133,8 @@
 
 				$games = $this->gameRepository->topTenByNumberOfTemplates();
 
-				$dtos = $this->gameResponseDTOTransformer->transformFromObjects($games);
+				$dtos = $this->transformMany($games);
 
-				/**
-				 * Inside ResponseHelper, we take the game objects, turn them into an array of DTOs and then validate it before returning.
-				 * @See GameResponseDTOTransformer
-				 * @See ResponseHelper
-				 */
 				return $this->responseHelper->createResponseForMany($dtos);
 
 			} catch (\Exception $e) {
@@ -232,6 +168,7 @@
 				 * This converts the response from IGDB to an array and returns it.
 				 */
 				$games = $this->IGDBHelper->searchIGDB($searchTerm);
+
 				return new JsonResponse($games); //TODO what happens if we search for gibberish?
 
 			} catch (\Exception $e) {
@@ -265,8 +202,8 @@
 				 */
 				$game = $this->IGDBHelper->getGameAndSave($internetGameDatabaseID);
 
-				$dto = $this->gameResponseDTOTransformer->transformFromObject($game);
-				
+				$dto = $this->transformOne($game);
+
 				return $this->responseHelper->createResponseForOne($dto);
 
 			} catch (\Exception $e) {
@@ -274,6 +211,40 @@
 				return $this->responseHelper->createErrorResponse($e);
 
 			}
+
+		}
+
+		/**
+		 * @throws \Exception
+		 */
+		protected function transformOne (Object $object): IGDBGameResponseDTO {
+
+			if (!isset($this->responseDTOTransformer)) {
+				$this->setResponseDTOTransformer(new GameResponseDTOTransformer());
+			}
+
+			$dto = $this->responseDTOTransformer->transformFromObject($object);
+
+			$this->validateOne($dto);
+
+			return $dto;
+
+		}
+
+		/**
+		 * @throws \Exception
+		 */
+		protected function transformMany (iterable $objects): iterable {
+
+			if (!isset($this->responseDTOTransformer)) {
+				$this->setResponseDTOTransformer(new GameResponseDTOTransformer());
+			}
+
+			$dtos = $this->responseDTOTransformer->transformFromObjects($objects);
+
+			$this->validateMany($dtos);
+
+			return $dtos;
 
 		}
 
