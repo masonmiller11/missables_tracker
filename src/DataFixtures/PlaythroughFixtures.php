@@ -14,14 +14,20 @@ class PlaythroughFixtures extends Fixture implements DependentFixtureInterface
 
 	public function load(ObjectManager $manager) {
 
-		for ($i = 0; $i < 20; $i++) {
+		for ($g = 1; $g <20; $g++) {
 
-			$playthrough = new Playthrough('test name' . $i, 'test description' . $i,$this->getReference(GameFixtures::GAME_REFERENCE),
-										   $this->getReference(PlaythroughTemplateFixtures::PLAYTHROUGH_TEMPLATE_REFERENCE),
-										   $this->getReference(UserFixtures::USER_REFERENCE),
-										   rand(0,1));
+			for ($i = 0; $i < 20; $i++) {
 
-			$manager->persist($playthrough);
+				$playthrough = new Playthrough(
+					'test name' . $i, 'test description' . $i, $this->getReference('game_' . $g),
+					$this->getReference(PlaythroughTemplateFixtures::PLAYTHROUGH_TEMPLATE_REFERENCE),
+					$this->getReference(UserFixtures::USER_REFERENCE),
+					rand(0, 1)
+				);
+
+				$manager->persist($playthrough);
+
+			}
 
 		}
 
