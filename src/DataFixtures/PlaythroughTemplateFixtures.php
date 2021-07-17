@@ -9,26 +9,30 @@ use Doctrine\Persistence\ObjectManager;
 
 class PlaythroughTemplateFixtures extends Fixture implements DependentFixtureInterface
 {
-	public const PLAYTHROUGH_TEMPLATE_REFERENCE = 'playthrough template';
 
 	public function load(ObjectManager $manager) {
 
-		for ($g = 1; $g < 20; $g++) {
+		for ($gameReference = 0; $gameReference < 10; $gameReference++) {
 
-			for ($i = 0; $i < 20; $i++) {
+			$playthroughTemplatesPerGame = 2;
+
+			for ($i = 0; $i < $playthroughTemplatesPerGame; $i++) {
 
 				$playthroughTemplate = new PlaythroughTemplate(
 					'test name' . $i, 'test description' . $i, $this->getReference(UserFixtures::USER_REFERENCE),
-					$this->getReference('game_' . $g), 1
+					$this->getReference('game_' . $gameReference), 1
 				);
 
+				$this->addReference('playthrough_template_' . ($i + ( $gameReference * $playthroughTemplatesPerGame)),
+								    $playthroughTemplate);
+
 				$manager->persist($playthroughTemplate);
+
 			}
 
 		}
 
 		$manager->flush();
-		$this->addReference(self::PLAYTHROUGH_TEMPLATE_REFERENCE, $playthroughTemplate);
 
     }
 

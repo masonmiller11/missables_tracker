@@ -12,16 +12,23 @@ class StepTemplateFixtures extends Fixture implements DependentFixtureInterface
 
 	public function load(ObjectManager $manager) {
 
-		for ($i = 0; $i < 20; $i++) {
+		for ($sectionTemplateReference = 0; $sectionTemplateReference < 15; $sectionTemplateReference++) {
 
-			$stepTemplate = new StepTemplate(
-				'Test Name' . $i+1,
-				'Test Description' . $i+1,
-				$this->getReference(SectionTemplateFixtures::SECTION_TEMPLATE_REFERENCE),
-				$i+1
-			);
+			$stepsPerSection = 4;
 
-			$manager->persist($stepTemplate);
+			for ($i = 0; $i < $stepsPerSection; $i++) {
+
+				$stepTemplate = new StepTemplate(
+					'Test Name' . $i + 1,
+					'Test Description' . $i + 1,
+					$this->getReference('section_template_' . $sectionTemplateReference),
+					$i + 1 + ($sectionTemplateReference * $stepsPerSection)
+				);
+
+				$manager->persist($stepTemplate);
+
+			}
+
 		}
 
 		$manager->flush();

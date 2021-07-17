@@ -12,16 +12,22 @@ class StepFixtures extends Fixture implements DependentFixtureInterface
 
 	public function load(ObjectManager $manager) {
 
-		for ($i = 0; $i < 20; $i++) {
+		for ($sectionReference = 0; $sectionReference < 15; $sectionReference++) {
 
-			$step = new Step(
-				'Test Name' . $i+1,
-				'Test Description' . $i+1,
-				$this->getReference(SectionFixtures::SECTION_REFERENCE),
-				$i+1
-			);
+			$stepsPerSection = 4;
 
-			$manager->persist($step);
+			for ($i = 0; $i < $stepsPerSection; $i++) {
+
+				$step = new Step(
+					'Test Name' . $i + 1,
+					'Test Description' . $i + 1,
+					$this->getReference('section_' . $i),
+					$i + 1 + ($sectionReference * $stepsPerSection)
+				);
+
+				$manager->persist($step);
+			}
+
 		}
 
 		$manager->flush();

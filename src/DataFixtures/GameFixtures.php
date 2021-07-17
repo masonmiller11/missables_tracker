@@ -13,6 +13,9 @@ class GameFixtures extends Fixture implements DependentFixtureInterface
 
 	private IGDBHelper $IGDBHelper;
 
+	private const GAME_IDS = [11397,2059,145817,88970,398,11133,2368,81085,2368,2364,
+		24869,145191,22066,484,485,480,1209,740,2640,991];
+
 	public function __construct(IGDBHelper $IGDBHelper) {
 		$this->IGDBHelper = $IGDBHelper;
 	}
@@ -22,15 +25,12 @@ class GameFixtures extends Fixture implements DependentFixtureInterface
 	 */
 	public function load(ObjectManager $manager) {
 
-			$IGBDgameIDs = [11397,2059,145817,88970,398,11133,2368,81085,2368,2364,
-				24869,145191,22066,484,485,480,1209,740,2640,991];
-
 			$i = 0;
 
-			foreach ($IGBDgameIDs as $gameID) {
-				$i++;
+			foreach (self::GAME_IDS as $gameID) {
 				$game = $this->IGDBHelper->getGameAndSave($gameID);
 				$this->addReference('game_' . $i, $game);
+				$i++;
 			}
 
     }

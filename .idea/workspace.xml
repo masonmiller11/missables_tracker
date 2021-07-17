@@ -6,6 +6,10 @@
       <change beforePath="$PROJECT_DIR$/src/DataFixtures/GameFixtures.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DataFixtures/GameFixtures.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/DataFixtures/PlaythroughFixtures.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DataFixtures/PlaythroughFixtures.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/DataFixtures/PlaythroughTemplateFixtures.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DataFixtures/PlaythroughTemplateFixtures.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataFixtures/SectionFixtures.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DataFixtures/SectionFixtures.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataFixtures/SectionTemplateFixtures.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DataFixtures/SectionTemplateFixtures.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataFixtures/StepFixtures.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DataFixtures/StepFixtures.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataFixtures/StepTemplateFixtures.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DataFixtures/StepTemplateFixtures.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -159,7 +163,7 @@
       <workItem from="1626366519750" duration="177000" />
       <workItem from="1626366733212" duration="20001000" />
       <workItem from="1626401792094" duration="170000" />
-      <workItem from="1626401978363" duration="11518000" />
+      <workItem from="1626401978363" duration="18152000" />
     </task>
     <servers />
   </component>

@@ -10,24 +10,31 @@ use Doctrine\Persistence\ObjectManager;
 class SectionTemplateFixtures extends Fixture implements DependentFixtureInterface
 {
 
-	public const SECTION_TEMPLATE_REFERENCE = 'section template';
-
 	public function load(ObjectManager $manager) {
 
-		for ($i = 0; $i < 20; $i++) {
+		for ($playthroughTemplateReference = 0; $playthroughTemplateReference < 5; $playthroughTemplateReference++) {
 
-			$sectionTemplate = new SectionTemplate(
-				'Test Name' . $i+1,
-				'Test Description' . $i+1,
-				$this->getReference(PlaythroughTemplateFixtures::PLAYTHROUGH_TEMPLATE_REFERENCE),
-				$i+1
-			);
+			$sectionTemplatesPerPlaythrough = 3;
 
-			$manager->persist($sectionTemplate);
+			for ($i = 0; $i < $sectionTemplatesPerPlaythrough; $i++) {
+
+				$sectionTemplate = new SectionTemplate(
+					'Test Name' . $i + 1,
+					'Test Description' . $i + 1,
+					$this->getReference('playthrough_template_' . $playthroughTemplateReference),
+					$i + 1
+				);
+
+				$this->addReference('section_template_' . ($i + ($playthroughTemplateReference * $sectionTemplatesPerPlaythrough)),
+									$sectionTemplate);
+
+				$manager->persist($sectionTemplate);
+
+			}
+
 		}
 
 		$manager->flush();
-		$this->addReference(self::SECTION_TEMPLATE_REFERENCE, $sectionTemplate);
 
     }
 

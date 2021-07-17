@@ -10,28 +10,38 @@ use Doctrine\Persistence\ObjectManager;
 class PlaythroughFixtures extends Fixture implements DependentFixtureInterface
 {
 
-	public const PLAYTHROUGH_REFERENCE = 'playthrough';
-
 	public function load(ObjectManager $manager) {
 
-		for ($g = 1; $g <20; $g++) {
+		for ($gameReference = 0; $gameReference < 2; $gameReference++) {
 
-			for ($i = 0; $i < 20; $i++) {
+			$playthroughTemplatesPerGame = 2;
 
-				$playthrough = new Playthrough(
-					'test name' . $i, 'test description' . $i, $this->getReference('game_' . $g),
-					$this->getReference(PlaythroughTemplateFixtures::PLAYTHROUGH_TEMPLATE_REFERENCE),
-					$this->getReference(UserFixtures::USER_REFERENCE),
-					rand(0, 1)
-				);
+			for ($playthroughTemplateReference = 0; $playthroughTemplateReference < $playthroughTemplatesPerGame; $playthroughTemplateReference++) {
 
-				$manager->persist($playthrough);
+				$playthroughsPerTemplate = 5;
+
+				for ($i = 0; $i < $playthroughsPerTemplate; $i++) {
+
+					$playthrough = new Playthrough(
+						'test name' . $i,
+						'test description' . $i,
+						$this->getReference('game_' . $gameReference),
+						$this->getReference('playthrough_template_' . $playthroughTemplateReference),
+						$this->getReference(UserFixtures::USER_REFERENCE),
+						rand(0, 1)
+					);
+
+					$this->addReference('playthrough_' .
+						($i + (
+								($gameReference * ($playthroughTemplatesPerGame * $playthroughsPerTemplate)) +
+								($playthroughTemplateReference * $playthroughsPerTemplate)))
+						, $playthrough);
+					$manager->persist($playthrough);
+				}
 
 			}
 
 		}
-
-		$this->addReference(self::PLAYTHROUGH_REFERENCE, $playthrough);
 
 		$manager->flush();
 
