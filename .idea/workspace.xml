@@ -3,7 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="3cf1ede0-50ad-4f5c-9157-fb8dcc6a3ff3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DataFixtures/StepFixtures.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DataFixtures/StepFixtures.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/GameController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/GameController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/PlaythroughController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/PlaythroughController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/PlaythroughTemplateController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/PlaythroughTemplateController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Service/ResponseHelper.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Service/ResponseHelper.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

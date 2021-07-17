@@ -101,8 +101,10 @@
 				 * @See ResponseHelper
 				 */
 				$game = $this->gameRepository->find($id);
-				return $this->responseHelper->createResponseForOne($game, $this->gameResponseDTOTransformer);
 
+				$dto = $this->gameResponseDTOTransformer->transformFromObject($game);
+
+				return $this->responseHelper->createResponseForOne($dto);
 			} catch (\Exception $e) {
 
 				return $this->responseHelper->createErrorResponse($e);
@@ -160,12 +162,14 @@
 				$searchTerm = $this->request->getCurrentRequest()->query->get('game');
 				$games = $this->gameRepository->searchByName($searchTerm);
 
+				$dtos = $this->gameResponseDTOTransformer->transformFromObjects($games);
+
 				/**
 				 * Inside ResponseHelper, we take the game object, turn it into a DTO and then validate it before returning.
 				 * @See GameResponseDTOTransformer
 				 * @See ResponseHelper
 				 */
-				return $this->responseHelper->createResponseForMany($games, $this->gameResponseDTOTransformer);
+				return $this->responseHelper->createResponseForMany($dtos);
 
 			} catch (\Exception $e) {
 
@@ -188,12 +192,14 @@
 
 				$games = $this->gameRepository->topTenByNumberOfTemplates();
 
+				$dtos = $this->gameResponseDTOTransformer->transformFromObjects($games);
+
 				/**
 				 * Inside ResponseHelper, we take the game objects, turn them into an array of DTOs and then validate it before returning.
 				 * @See GameResponseDTOTransformer
 				 * @See ResponseHelper
 				 */
-				return $this->responseHelper->createResponseForMany($games, $this->gameResponseDTOTransformer);
+				return $this->responseHelper->createResponseForMany($dtos);
 
 			} catch (\Exception $e) {
 
@@ -258,7 +264,10 @@
 				 * the gameResponseDTO.
 				 */
 				$game = $this->IGDBHelper->getGameAndSave($internetGameDatabaseID);
-				return $this->responseHelper->createResponseForOne($game, $this->gameResponseDTOTransformer);
+
+				$dto = $this->gameResponseDTOTransformer->transformFromObject($game);
+				
+				return $this->responseHelper->createResponseForOne($dto);
 
 			} catch (\Exception $e) {
 

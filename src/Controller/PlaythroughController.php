@@ -41,14 +41,15 @@
 		public function list(string|int $page, SerializerInterface $serializer): Response {
 
 			$user = $this->getUser();
+
 			assert($user instanceof User);
 
 			$playthroughs = $user->getPlaythroughs();
 
-			return $this->responseHelper->createResponseForMany($playthroughs, $this->playthroughResponseDTOTransformer);
+			$dtos = $this->playthroughResponseDTOTransformer->transformFromObjects($playthroughs);
+
+			return $this->responseHelper->createResponseForMany($dtos);
 
 		}
-
-
 
 	}

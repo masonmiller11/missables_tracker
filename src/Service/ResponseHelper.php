@@ -1,6 +1,7 @@
 <?php
 	namespace App\Service;
 
+	use App\DTO\DTOInterface;
 	use App\Exception\ValidationException;
 	use App\DTO\Transformer\ResponseTransformer\ResponseDTOTransformerInterface;
 	use App\Entity\EntityInterface;
@@ -37,22 +38,21 @@
 		 * @return iterable|JsonResponse|Response
 		 * @throws ResourceNotFoundException
 		 */
-		public function createResponseForMany (iterable $objects,
-		                                       ResponseDTOTransformerInterface $transformer): iterable|JsonResponse|Response {
+		public function createResponseForMany (iterable $dtos): iterable|JsonResponse|Response {
 
-			if ($objects === []) {
-				throw new ResourceNotFoundException('resource not found');
-			}
+//			if ($objects === []) {
+//				throw new ResourceNotFoundException('resource not found');
+//			}
+//
+//			$dto = $transformer->transformFromObjects($objects);
+//
+//			$errors = $this->validator->validate($dtos);
+//			if (count($errors) > 0) {
+//				$errorString = (string)$errors;
+//				throw new ValidationException($errorString);
+//			}
 
-			$dto = $transformer->transformFromObjects($objects);
-
-			$errors = $this->validator->validate($dto);
-			if (count($errors) > 0) {
-				$errorString = (string)$errors;
-				throw new ValidationException($errorString);
-			}
-
-			return new Response($this->serializer->serialize($dto, 'json',[
+			return new Response($this->serializer->serialize($dtos, 'json',[
 				'circular_reference_handler' => function ($object) {
 					return $object->getId();
 				}
@@ -69,21 +69,20 @@
 		 * @return iterable|JsonResponse|Response
 		 * @throws ResourceNotFoundException
 		 */
-		public function createResponseForOne (EntityInterface $object,
-		                                      ResponseDTOTransformerInterface $transformer): iterable|JsonResponse|Response {
+		public function createResponseForOne (DTOInterface $dto): iterable|JsonResponse|Response {
 
-			if (!$object) {
-				throw new ResourceNotFoundException('resource not found');
-			}
-
-			$dto = $transformer->transformFromObject($object);
-
-			$errors = $this->validator->validate($dto);
-
-			if (count($errors) > 0) {
-				$errorString = (string)$errors;
-				throw new ValidationException($errorString);
-			}
+//			if (!$object) {
+//				throw new ResourceNotFoundException('resource not found');
+//			}
+//
+//			$dto = $transformer->transformFromObject($object);
+//
+//			$errors = $this->validator->validate($dto);
+//
+//			if (count($errors) > 0) {
+//				$errorString = (string)$errors;
+//				throw new ValidationException($errorString);
+//			}
 
 			return new Response($this->serializer->serialize($dto, 'json',[
 				'circular_reference_handler' => function ($object) {
