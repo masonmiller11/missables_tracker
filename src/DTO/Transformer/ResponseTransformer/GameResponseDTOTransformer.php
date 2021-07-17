@@ -20,6 +20,9 @@
 				throw new UnexpectedTypeException($object, 'Game');
 			}
 
+			//TODO add number of playthroughtTemplates in here
+			//			$dto->numberOfPlaythroughTemplates = count($object->getTemplates());
+
 			$dto = new GameDTO();
 			$dto->genre = $object->getGenre();
 			$dto->title = $object->getTitle();

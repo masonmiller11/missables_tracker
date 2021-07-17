@@ -44,21 +44,6 @@
 		protected ValidatorInterface $validator;
 
 		/**
-		 * @var GameRepository
-		 */
-		protected GameRepository $gameRepository;
-
-		/**
-		 * @var ResponseDTOTransformerInterface
-		 */
-		protected ResponseDTOTransformerInterface $responseDTOTransformer;
-
-		/**
-		 * @var RequestDTOTransformerInterface
-		 */
-		protected RequestDTOTransformerInterface $requestDTOTransformer;
-
-		/**
 		 * @var ServiceEntityRepository
 		 */
 		protected ServiceEntityRepository $repository;
@@ -71,21 +56,18 @@
 		 * @param EntityHelper       $entityHelper
 		 * @param RequestStack       $request
 		 * @param ValidatorInterface $validator
-		 * @param GameRepository     $gameRepository
 		 */
 		public function __construct (IGDBHelper $IGDBHelper,
 									 ResponseHelper $responseHelper,
 									 EntityHelper $entityHelper,
 									 RequestStack $request,
-									 ValidatorInterface $validator,
-									 GameRepository $gameRepository) {
+									 ValidatorInterface $validator) {
 
 			$this->IGDBHelper = $IGDBHelper;
 			$this->responseHelper = $responseHelper;
 			$this->request = $request;
 			$this->entityHelper = $entityHelper;
 			$this->validator = $validator;
-			$this->gameRepository = $gameRepository;
 
 		}
 
@@ -128,30 +110,35 @@
 		}
 
 		/**
-		 * @param ResponseDTOTransformerInterface $transformer
-		 */
-		protected function setResponseDTOTransformer(ResponseDTOTransformerInterface $transformer): void {
-			$this->responseDTOTransformer = $transformer;
-		}
-
-		/**
-		 * @param RequestDTOTransformerInterface $transformer
-		 */
-		protected function setRequestDTOTransformer(RequestDTOTransformerInterface $transformer): void {
-			$this->requestDTOTransformer = $transformer;
-		}
-		/**
 		 * @param Object $object
-		 *
+		 * @param ResponseDTOTransformerInterface $transformer
 		 * @return DTOInterface
+		 * @throws \Exception
 		 */
-		protected abstract function transformOne(Object $object): DTOInterface;
+		protected function transformOne(Object $object, ResponseDTOTransformerInterface $transformer): DTOInterface {
+
+			$dto = $transformer->transformFromObject($object);
+
+			$this->validateOne($dto);
+
+			return $dto;
+
+		}
 
 		/**
 		 * @param iterable $objects
-		 *
+		 * @param ResponseDTOTransformerInterface $transformer
 		 * @return iterable
+		 * @throws \Exception
 		 */
-		protected abstract function transformMany(iterable $objects): iterable;
+		protected function transformMany(iterable $objects, ResponseDTOTransformerInterface $transformer): iterable {
+
+			$dtos = $transformer->transformFromObjects($objects);
+
+			$this->validateMany($dtos);
+
+			return $dtos;
+
+		}
 
 	}
