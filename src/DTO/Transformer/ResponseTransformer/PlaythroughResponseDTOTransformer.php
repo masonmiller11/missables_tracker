@@ -32,7 +32,7 @@
 			];
 
 			$dto->sectionPositions = $object->getSections()->map(
-				fn(Section $section) => 
+				fn(Section $section) =>
 					$section->getPosition()
 			)->toArray();
 

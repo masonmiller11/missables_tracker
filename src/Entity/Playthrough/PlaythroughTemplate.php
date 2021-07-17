@@ -71,7 +71,7 @@
 		 * @param Game $game
 		 * @param bool $visibility
 		 */
-		#[Pure] public function __construct(User $owner, Game $game, bool $visibility) {
+		#[Pure] public function __construct(string $name, string $description, User $owner, Game $game, bool $visibility) {
 
 			$this->playthroughs = new ArrayCollection();
 			$this->sectionTemplates = new ArrayCollection();
@@ -79,6 +79,8 @@
 			$this->owner = $owner;
 			$this->game = $game;
 			$this->visibility = $visibility;
+			$this->name = $name;
+			$this->description = $description;
 			$this->votes = 0;
 
 		}
