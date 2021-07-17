@@ -63,26 +63,11 @@
 		}
 
 		/**
-		 * @param EntityInterface                 $object
-		 * @param ResponseDTOTransformerInterface $transformer
+		 * @param DTOInterface $dto
 		 *
 		 * @return iterable|JsonResponse|Response
-		 * @throws ResourceNotFoundException
 		 */
 		public function createResponseForOne (DTOInterface $dto): iterable|JsonResponse|Response {
-
-//			if (!$object) {
-//				throw new ResourceNotFoundException('resource not found');
-//			}
-//
-//			$dto = $transformer->transformFromObject($object);
-//
-//			$errors = $this->validator->validate($dto);
-//
-//			if (count($errors) > 0) {
-//				$errorString = (string)$errors;
-//				throw new ValidationException($errorString);
-//			}
 
 			return new Response($this->serializer->serialize($dto, 'json',[
 				'circular_reference_handler' => function ($object) {
