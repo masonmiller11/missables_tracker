@@ -21,7 +21,7 @@ class StepFixtures extends Fixture implements DependentFixtureInterface
 				$step = new Step(
 					'Test Name' . $i + 1,
 					'Test Description' . $i + 1,
-					$this->getReference('section_' . $i),
+					$this->getReference('section_' . $sectionReference),
 					$i + 1 + ($sectionReference * $stepsPerSection)
 				);
 
