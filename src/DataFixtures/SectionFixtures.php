@@ -11,24 +11,29 @@ use Doctrine\Persistence\ObjectManager;
 class SectionFixtures extends Fixture implements DependentFixtureInterface
 {
 
-	public const SECTION_REFERENCE = 'section';
-
 	public function load(ObjectManager $manager) {
 
-		for ($i = 0; $i < 20; $i++) {
+		for ($playthroughReference = 0; $playthroughReference < 5; $playthroughReference++) {
 
-			$section = new Section(
-				'Test Name' . $i+1,
-				'Test Description' . $i+1,
-				$this->getReference(PlaythroughFixtures::PLAYTHROUGH_REFERENCE),
-				$i+1
-			);
+			$sectionsPerPlaythrough = 3;
 
-			$manager->persist($section);
+			for ($i = 0; $i < $sectionsPerPlaythrough; $i++) {
+
+				$section = new Section(
+					'Test Name' . $i + 1,
+					'Test Description' . $i + 1,
+					$this->getReference('playthrough_' . $playthroughReference),
+					$i + 1
+				);
+
+				$this->addReference('section_' . ($i + ($playthroughReference * $sectionsPerPlaythrough)), $section);
+				$manager->persist($section);
+
+			}
+
 		}
 
 		$manager->flush();
-		$this->addReference(self::SECTION_REFERENCE, $section);
 
 	}
 
