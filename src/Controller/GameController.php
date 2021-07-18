@@ -27,14 +27,17 @@
 		/**
 		 * @Route(path="/read/{id<\d+>}", methods={"GET"}, name="read")
 		 *
-		 * @param string|int $id
+		 * @param string|int                 $id
 		 * @param GameResponseDTOTransformer $transformer
-		 * @param GameRepository $gameRepository
+		 * @param GameRepository             $gameRepository
+		 * @param SerializerInterface        $serializer
+		 *
 		 * @return Response
 		 *
 		 * Reads a single game from our database based on its id.
 		 */
-		public function read(string|int $id, GameResponseDTOTransformer $transformer, GameRepository $gameRepository): Response {
+		public function read(string|int $id, GameResponseDTOTransformer $transformer, GameRepository $gameRepository,
+							 SerializerInterface $serializer): Response {
 
 			try {
 
@@ -44,9 +47,17 @@
 				 */
 				$game = $gameRepository->find($id);
 
-				$dto = $this->transformOne($game, $transformer);
+				// $dto = $this->transformOne($game, $transformer);
 
-				return $this->responseHelper->createResponseForOne($dto);
+				// return $this->responseHelper->createResponseForOne($dto);
+
+				return new Response($serializer->serialize($game, 'json',[
+					'circular_reference_handler' => function ($object) {
+						return $object->getId();
+					}
+				]), Response::HTTP_OK, [
+					'Content-Type' => 'application/json'
+				]);
 
 			} catch (\Exception $e) {
 
