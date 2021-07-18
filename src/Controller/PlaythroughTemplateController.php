@@ -2,13 +2,8 @@
 	namespace App\Controller;
 
 	use App\DTO\Transformer\ResponseTransformer\PlaythroughTemplateResponseDTOTransformer;
-	use App\Entity\EntityInterface;
-	use App\Entity\User;
 	use App\Repository\PlaythroughTemplateRepository;
-	use App\Service\ResponseHelper;
-	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\Routing\Annotation\Route;
-	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\Response;
 
 	/**
@@ -17,51 +12,30 @@
 	 * @package App\Controller
 	 * @Route(path="/templates", name="templates.")
 	 */
-	class PlaythroughTemplateController extends AbstractController {
-
-
-		/**
-		 * @var PlaythroughTemplateResponseDTOTransformer
-		 */
-		private PlaythroughTemplateResponseDTOTransformer $templateResponseDTOTransformer;
-
-		/**
-		 * @var PlaythroughTemplateRepository
-		 */
-		private PlaythroughTemplateRepository $playthroughTemplateRepository;
-
-		/**
-		 * @var ResponseHelper
-		 */
-		private ResponseHelper $responseHelper;
-
-		public function __construct (playthroughTemplateResponseDTOTransformer $playthroughTemplateResponseDTOTransformer,
-									 PlaythroughTemplateRepository $playthroughTemplateRepository,
-									 ResponseHelper $responseHelper) {
-
-			$this->templateResponseDTOTransformer = $playthroughTemplateResponseDTOTransformer;
-			$this->playthroughTemplateRepository = $playthroughTemplateRepository;
-			$this->responseHelper = $responseHelper;
-
-		}
+	final class PlaythroughTemplateController extends AbstractBaseApiController {
 
 		/**
 		 * @Route(path="/{page<\d+>?1}", methods={"GET"}, name="list_this_users")
 		 *
-		 * @param string|int          $page
-		 *
+		 * @param string|int $page
+		 * @param PlaythroughTemplateResponseDTOTransformer $transformer
 		 * @return Response
 		 */
-		public function listThisUsers(string|int $page): Response {
+		public function listThisUsers(string|int $page, PlaythroughTemplateResponseDTOTransformer $transformer): Response {
 
-			$user = $this->getUser();
-			assert($user instanceof User);
+			try {
+				$user = $this->getUser();
 
-			$templates = $user->getPlaythroughTemplates();
+				$templates = $user->getPlaythroughTemplates();
 
-			$dtos = $this->templateResponseDTOTransformer->transformFromObjects($templates);
+				$dtos = $this->transformMany($templates, $transformer);
 
-			return $this->responseHelper->createResponseForMany($dtos);
+				return $this->responseHelper->createResponseForMany($dtos);
+			} catch (\Exception $e) {
+
+				return $this->responseHelper->createErrorResponse($e);
+
+			}
 
 		}
 
@@ -69,32 +43,49 @@
 		 * @Route(path="/bygame/{gameID<\d+>}", methods={"GET"}, name="list_by_game")
 		 *
 		 * @param int $gameID
-		 *
+		 * @param PlaythroughTemplateRepository $repository
+		 * @param PlaythroughTemplateResponseDTOTransformer $transformer
 		 * @return Response
 		 */
-		public function listByGame (int $gameID): Response {
+		public function listByGame (int $gameID, PlaythroughTemplateRepository $repository,
+		                            PlaythroughTemplateResponseDTOTransformer $transformer ): Response {
 
-			$templates = $this->playthroughTemplateRepository->findByGame($gameID);
+			try {
+				$templates = $repository->findByGame($gameID);
 
-			$dtos = $this->templateResponseDTOTransformer->transformFromObjects($templates);
+				$dtos = $this->transformMany($templates, $transformer);
 
-			return $this->responseHelper->createResponseForMany($dtos);
+				return $this->responseHelper->createResponseForMany($dtos);
+			} catch (\Exception $e) {
+
+				return $this->responseHelper->createErrorResponse($e);
+
+			}
+
 		}
 
 		/**
 		 * @Route(path="/byauthor/{authorID<\d+>}", methods={"GET"}, name="list_by_author")
 		 *
 		 * @param int $authorID
-		 *
+		 * @param PlaythroughTemplateRepository $repository
+		 * @param PlaythroughTemplateResponseDTOTransformer $transformer
 		 * @return Response
 		 */
-		public function listByAuthor (int $authorID): Response {
+		public function listByAuthor (int $authorID, PlaythroughTemplateRepository $repository,
+		                              PlaythroughTemplateResponseDTOTransformer $transformer): Response {
 
-			$templates = $this->playthroughTemplateRepository->findByAuthor($authorID);
+			try {
+				$templates = $repository->findByAuthor($authorID);
 
-			$dtos = $this->templateResponseDTOTransformer->transformFromObjects($templates);
+				$dtos = $this->transformMany($templates, $transformer);
 
-			return $this->responseHelper->createResponseForMany($dtos);
+				return $this->responseHelper->createResponseForMany($dtos);
+			} catch (\Exception $e) {
+
+				return $this->responseHelper->createErrorResponse($e);
+
+			}
 
 		}
 
