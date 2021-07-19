@@ -87,7 +87,7 @@
 				return new JsonResponse([
 					'status' => 'game created'
 				],
-					Response::HTTP_CREATED);
+					Response::HTTP_CREATED); //TODO add a Location Header for the URI of the resource
 
 			} catch (\Exception $e) {
 
