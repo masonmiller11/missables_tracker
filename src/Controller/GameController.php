@@ -27,16 +27,15 @@
 		/**
 		 * @Route(path="/read/{id<\d+>}", methods={"GET"}, name="read")
 		 *
-		 * @param string|int                 $id
-		 * @param GameResponseDTOTransformer $transformer
-		 * @param GameRepository             $gameRepository
-		 * @param SerializerInterface        $serializer
+		 * @param string|int $id
+		 * @param GameRepository $gameRepository
+		 * @param SerializerInterface $serializer
 		 *
 		 * @return Response
 		 *
 		 * Reads a single game from our database based on its id.
 		 */
-		public function read(string|int $id, GameResponseDTOTransformer $transformer, GameRepository $gameRepository,
+		public function read(string|int $id, GameRepository $gameRepository,
 							 SerializerInterface $serializer): Response {
 
 			try {
