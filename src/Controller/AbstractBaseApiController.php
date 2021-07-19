@@ -15,6 +15,7 @@
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\RequestStack;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
+	use Symfony\Component\HttpFoundation\Request;
 
 	abstract class AbstractBaseApiController extends AbstractController {
 
@@ -83,9 +84,9 @@
 
 		/**
 		 * @param DTOInterface $dto
-		 * @throws \Exception
+		 * @throws ValidationException
 		 */
-		protected function validateOne(DTOInterface $dto) {
+		protected function validate(DTOInterface $dto) {
 
 			$errors = $this->validator->validate($dto);
 			if (count($errors) > 0) {
@@ -96,34 +97,19 @@
 		}
 
 		/**
-		 * @param Object $object
-		 * @param ResponseDTOTransformerInterface $transformer
+		 * @param Request                        $request
+		 * @param RequestDTOTransformerInterface $transformer
+		 *
 		 * @return DTOInterface
 		 * @throws \Exception
 		 */
-		protected function transformOne(Object $object, ResponseDTOTransformerInterface $transformer): DTOInterface {
+		protected function transformOne(Request $request, RequestDTOTransformerInterface $transformer): DTOInterface {
 
-			$dto = $transformer->transformFromObject($object);
+			$dto = $transformer->transformFromRequest($request);
 
-			$this->validateOne($dto);
+			$this->validate($dto);
 
 			return $dto;
-
-		}
-
-		/**
-		 * @param iterable $objects
-		 * @param ResponseDTOTransformerInterface $transformer
-		 * @return iterable
-		 * @throws \Exception
-		 */
-		protected function transformMany(iterable $objects, ResponseDTOTransformerInterface $transformer): iterable {
-
-			$dtos = $transformer->transformFromObjects($objects);
-
-			$this->validateMany($dtos);
-
-			return $dtos;
 
 		}
 

@@ -1,9 +1,9 @@
 <?php
 	namespace App\Controller;
 
-	use App\DTO\Transformer\ResponseTransformer\PlaythroughResponseDTOTransformer;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\HttpFoundation\Response;
+
 	/**
 	 * Class PlaythroughController
 	 *
@@ -16,27 +16,15 @@
 		 * @Route(path="/{page<\d+>?1}", methods={"GET"}, name="list")
 		 *
 		 * @param string|int $page
-		 * @param PlaythroughResponseDTOTransformer $transformer
+		 *
 		 * @return Response
-		 * @throws \Exception
 		 */
-		public function list(string|int $page, PlaythroughResponseDTOTransformer $transformer): Response {
+		public function list(string|int $page): Response {
 
 			$user = $this->getUser();
+			$playthroughs = $user->getPlaythroughs();
 
-			try {
-
-				$playthroughs = $user->getPlaythroughs();
-
-				$dtos = $this->transformMany($playthroughs, $transformer);
-
-				return $this->responseHelper->createResponseForMany($dtos);
-
-			} catch (\Exception $e) {
-
-				return $this->responseHelper->createErrorResponse($e);
-
-			}
+			return $this->responseHelper->createResponse($playthroughs);
 
 		}
 
