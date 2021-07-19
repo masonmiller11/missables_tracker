@@ -194,13 +194,17 @@
 		 */
 		public function searchIGDB (string $term, int $limit = 20): array{
 
-			$response = $this->client->request('POST', InternetGameDatabaseEndpoints::GAMES, [
-				'headers' => $this->headers,
-				'body' => 'fields name, id, cover, platforms, summary, first_release_date;
-				search "' . $term . '";
-				where version_parent = null;
-				limit ' . $limit .';'
-			]);
+			$response = $this->client->request(
+				'POST',
+				InternetGameDatabaseEndpoints::GAMES,
+				[
+					'headers' => $this->headers,
+					'body' => 'fields name, id, cover, platforms, summary, first_release_date;
+			search "' . $term . '";
+			where version_parent = null;
+			limit ' . $limit . ';'
+				]
+			);
 
 			return $response->toArray();
 

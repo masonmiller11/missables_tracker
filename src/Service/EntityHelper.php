@@ -1,6 +1,7 @@
 <?php
 	namespace App\Service;
 
+	use App\DTO\DTOInterface;
 	use App\Exception\ValidationException;
 	use App\DTO\GameDTO;
 	use App\Entity\Game;
@@ -24,22 +25,12 @@
 		/**
 		 * @param GameDTO $dto
 		 *
-		 * @return Game
+		 * @return Game*
 		 * @throws \Exception
-		 *
-		 * Validates DTO, creates Game entity based off DTO and then returns new Game entity.
 		 */
-		public function createGame (GameDTO $dto): Game {
-
-			$errors = $this->validator->validate($dto);
-
-			if (count($errors) > 0) {
-				$errorString = (string)$errors;
-				throw new ValidationException($errorString);
-			}
+		public function createGame (DTOInterface $dto): Game {
 
 			$releaseDateTimeImmutable = new \DateTimeImmutable(date('Y-m-d', ((int)$dto->releaseDate)));
-
 
 			$game = new Game(
 				$dto->genre, $dto->title, $dto->internetGameDatabaseID, $dto->screenshots, $dto->artworks, $dto->cover,
