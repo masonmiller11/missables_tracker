@@ -72,6 +72,11 @@
 		private ValidatorInterface $validator;
 
 		/**
+		 * @var EntityAssembler
+		 */
+		private EntityAssembler $entityAssembler;
+
+		/**
 		 * @throws \Exception
 		 */
 		public function __construct(HttpClientInterface $client,
@@ -81,7 +86,8 @@
 		                            EntityManagerInterface $entityManager,
 		                            GameRepository $gameRepository,
 		                            ValidatorInterface $validator,
-		                            IGDBGameResponseDTOTransformer $IGDBGameResponseDTOTransformer) {
+		                            IGDBGameResponseDTOTransformer $IGDBGameResponseDTOTransformer,
+									EntityAssembler $entityAssembler) {
 
 			$this->client = $client;
 
@@ -91,6 +97,7 @@
 			$this->apiID = $apiID;
 			$this->apiSecret = $apiSecret;
 
+			$this->entityAssembler = $entityAssembler;
 			$this->IGDBConfigRepository = $IGDBConfigRepository;
 			$this->IGDBGameResponseDTOTransformer = $IGDBGameResponseDTOTransformer;
 			$this->gameRepository = $gameRepository;
@@ -234,7 +241,7 @@
 		 */
 		private function isIGDBGameInDatabase (IGDBGameResponseDTO $internetGameDatabaseDTO): Game | NonUniqueResultException | null {
 
-			return $this->gameRepository->findGameByInternetGameDatabaseID($internetGameDatabaseDTO->id);
+			return $this->gameRepository->findGameByInternetGameDatabaseID($internetGameDatabaseDTO->internetGameDatabaseID);
 
 		}
 
@@ -272,10 +279,7 @@
 			 */
 			if (!$gameIfInDatabase) {
 
-				$game = new Game($dto->genre, $dto->title, $dto->id, $dto->screenshots, $dto->artworks, $dto->cover,
-					$dto->platforms,$dto->slug, $dto->rating, $dto->summary, $dto->storyline,
-					$dto->releaseDate
-				);
+				$game = $this->entityAssembler->createGame($dto);
 
 				$this->entityManager->persist($game);
 				$this->entityManager->flush();

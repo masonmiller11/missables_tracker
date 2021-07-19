@@ -16,7 +16,7 @@
 		 * @Assert\NotNull
 		 * @Assert\Type("integer")
 		 */
-		public mixed $id;
+		public mixed $internetGameDatabaseID;
 
 		/**
 		 * @Assert\NotNull
