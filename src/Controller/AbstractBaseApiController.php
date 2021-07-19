@@ -4,14 +4,13 @@
 
 	use App\DTO\DTOInterface;
 	use App\DTO\Transformer\RequestTransformer\RequestDTOTransformerInterface;
-	use App\DTO\Transformer\ResponseTransformer\ResponseDTOTransformerInterface;
 	use App\Entity\User;
 	use App\Exception\ValidationException;
-	use App\Repository\GameRepository;
-	use App\Service\EntityHelper;
+	use App\Service\EntityAssembler;
 	use App\Service\IGDBHelper;
 	use App\Service\ResponseHelper;
 	use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+	use Doctrine\ORM\EntityManagerInterface;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\RequestStack;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -35,9 +34,9 @@
 		protected RequestStack $request;
 
 		/**
-		 * @var EntityHelper
+		 * @var EntityAssembler
 		 */
-		protected EntityHelper $entityHelper;
+		protected EntityAssembler $entityAssembler;
 
 		/**
 		 * @var ValidatorInterface
@@ -49,26 +48,34 @@
 		 */
 		protected ServiceEntityRepository $repository;
 
+
+		/**
+		 * @var EntityManagerInterface
+		 */
+		protected EntityManagerInterface $entityManager;
+
 		/**
 		 * AbstractBaseApiController constructor.
 		 *
 		 * @param IGDBHelper         $IGDBHelper
 		 * @param ResponseHelper     $responseHelper
-		 * @param EntityHelper       $entityHelper
+		 * @param EntityAssembler    $entityHelper
 		 * @param RequestStack       $request
 		 * @param ValidatorInterface $validator
 		 */
 		public function __construct (IGDBHelper $IGDBHelper,
-									 ResponseHelper $responseHelper,
-									 EntityHelper $entityHelper,
-									 RequestStack $request,
-									 ValidatorInterface $validator) {
+		                             ResponseHelper $responseHelper,
+		                             EntityAssembler $entityHelper,
+		                             RequestStack $request,
+		                             EntityManagerInterface $entityManager,
+		                             ValidatorInterface $validator) {
 
 			$this->IGDBHelper = $IGDBHelper;
 			$this->responseHelper = $responseHelper;
 			$this->request = $request;
-			$this->entityHelper = $entityHelper;
+			$this->entityAssembler = $entityHelper;
 			$this->validator = $validator;
+			$this->entityManager = $entityManager;
 
 		}
 

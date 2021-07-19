@@ -59,9 +59,12 @@
 
 				$this->validate($dto);
 
-				$game = $this->entityHelper->createGame($dto);
+				$game = $this->entityAssembler->createGame($dto);
 
-				return $this->responseHelper->createResourceCreatedResponse('games/read/' . $game->getId());
+				$this->entityManager->persist($game);
+				$this->entityManager->flush();
+
+				return $this->responseHelper->returnResourceCreatedResponse('games/read/' . $game->getId());
 
 			} catch (ValidationException|\Exception $e) {
 

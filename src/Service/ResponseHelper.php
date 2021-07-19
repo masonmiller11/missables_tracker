@@ -46,7 +46,7 @@
 		 *
 		 * @return JsonResponse
 		 */
-		public function createResourceCreatedResponse (string $uri): JsonResponse {
+		public function returnResourceCreatedResponse (string $uri): JsonResponse {
 
 			return new JsonResponse([
 					'status' => 'resource created'
