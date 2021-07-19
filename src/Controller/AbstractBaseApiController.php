@@ -96,20 +96,6 @@
 		}
 
 		/**
-		 * @param iterable $dtos
-		 * @throws \Exception
-		 */
-		protected function validateMany(iterable $dtos) {
-
-			$errors = $this->validator->validate($dtos);
-			if (count($errors) > 0) {
-				$errorString = (string)$errors;
-				throw new ValidationException($errorString);
-			}
-
-		}
-
-		/**
 		 * @param Object $object
 		 * @param ResponseDTOTransformerInterface $transformer
 		 * @return DTOInterface

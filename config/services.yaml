@@ -29,6 +29,9 @@ services:
         resource: '../src/Controller/'
         tags: [ 'controller.service_arguments' ]
 
+    App\Serializer\GameNormalizer:
+        tags: [ 'serializer.normalizer' ]
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
@@ -36,26 +39,6 @@ services:
         bind:
             string $apiID: '%env(API_ID)%'
             string $apiSecret: '%env(API_SECRET)%'
-
-    app.serializer.normalizers.datetime:
-        class: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
-
-    app.serializer.normalizers.object:
-        class: Symfony\Component\Serializer\Normalizer\ObjectNormalizer
-
-    app.serializer.encoders.json:
-        class: Symfony\Component\Serializer\Encoder\JsonEncoder
-
-    app.serializer:
-        class: Symfony\Component\Serializer\Serializer
-        arguments:
-            -
-                - '@app.serializer.normalizers.datetime'
-                - '@app.serializer.normalizers.object'
-            -
-                - '@app.serializer.encoders.json'
-
-    Symfony\Component\Serializer\SerializerInterface: '@app.serializer'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
