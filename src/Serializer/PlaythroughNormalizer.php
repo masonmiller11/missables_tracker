@@ -4,7 +4,11 @@
 	use App\Entity\Playthrough\Playthrough;
 	use App\Entity\Playthrough\PlaythroughTemplate;
 	use App\Entity\Section\Section;
+	use App\Entity\Section\SectionInterface;
+	use App\Entity\Section\SectionTemplate;
 	use App\Entity\Step\Step;
+	use App\Entity\Step\StepInterface;
+	use App\Entity\Step\StepTemplate;
 	use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 
 	class PlaythroughNormalizer implements  ContextAwareNormalizerInterface {
@@ -28,39 +32,56 @@
 				'gameTitle' => $object->getGame()->getTitle()
 			];
 
+			$data['stepPositions'] = call_user_func_array("array_merge",
+				$object->getSections()->map(
+					fn (SectionInterface $section) =>
+					$section->getSteps()->map(
+						fn (StepInterface $step) =>
+						$step->getPosition()
+					)->toArray()
+				)->toArray());
+
+			$data['sectionPositions'] = $object->getSections()->map(
+				fn(SectionInterface $section) =>
+				$section->getPosition()
+			)->toArray();
+
+			if ($object instanceof Playthrough) {
+				$data['templateId'] = $object->getTemplate()->getId();
+
+				$data['sections'] = $object->getSections()->map(
+					fn(Section $section) => [
+						'id'=>$section->getId(),
+						'name'=>$section->getName(),
+						'description'=>$section->getDescription(),
+						'steps'=>$section->getSteps()->map(
+							fn(Step $step) => [
+								'id'=>$step->getId(),
+								'isCompleted'=>$step->isCompleted(),
+								'name'=>$step->getName(),
+								'description'=>$step->getDescription()
+							]
+						)->toArray()
+					]
+				)->toArray();
+
+				return $data;
+			}
+
 			$data['sections'] = $object->getSections()->map(
-				fn(Section $section) => [
+				fn(SectionTemplate $section) => [
 					'id'=>$section->getId(),
 					'name'=>$section->getName(),
 					'description'=>$section->getDescription(),
 					'steps'=>$section->getSteps()->map(
-						fn(Step $step) => [
+						fn(StepTemplate $step) => [
 							'id'=>$step->getId(),
-							'isCompleted'=>$step->isCompleted(),
 							'name'=>$step->getName(),
 							'description'=>$step->getDescription()
 						]
 					)->toArray()
 				]
 			)->toArray();
-
-			$data['stepPositions'] = call_user_func_array("array_merge",
-				$object->getSections()->map(
-					fn (Section $section) =>
-					$section->getSteps()->map(
-						fn (Step $step) =>
-						$step->getPosition()
-					)->toArray()
-				)->toArray());
-
-			$data['sectionPositions'] = $object->getSections()->map(
-				fn(Section $section) =>
-				$section->getPosition()
-			)->toArray();
-
-			if ($object instanceof Playthrough) {
-				$data['templateId'] = $object->getTemplate()->getId();
-			}
 
 			return $data;
 
