@@ -1,81 +1,58 @@
 <?php
 	namespace App\Service;
 
-	use App\DTO\DTOInterface;
-	use App\Exception\ValidationException;
-	use App\DTO\Transformer\ResponseTransformer\ResponseDTOTransformerInterface;
 	use App\Entity\EntityInterface;
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\HttpFoundation\Response;
-	use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	class ResponseHelper {
-
-		/**
-		 * @var ValidatorInterface
-		 */
-		private ValidatorInterface $validator;
 
 		/**
 		 * @var SerializerInterface
 		 */
 		private SerializerInterface $serializer;
 
-		public function __construct(ValidatorInterface $validator,
-		                            SerializerInterface $serializer) {
+		public function __construct(SerializerInterface $serializer) {
 
-			$this->validator = $validator;
 			$this->serializer = $serializer;
 
 		}
 
 		/**
-		 * @param EntityInterface|iterable $objects
-		 * @param ResponseDTOTransformerInterface $transformer
-		 *
-		 * @return iterable|JsonResponse|Response
-		 * @throws ResourceNotFoundException
-		 */
-		public function createResponseForMany (iterable $dtos): iterable|JsonResponse|Response {
-
-//			if ($objects === []) {
-//				throw new ResourceNotFoundException('resource not found');
-//			}
-//
-//			$dto = $transformer->transformFromObjects($objects);
-//
-//			$errors = $this->validator->validate($dtos);
-//			if (count($errors) > 0) {
-//				$errorString = (string)$errors;
-//				throw new ValidationException($errorString);
-//			}
-
-			return new Response($this->serializer->serialize($dtos, 'json',[
-				'circular_reference_handler' => function ($object) {
-					return $object->getId();
-				}
-			]), Response::HTTP_OK, [
-				'Content-Type' => 'application/json'
-			]) ;
-
-		}
-
-		/**
-		 * @param DTOInterface $dto
+		 * @param Object|iterable $object
 		 *
 		 * @return iterable|JsonResponse|Response
 		 */
-		public function createResponseForOne (DTOInterface $dto): iterable|JsonResponse|Response {
+		public function createResponse (Object|iterable $object): iterable|JsonResponse|Response {
 
-			return new Response($this->serializer->serialize($dto, 'json',[
+			if (!$object || $object === []) {
+				throw new NotFoundHttpException();
+			}
+
+			return new Response($this->serializer->serialize($object, 'json',[
 				'circular_reference_handler' => function ($object) {
 					return $object->getId();
 				}
 			]), Response::HTTP_OK, [
 				'Content-Type' => 'application/json'
 			]);
+
+		}
+
+		/**
+		 * @param string $uri
+		 *
+		 * @return JsonResponse
+		 */
+		public function createResourceCreatedResponse (string $uri): JsonResponse {
+
+			return new JsonResponse([
+					'status' => 'resource created'
+				], Response::HTTP_CREATED, [
+					"Location" => $uri
+				]);
 
 		}
 
