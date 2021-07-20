@@ -1,14 +1,14 @@
 <?php
 	namespace App\Service;
 
-	use App\Exception\ValidationException;
-	use App\DTO\IGDBGameResponseDTO;
+	use App\DTO\Game\IGDBGameResponseDTO;
 	use App\DTO\Transformer\ResponseTransformer\IGDBGameResponseDTOTransformer;
 	use App\Entity\Game;
 	use App\Entity\IGDBConfig;
-	use App\Utility\InternetGameDatabaseEndpoints;
+	use App\Exception\ValidationException;
 	use App\Repository\GameRepository;
 	use App\Repository\IGDBConfigRepository;
+	use App\Utility\InternetGameDatabaseEndpoints;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Doctrine\ORM\NonUniqueResultException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -279,7 +279,7 @@
 			 */
 			if (!$gameIfInDatabase) {
 
-				$game = $this->entityAssembler->createGame($dto);
+				$game = $this->entityAssembler->assembleGame($dto);
 
 				$this->entityManager->persist($game);
 				$this->entityManager->flush();

@@ -2,11 +2,13 @@
 	namespace App\Service;
 
 	use App\Entity\EntityInterface;
+	use App\Exception\ValidationException;
 	use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 	use Symfony\Component\Serializer\SerializerInterface;
+	use Symfony\Component\Validator\Exception\ValidationFailedException;
 
 	class ResponseHelper {
 
@@ -66,6 +68,11 @@
 			if ($exception instanceof UniqueConstraintViolationException) {
 				return new JsonResponse(['status' => 'error',
 					'message' => 'duplicate resource'], Response::HTTP_CONFLICT);
+			}
+
+			if ($exception instanceof ValidationException) {
+				return new JsonResponse(['status' => 'error',
+					'message' => 'validation failed'], Response::HTTP_BAD_REQUEST);
 			}
 
 			return new JsonResponse(['status' => 'error','code' => $exception->getCode(),

@@ -1,19 +1,19 @@
 <?php
 	namespace App\Service;
-
-	use App\DTO\DTOInterface;
-	use App\DTO\GameDTO;
+	
+	use App\DTO\Game\GameDTO;
+	use App\DTO\Game\IGDBGameResponseDTO;
 	use App\Entity\Game;
 
 	class EntityAssembler {
 
 		/**
-		 * @param GameDTO $dto
+		 * @param GameDTO|IGDBGameResponseDTO $dto
 		 *
 		 * @return Game*
 		 * @throws \Exception
 		 */
-		public function createGame (DTOInterface $dto): Game {
+		public function assembleGame (IGDBGameResponseDTO|GameDTO $dto): Game {
 
 			if (!($dto->releaseDate instanceof \DateTimeImmutable)) {
 

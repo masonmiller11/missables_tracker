@@ -1,7 +1,7 @@
 <?php
 	namespace App\DTO\Transformer\ResponseTransformer;
 
-	use App\DTO\IGDBGameResponseDTO;
+	use App\DTO\Game\IGDBGameResponseDTO;
 
 	class IGDBGameResponseDTOTransformer extends AbstractResponseDTOTransformer {
 
@@ -29,7 +29,6 @@
 			$dto->platforms = $object["platforms"] ?? [];
 			$dto->internetGameDatabaseID = $object["id"];
 			$dto->genre = $object["genre"] ?? 'No genre available'; //TODO let's fix these at some point
-
 
 			return $dto;
 

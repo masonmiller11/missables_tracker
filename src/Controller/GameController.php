@@ -1,6 +1,7 @@
 <?php
 	namespace App\Controller;
 
+	use App\DTO\Game\GameDTO;
 	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
 	use App\Exception\ValidationException;
 	use App\Repository\GameRepository;
@@ -51,6 +52,7 @@
 		 * @param Request $request
 		 * @param GameRequestDTOTransformer $transformer
 		 * @return Response
+		 * @throws \Exception
 		 */
 		public function create(Request $request, GameRequestDTOTransformer $transformer): Response {
 
@@ -58,16 +60,16 @@
 
 				$dto = $this->transformOne($request, $transformer);
 
+				Assert($dto instanceof GameDTO);
 				$this->validate($dto);
 
-				$game = $this->entityAssembler->createGame($dto);
-
+				$game = $this->entityAssembler->assembleGame($dto);
 				$this->entityManager->persist($game);
 				$this->entityManager->flush();
 
 				return $this->responseHelper->returnResourceCreatedResponse('games/read/' . $game->getId());
 
-			} catch (ValidationException|\Exception $e) {
+			} catch (ValidationException $e) {
 
 				return $this->responseHelper->createErrorResponse($e);
 
