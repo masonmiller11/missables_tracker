@@ -2,6 +2,7 @@
 	namespace App\Service;
 
 	use App\Entity\EntityInterface;
+	use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -61,6 +62,11 @@
 		 * @return JsonResponse
 		 */
 		public function createErrorResponse (\Exception $exception): JsonResponse {
+
+			if ($exception instanceof UniqueConstraintViolationException) {
+				return new JsonResponse(['status' => 'error',
+					'message' => 'duplicate resource'], Response::HTTP_CONFLICT);
+			}
 
 			return new JsonResponse(['status' => 'error','code' => $exception->getCode(),
 				'message' => $exception->getMessage(), 'file' => $exception->getFile()], Response::HTTP_INTERNAL_SERVER_ERROR);
