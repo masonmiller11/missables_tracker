@@ -7,6 +7,7 @@
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 	use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 	class ExceptionListener {
 
@@ -28,8 +29,13 @@
 			}
 
 			if ($exception instanceof HttpExceptionInterface) {
-				$response =  new JsonResponse(['status' => 'error', 'code' => $exception->getCode(),
+				$response =  new JsonResponse(['status' => 'error','code' => $exception->getCode(),
 					'message' => $exception->getMessage(), 'file' => $exception->getFile()], $exception->getStatusCode());
+			}
+
+			if ($exception instanceof NotFoundHttpException) {
+				$response = new JsonResponse(['status' => 'error',
+					'message' => 'resource not found'], Response::HTTP_NOT_FOUND);
 			}
 
 			$event->setResponse($response);
