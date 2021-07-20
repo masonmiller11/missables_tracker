@@ -1,6 +1,6 @@
 <?php
 	namespace App\Service;
-	
+
 	use App\DTO\Game\GameDTO;
 	use App\DTO\Game\IGDBGameResponseDTO;
 	use App\Entity\Game;
