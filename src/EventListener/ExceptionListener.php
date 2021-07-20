@@ -28,8 +28,8 @@
 			}
 
 			if ($exception instanceof HttpExceptionInterface) {
-				$response =  new JsonResponse(['status' => 'error',
-					'message' => $exception->getMessage(),'type' =>gettype($exception), 'file' => $exception->getFile()], $exception->getStatusCode());
+				$response =  new JsonResponse(['status' => 'error', 'code' => $exception->getCode(),
+					'message' => $exception->getMessage(), 'file' => $exception->getFile()], $exception->getStatusCode());
 			}
 
 			$event->setResponse($response);
