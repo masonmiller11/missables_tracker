@@ -56,24 +56,16 @@
 		 */
 		public function create(Request $request, GameRequestDTOTransformer $transformer): Response {
 
-			try {
+			$dto = $this->transformOne($request, $transformer);
 
-				$dto = $this->transformOne($request, $transformer);
+			Assert($dto instanceof GameDTO);
+			$this->validate($dto);
 
-				Assert($dto instanceof GameDTO);
-				$this->validate($dto);
+			$game = $this->entityAssembler->assembleGame($dto);
+			$this->entityManager->persist($game);
+			$this->entityManager->flush();
 
-				$game = $this->entityAssembler->assembleGame($dto);
-				$this->entityManager->persist($game);
-				$this->entityManager->flush();
-
-				return $this->responseHelper->returnResourceCreatedResponse('games/read/' . $game->getId());
-
-			} catch (ValidationException $e) {
-
-				return $this->responseHelper->createErrorResponse($e);
-
-			}
+			return $this->responseHelper->returnResourceCreatedResponse('games/read/' . $game->getId());
 
 		}
 
@@ -87,10 +79,10 @@
 		 */
 		public function search( GameRepository $gameRepository): Response {
 
-				$searchTerm = $this->request->getCurrentRequest()->query->get('game');
-				$games = $gameRepository->searchByName($searchTerm);
+			$searchTerm = $this->request->getCurrentRequest()->query->get('game');
+			$games = $gameRepository->searchByName($searchTerm);
 
-				return $this->responseHelper->createResponse($games);
+			return $this->responseHelper->createResponse($games);
 
 		}
 
@@ -104,17 +96,10 @@
 		 */
 		public function listPopular(GameRepository $gameRepository): Response {
 
-			try {
+			$games = $gameRepository->topTenByNumberOfTemplates();
 
-				$games = $gameRepository->topTenByNumberOfTemplates();
+			return $this->responseHelper->createResponse($games);
 
-				return $this->responseHelper->createResponse($games);
-
-			} catch (\Exception $e) {
-
-				return $this->responseHelper->createErrorResponse($e);
-
-			}
 		}
 
 		/**
@@ -124,27 +109,24 @@
 		 *
 		 * This controller action looks at the URL query, searches IGDB and returns whatever IGDB sends us.
 		 * So ?halo will return whatever IGDB poops up if we searched for Halo.
+		 * @throws ClientExceptionInterface
+		 * @throws DecodingExceptionInterface
+		 * @throws RedirectionExceptionInterface
+		 * @throws ServerExceptionInterface
+		 * @throws TransportExceptionInterface
 		 */
 		public function searchIGDB(): Response {
 
-			try {
+			$searchTerm = $this->request->getCurrentRequest()->query->get('game');
 
-				$searchTerm = $this->request->getCurrentRequest()->query->get('game');
+			$games = $this->IGDBHelper->searchIGDB($searchTerm);
 
-				$games = $this->IGDBHelper->searchIGDB($searchTerm);
-
-				if (!$games || $games === []) {
-					throw new NotFoundHttpException();
-				}
-
-				return new JsonResponse($games);
-
-			} catch (ClientExceptionInterface | RedirectionExceptionInterface | ServerExceptionInterface |
-			TransportExceptionInterface | DecodingExceptionInterface $e) {
-
-				return $this->responseHelper->createErrorResponse($e);
-
+			if (!$games || $games === []) {
+				throw new NotFoundHttpException();
 			}
+
+			return new JsonResponse($games);
+
 		}
 
 	}
