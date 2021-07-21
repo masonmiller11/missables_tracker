@@ -15,7 +15,7 @@
 
 			$exception = $event->getThrowable();
 
-			$response =  new JsonResponse(['status' => 'error','code' => $exception->getCode(),
+			$response =  new JsonResponse(['status' => 'error','code' => $exception->getCode(), 'type' => get_class($exception),
 				'message' => $exception->getMessage(), 'file' => $exception->getFile()], Response::HTTP_INTERNAL_SERVER_ERROR);
 
 			if ($exception instanceof UniqueConstraintViolationException) {
@@ -29,7 +29,7 @@
 			}
 
 			if ($exception instanceof HttpExceptionInterface) {
-				$response =  new JsonResponse(['status' => 'error','code' => $exception->getCode(),
+				$response =  new JsonResponse(['status' => 'error','code' => $exception->getCode(), 'type' => get_class($exception),
 					'message' => $exception->getMessage(), 'file' => $exception->getFile()], $exception->getStatusCode());
 			}
 
