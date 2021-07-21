@@ -290,6 +290,19 @@
 			return $this->artworks;
 		}
 
+		/**
+		 * @return int
+		 */
+		public function getPlaythroughTemplateCount(): int {
+			return $this->playthroughTemplates->count();
+		}
+
+		/**
+		 * @return int
+		 */
+		public function getPlaythroughCount(): int {
+			return $this->playthroughs->count();
+		}
 
 
 	}

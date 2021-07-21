@@ -1,5 +1,5 @@
 <?php
-	namespace App\Serializer;
+	namespace App\Serializer\Normalizer;
 
 	use App\Entity\Game;
 	use App\Entity\Playthrough\PlaythroughTemplate;
@@ -16,7 +16,8 @@
 		public function normalize ($object, string $format = null, array $context = []): array {
 
 			$data['title'] = $object->getTitle();
-			$data['countOfTemplates'] = count($object->getTemplates());
+			$data['templateCount'] = $object->getPlaythroughTemplateCount();
+			$data['playthroughCount'] = $object->getPlaythroughCount();
 			$data['playthroughTemplate'] = $object->getTemplates()->map(
 				fn(PlaythroughTemplate $playthroughTemplate) => [
 					'id'=>$playthroughTemplate->getId(),

@@ -1,5 +1,5 @@
 <?php
-	namespace App\Serializer;
+	namespace App\Serializer\Normalizer;
 
 	use App\Entity\Playthrough\Playthrough;
 	use App\Entity\Playthrough\PlaythroughTemplate;
