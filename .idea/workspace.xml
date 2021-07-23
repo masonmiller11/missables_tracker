@@ -2,10 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3cf1ede0-50ad-4f5c-9157-fb8dcc6a3ff3" name="Default Changelist" comment="">
+<<<<<<< wip/normalizers
+<<<<<<< wip/normalizers
+      <change beforePath="$PROJECT_DIR$/src/Controller/PlaythroughController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Playthrough/ListPlaythroughController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/PlaythroughTemplateController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/PlaythroughTemplate/PlaythroughTemplateController.php" afterDir="false" />
+=======
+=======
+      <change afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+>>>>>>> Create Makefile
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/Game.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Game.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/Playthrough/PlaythroughTemplate.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Playthrough/PlaythroughTemplate.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/User.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/EventListener/ExceptionListener.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/EventListener/ExceptionListener.php" afterDir="false" />
+<<<<<<< wip/normalizers
+      <change beforePath="$PROJECT_DIR$/src/Serializer/GameNormalizer.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Serializer/Normalizer/GameNormalizer.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Serializer/PlaythroughNormalizer.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Serializer/Normalizer/PlaythroughNormalizer.php" afterDir="false" />
+>>>>>>> Add playthroughCount and templateCount to entity
+=======
+>>>>>>> Create Makefile
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -120,7 +132,7 @@
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="reference.webide.settings.project.settings.php" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
@@ -132,12 +144,27 @@
       <recent name="E:\ovid_files\projects\dev_projects\missables_tracker\src\Repository" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/Controller/PlaythroughTemplate" />
-      <recent name="$PROJECT_DIR$/src/Controller/Playthrough" />
+<<<<<<< wip/normalizers
       <recent name="$PROJECT_DIR$/src/Controller/Game" />
+=======
+      <recent name="E:\ovid_files\projects\dev_projects\missables_tracker\src\Serializer\Normalizer" />
+>>>>>>> Add playthroughCount and templateCount to entity
       <recent name="E:\ovid_files\projects\dev_projects\missables_tracker\src\DTO\Game" />
       <recent name="E:\ovid_files\projects\dev_projects\missables_tracker\src\DTO\Playthrough" />
     </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="routes" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
+      <makefile filename="$PROJECT_DIR$/Makefile" target="routes" workingDirectory="" arguments="">
+        <envs />
+      </makefile>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Makefile Target.routes" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
