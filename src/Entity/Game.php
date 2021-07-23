@@ -304,5 +304,4 @@
 			return $this->playthroughs->count();
 		}
 
-
 	}
