@@ -1,5 +1,5 @@
 <?php
-	namespace App\Controller\PlaythroughTemaplate;
+	namespace App\Controller\PlaythroughTemplate;
 
 	use App\Controller\AbstractBaseApiController;
 	use App\Repository\PlaythroughTemplateRepository;
