@@ -1,16 +1,17 @@
 <?php
-	namespace App\Controller;
+	namespace App\Controller\Playthrough;
 
+	use App\Controller\AbstractBaseApiController;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\HttpFoundation\Response;
 
 	/**
-	 * Class PlaythroughController
+	 * Class ListPlaythroughController
 	 *
 	 * @package App\Controller
 	 * @Route(path="/playthroughs", name="playthroughs.")
 	 */
-	final class PlaythroughController extends AbstractBaseApiController {
+	final class ListPlaythroughController extends AbstractBaseApiController {
 
 		/**
 		 * @Route(path="/{page<\d+>?1}", methods={"GET"}, name="list")

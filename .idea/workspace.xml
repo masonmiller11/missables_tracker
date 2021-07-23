@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3cf1ede0-50ad-4f5c-9157-fb8dcc6a3ff3" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Controller/Game/GetOneGameController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Controller/Game/ListGamesController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Controller/Game/SearchGameController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/GameController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Game/CreateGameController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/PlaythroughController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/Playthrough/ListPlaythroughController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/PlaythroughTemplateController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/PlaythroughTemplate/PlaythroughTemplateController.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -161,6 +158,7 @@
       <workItem from="1626366733212" duration="20001000" />
       <workItem from="1626401792094" duration="170000" />
       <workItem from="1626401978363" duration="18152000" />
+      <workItem from="1627008565093" duration="800000" />
     </task>
     <servers />
   </component>
