@@ -137,4 +137,22 @@
 		public function eraseCredentials() {
 			//no op
 		}
+
+		public function addToLiked(PlaythroughTemplate $template): void
+		{
+			if ($this->likedTemplates->contains($template)) {
+				return;
+			}
+
+			$this->likedTemplates->add($template);
+		}
+
+		public function removeFromLiked(PlaythroughTemplate $template): void
+		{
+			if (!$this->likedTemplates->contains($template)) {
+				return;
+			}
+
+			$this->likedTemplates->removeElement($template);
+		}
 	}
