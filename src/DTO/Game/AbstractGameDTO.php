@@ -62,6 +62,7 @@
 
 		/**
 		 * @Assert\NotBlank()
+		 * @Assert\Choice(callback: [Genre::class, 'values'], message = "Choose a valid genre.")]
 		 */
 		public mixed $genre;
 
