@@ -44,7 +44,7 @@
 		 * @return Response
 		 *
 		 * This controller action looks at the URL query, searches IGDB and returns whatever IGDB sends us.
-		 * So ?halo will return whatever IGDB poops up if we searched for Halo.
+		 * So ?halo will return whatever IGDB finds after searching for halo
 		 * @throws ClientExceptionInterface
 		 * @throws DecodingExceptionInterface
 		 * @throws RedirectionExceptionInterface
