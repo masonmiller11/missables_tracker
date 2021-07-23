@@ -27,6 +27,13 @@
 		private string $email;
 
 		/**
+		 * @var string
+		 *
+		 * @ORM\Column(type="string", length=254, unique=true)
+		 */
+		private string $username;
+
+		/**
 		 * @var string|null
 		 *
 		 * @ORM\Column(type="text", nullable=true)
@@ -48,12 +55,21 @@
 		private Collection|Selectable|array $playthroughs;
 
 		/**
+		 * @var Collection|Selectable|PlaythroughTemplate[]
+		 *
+		 * @ORM\ManyToMany(targetEntity="App\Entity\Playthrough\PlaythroughTemplate", inversedBy="likedBy", cascade={"all"}, orphanRemoval=true)
+		 * @ORM\JoinTable(name="templates_liked_by")
+		 */
+		private Collection|Selectable|array $likedTemplates;
+
+		/**
 		 * User constructor.
 		 * @param string $email
 		 */
-		#[Pure] public function __construct(string $email) {
+		#[Pure] public function __construct(string $email, string $username) {
 
 			$this->email = $email;
+			$this->username = $username;
 
 			$this->playthroughTemplates = new ArrayCollection();
 			$this->playthroughs = new ArrayCollection();
