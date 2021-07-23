@@ -66,6 +66,13 @@
 		private Collection|Selectable|array $playthroughs;
 
 		/**
+		 * @var Collection|Selectable|User[]
+		 *
+		 * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="likedTemplates")
+		 */
+		private Collection|Selectable|array $likedBy;
+
+		/**
 		 * PlaythroughTemplate constructor.
 		 *
 		 * @param string $name
@@ -133,6 +140,13 @@
 		 */
 		public function getPlaythroughs(): Collection|array|Selectable {
 			return $this->playthroughs;
+		}
+
+		/**
+		 * @return int
+		 */
+		public function getLikes(): int {
+			return $this->likedBy->count();
 		}
 
 		/**
