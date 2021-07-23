@@ -66,14 +66,6 @@
 		private Collection|Selectable|array $playthroughs;
 
 		/**
-		 * @var Collection|Selectable|User[]
-		 *
-		 * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="likedTemplates")
-		 * @ORM\JoinTable(name="users")
-		 */
-		private Collection|Selectable|array $likedBy;
-
-		/**
 		 * PlaythroughTemplate constructor.
 		 *
 		 * @param string $name
@@ -127,13 +119,6 @@
 		 */
 		public function getOwner(): User {
 			return $this->owner;
-		}
-
-		/**
-		 * @return int
-		 */
-		public function getVotes(): int {
-			return $this->votes;
 		}
 
 		/**
