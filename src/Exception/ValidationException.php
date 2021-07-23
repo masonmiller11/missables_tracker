@@ -1,5 +1,5 @@
 <?php
-	namespace App\DTO\Exception;
+	namespace App\Exception;
 
 	use JetBrains\PhpStorm\Pure;
 
@@ -8,8 +8,7 @@
 		private const CODE = 400;
 
 		#[Pure]
-		public function __construct(string $message)
-		{
+		public function __construct(string $message) {
 			parent::__construct($message, self::CODE);
 		}
 

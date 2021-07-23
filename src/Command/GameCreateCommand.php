@@ -12,20 +12,18 @@
 	use Symfony\Component\Console\Output\OutputInterface;
 	use Symfony\Component\Console\Style\SymfonyStyle;
 	use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+	use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 	class GameCreateCommand extends Command {
 
 		protected static $defaultName = 'app:game:create';
 		protected static $defaultDescription = 'This is for creating games to test the app with';
 
-		private EntityManagerInterface $entityManager;
-
 		private IGDBHelper $IGDBHelper;
 
-		public function __construct (EntityManagerInterface $entityManager,
-									 IGDBHelper $IGDBHelper) {
+		public function __construct (IGDBHelper $IGDBHelper) {
 			parent::__construct();
-			$this->entityManager = $entityManager;
+
 			$this->IGDBHelper = $IGDBHelper;
 		}
 
@@ -42,7 +40,7 @@
 				$this->IGDBHelper->getGameAndSave($input->getArgument('igdb_id'));
 				return ExitCode::OK;
 
-			} catch(\Exception) {
+			} catch(\Exception | TransportExceptionInterface) {
 				return ExitCode::ERROR;
 			}
 
