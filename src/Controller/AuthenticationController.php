@@ -7,7 +7,7 @@
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\Routing\Annotation\Route;
 
-	class AuthenticationController extends AbstractController {
+	final class AuthenticationController extends AbstractController {
 
 		/**
 		 * @Route(path="/login/refresh", methods={"GET"}, name="auth.login.refresh")

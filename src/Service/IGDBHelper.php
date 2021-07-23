@@ -1,14 +1,14 @@
 <?php
 	namespace App\Service;
 
-	use App\DTO\Exception\ValidationException;
-	use App\DTO\IGDBGameResponseDTO;
+	use App\DTO\Game\IGDBGameResponseDTO;
 	use App\DTO\Transformer\ResponseTransformer\IGDBGameResponseDTOTransformer;
 	use App\Entity\Game;
 	use App\Entity\IGDBConfig;
-	use App\Utility\InternetGameDatabaseEndpoints;
+	use App\Exception\ValidationException;
 	use App\Repository\GameRepository;
 	use App\Repository\IGDBConfigRepository;
+	use App\Utility\InternetGameDatabaseEndpoints;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Doctrine\ORM\NonUniqueResultException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -72,6 +72,11 @@
 		private ValidatorInterface $validator;
 
 		/**
+		 * @var EntityAssembler
+		 */
+		private EntityAssembler $entityAssembler;
+
+		/**
 		 * @throws \Exception
 		 */
 		public function __construct(HttpClientInterface $client,
@@ -81,7 +86,8 @@
 		                            EntityManagerInterface $entityManager,
 		                            GameRepository $gameRepository,
 		                            ValidatorInterface $validator,
-		                            IGDBGameResponseDTOTransformer $IGDBGameResponseDTOTransformer) {
+		                            IGDBGameResponseDTOTransformer $IGDBGameResponseDTOTransformer,
+									EntityAssembler $entityAssembler) {
 
 			$this->client = $client;
 
@@ -91,12 +97,17 @@
 			$this->apiID = $apiID;
 			$this->apiSecret = $apiSecret;
 
+			$this->entityAssembler = $entityAssembler;
 			$this->IGDBConfigRepository = $IGDBConfigRepository;
 			$this->IGDBGameResponseDTOTransformer = $IGDBGameResponseDTOTransformer;
 			$this->gameRepository = $gameRepository;
 			$this->entityManager = $entityManager;
-			$this->IGDBConfig = $IGDBConfigRepository->find(1);
 			$this->validator = $validator;
+			$this->IGDBConfig = $IGDBConfigRepository->find(1);
+
+			if (!$this->IGDBConfig) {
+				$this->IGDBConfig =$this->refreshTokenInDatabase();
+			}
 
 			// $diff is time until expiration.
 			$diff = (new \DateTimeImmutable('now'))->diff($this->IGDBConfig->getExpiration());
@@ -190,13 +201,17 @@
 		 */
 		public function searchIGDB (string $term, int $limit = 20): array{
 
-			$response = $this->client->request('POST', InternetGameDatabaseEndpoints::GAMES, [
-				'headers' => $this->headers,
-				'body' => 'fields name, id, cover, platforms, summary, first_release_date;
-				search "' . $term . '";
-				where version_parent = null;
-				limit ' . $limit .';'
-			]);
+			$response = $this->client->request(
+				'POST',
+				InternetGameDatabaseEndpoints::GAMES,
+				[
+					'headers' => $this->headers,
+					'body' => 'fields name, id, cover, platforms, summary, first_release_date;
+			search "' . $term . '";
+			where version_parent = null;
+			limit ' . $limit . ';'
+				]
+			);
 
 			return $response->toArray();
 
@@ -226,7 +241,7 @@
 		 */
 		private function isIGDBGameInDatabase (IGDBGameResponseDTO $internetGameDatabaseDTO): Game | NonUniqueResultException | null {
 
-			return $this->gameRepository->findGameByInternetGameDatabaseID($internetGameDatabaseDTO->id);
+			return $this->gameRepository->findGameByInternetGameDatabaseID($internetGameDatabaseDTO->internetGameDatabaseID);
 
 		}
 
@@ -264,10 +279,7 @@
 			 */
 			if (!$gameIfInDatabase) {
 
-				$game = new Game($dto->genre, $dto->title, $dto->id, $dto->screenshots, $dto->artworks, $dto->cover,
-					$dto->platforms,$dto->slug, $dto->rating, $dto->summary, $dto->storyline,
-					$dto->releaseDate
-				);
+				$game = $this->entityAssembler->assembleGame($dto);
 
 				$this->entityManager->persist($game);
 				$this->entityManager->flush();

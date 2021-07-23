@@ -1,7 +1,7 @@
 <?php
 	namespace App\Repository;
 
-	use App\Entity\PlaythroughTemplate;
+	use App\Entity\Playthrough\PlaythroughTemplate;
 	use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 	use Doctrine\Persistence\ManagerRegistry;
 
