@@ -3,7 +3,7 @@
 
 	use App\DTO\Game\IGDBGameResponseDTO;
 
-	class IGDBGameResponseDTOTransformer extends AbstractResponseDTOTransformer {
+	final class IGDBGameResponseDTOTransformer extends AbstractResponseDTOTransformer {
 
 		/**
 		 * @param $object

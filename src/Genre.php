@@ -17,5 +17,6 @@
 		public const SIMULATION = 'simulation';
 		public const STEALTH = 'stealth';
 		public const VISUAL_NOVEL = 'visual novel';
+		public const NOT_AVAILABLE = 'No genre available';
 
 	}
