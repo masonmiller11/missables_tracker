@@ -48,6 +48,14 @@
 		private Collection|Selectable|array $playthroughs;
 
 		/**
+		 * @var Collection|Selectable|PlaythroughTemplate[]
+		 *
+		 * @ORM\ManyToMany(targetEntity="App\Entity\Playthrough\PlaythroughTemplate", inversedBy="likedBy", cascade={"all"}, orphanRemoval=true)
+		 * @ORM\JoinTable(name="playthrough_templates")
+		 */
+		private Collection|Selectable|array $likedTemplates;
+
+		/**
 		 * User constructor.
 		 * @param string $email
 		 */

@@ -66,15 +66,27 @@
 		private Collection|Selectable|array $playthroughs;
 
 		/**
+		 * @var Collection|Selectable|User[]
+		 *
+		 * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="likedTemplates")
+		 * @ORM\JoinTable(name="users")
+		 */
+		private Collection|Selectable|array $likedBy;
+
+		/**
 		 * PlaythroughTemplate constructor.
-		 * @param User $owner
-		 * @param Game $game
-		 * @param bool $visibility
+		 *
+		 * @param string $name
+		 * @param string $description
+		 * @param User   $owner
+		 * @param Game   $game
+		 * @param bool   $visibility
 		 */
 		#[Pure] public function __construct(string $name, string $description, User $owner, Game $game, bool $visibility) {
 
 			$this->playthroughs = new ArrayCollection();
 			$this->sectionTemplates = new ArrayCollection();
+			$this->likedBy = new ArrayCollection();
 
 			$this->owner = $owner;
 			$this->game = $game;
