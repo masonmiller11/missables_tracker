@@ -22,7 +22,7 @@
 				fn(PlaythroughTemplate $playthroughTemplate) => [
 					'id'=>$playthroughTemplate->getId(),
 					'visibility'=>$playthroughTemplate->isVisible(),
-					'votes'=>$playthroughTemplate->getVotes(),
+					'votes'=>$playthroughTemplate->getLikes(),
 					'owner'=>$playthroughTemplate->getOwner()->getId(),
 				]
 			)->toArray();
