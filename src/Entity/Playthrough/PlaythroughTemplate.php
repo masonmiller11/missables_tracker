@@ -45,13 +45,6 @@
 		private bool $visibility;
 
 		/**
-		 * @var int
-		 *
-		 * @ORM\Column(type="integer")
-		 */
-		private int $votes;
-
-		/**
 		 * @var Collection|Selectable|SectionTemplate[]
 		 *
 		 * @ORM\OneToMany(targetEntity="App\Entity\Section\SectionTemplate", mappedBy="playthroughTemplate", cascade={"all"}, orphanRemoval=true)
@@ -92,8 +85,6 @@
 			$this->visibility = $visibility;
 			$this->name = $name;
 			$this->description = $description;
-			$this->votes = 0;
-
 		}
 
 		/**
@@ -102,15 +93,6 @@
 		 */
 		public function setVisibility(bool $visibility): static {
 			$this->visibility = $visibility;
-			return $this;
-		}
-
-		/**
-		 * @param int $votes
-		 * @return static
-		 */
-		public function setVotes(int $votes): static {
-			$this->votes = $votes;
 			return $this;
 		}
 
