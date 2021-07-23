@@ -1,17 +1,18 @@
 <?php
-	namespace App\Controller;
+	namespace App\Controller\PlaythroughTemaplate;
 
+	use App\Controller\AbstractBaseApiController;
 	use App\Repository\PlaythroughTemplateRepository;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\HttpFoundation\Response;
 
 	/**
-	 * Class PlaythroughTemplateController
+	 * Class ListPlaythroughTemplateController
 	 *
 	 * @package App\Controller
 	 * @Route(path="/templates", name="templates.")
 	 */
-	final class PlaythroughTemplateController extends AbstractBaseApiController {
+	final class ListPlaythroughTemplateController extends AbstractBaseApiController {
 
 		/**
 		 * @Route(path="/{page<\d+>?1}", methods={"GET"}, name="list_this_users")
