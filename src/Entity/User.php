@@ -3,6 +3,7 @@
 
 	use App\Entity\Playthrough\Playthrough;
 	use App\Entity\Playthrough\PlaythroughTemplate;
+	use App\Entity\Playthrough\PlaythroughTemplateLike;
 	use Doctrine\Common\Collections\ArrayCollection;
 	use Doctrine\Common\Collections\Collection;
 	use Doctrine\Common\Collections\Selectable;
@@ -55,16 +56,16 @@
 		private Collection|Selectable|array $playthroughs;
 
 		/**
-		 * @var Collection|Selectable|PlaythroughTemplate[]
+		 * @var Collection|Selectable|PlaythroughTemplateLike[]
 		 *
-		 * @ORM\ManyToMany(targetEntity="App\Entity\Playthrough\PlaythroughTemplate", inversedBy="likedBy", cascade={"all"}, orphanRemoval=true)
-		 * @ORM\JoinTable(name="templates_liked_by")
+		 * @ORM\OneToMany(targetEntity="App\Entity\Playthrough\PlaythroughTemplateLike", mappedBy="likedBy", cascade={"all"}, orphanRemoval=true)
 		 */
-		private Collection|Selectable|array $likedTemplates;
+		private Collection|Selectable|array $likes;
 
 		/**
 		 * User constructor.
 		 * @param string $email
+		 * @param string $username
 		 */
 		#[Pure] public function __construct(string $email, string $username) {
 
@@ -73,6 +74,7 @@
 
 			$this->playthroughTemplates = new ArrayCollection();
 			$this->playthroughs = new ArrayCollection();
+			$this->likes = new ArrayCollection();
 
 		}
 
@@ -102,6 +104,13 @@
 		 */
 		public function getPlaythroughs(): Collection|array|Selectable {
 			return $this->playthroughs;
+		}
+
+		/**
+		 * @return PlaythroughTemplateLike[]|Collection|Selectable
+		 */
+		public function getLikes(): Collection|array|Selectable {
+			return $this->likes;
 		}
 
 		/**
@@ -136,23 +145,5 @@
 
 		public function eraseCredentials() {
 			//no op
-		}
-
-		public function addToLiked(PlaythroughTemplate $template): void
-		{
-			if ($this->likedTemplates->contains($template)) {
-				return;
-			}
-
-			$this->likedTemplates->add($template);
-		}
-
-		public function removeFromLiked(PlaythroughTemplate $template): void
-		{
-			if (!$this->likedTemplates->contains($template)) {
-				return;
-			}
-
-			$this->likedTemplates->removeElement($template);
 		}
 	}
