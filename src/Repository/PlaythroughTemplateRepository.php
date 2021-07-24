@@ -20,11 +20,11 @@
 
 		public function findByGame(int $gameId) {
 			$qb = $this->createQueryBuilder('template')
-				->select('COUNT(user) AS HIDDEN myCount', 'template')
+				->select('COUNT(likes) AS HIDDEN myCount', 'template')
 				->andWhere('game.id = :gameId')
 				->andWhere('template.visibility = true')
 				->leftJoin('template.game', 'game')
-				->leftJoin('template.likedBy','user')
+				->leftJoin('template.likes','likes')
 				->orderBy('myCount', 'DESC')
 				->setParameter('gameId', $gameId);
 
@@ -35,11 +35,11 @@
 
 		public function findByAuthor(int $authorId) {
 			$qb = $this->createQueryBuilder('template')
-				->select('COUNT(user) AS HIDDEN myCount', 'template')
+				->select('COUNT(likes) AS HIDDEN myCount', 'template')
 				->andWhere('author.id = :authorId')
 				->andWhere('template.visibility = true')
 				->leftJoin('template.owner', 'author')
-				->leftJoin('template.likedBy','user')
+				->leftJoin('template.likes','likes')
 				->orderBy('myCount', 'DESC')
 				->setParameter('authorId', $authorId);
 
