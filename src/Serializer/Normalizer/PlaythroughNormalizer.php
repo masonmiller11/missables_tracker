@@ -83,6 +83,8 @@
 				]
 			)->toArray();
 
+			$data['likes'] = $object->getLikes();
+
 			return $data;
 
 		}
