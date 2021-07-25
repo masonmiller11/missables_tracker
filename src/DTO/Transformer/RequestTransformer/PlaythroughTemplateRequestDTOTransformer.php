@@ -13,11 +13,10 @@
 			$dto = new PlaythroughTemplateDTO();
 
 			$dto->visibility = $data['visibility'];
-			$dto->ownerID = $data['owner'];
 			$dto->gameID = $data['game'];
-			$dto->sections = $data['sections'];
-			$dto->sectionPositions = $data['section_positions'];
-			$dto->stepPositions = $data['step_positions'];
+			$dto->sections = $data['sections'] ?? [];
+			$dto->sectionPositions = $data['section_positions'] ?? [];
+			$dto->stepPositions = $data['step_positions'] ?? [];
 			$dto->name = $data['name'];
 			$dto->description = $data['description'];
 
