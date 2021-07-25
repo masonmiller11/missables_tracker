@@ -4,6 +4,8 @@
 	use App\Controller\AbstractBaseApiController;
 	use App\DTO\Game\GameDTO;
 	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
+	use App\Service\EntityAssembler;
+	use Doctrine\ORM\EntityManager;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
@@ -19,8 +21,9 @@
 		/**
 		 * @Route(methods={"POST"}, name="create")
 		 *
-		 * @param Request $request
+		 * @param Request                   $request
 		 * @param GameRequestDTOTransformer $transformer
+		 *
 		 * @return Response
 		 * @throws \Exception
 		 */
@@ -31,7 +34,7 @@
 			Assert($dto instanceof GameDTO);
 			$this->validate($dto);
 
-			$game = $this->entityAssembler->assembleGame($dto);
+			$game = EntityAssembler::assembleGame($dto);
 			$this->entityManager->persist($game);
 			$this->entityManager->flush();
 
