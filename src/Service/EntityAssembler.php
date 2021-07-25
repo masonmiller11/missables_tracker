@@ -6,6 +6,7 @@
 	use App\DTO\Playthrough\PlaythroughTemplateDTO;
 	use App\Entity\Game;
 	use App\Entity\Playthrough\PlaythroughTemplate;
+	use App\Entity\User;
 	use App\Repository\GameRepository;
 	use App\Repository\UserRepository;
 
@@ -34,14 +35,10 @@
 		}
 
 		public static function assembePlaythroughTemplate (PlaythroughTemplateDTO $dto,
-													GameRepository $gameRepository,
-													UserRepository $userRepository): PlaythroughTemplate {
+													Game $game,
+													User $user): PlaythroughTemplate {
 
-			return new PlaythroughTemplate( $dto->name, $dto->description,
-											$userRepository->find($dto->ownerID),
-											$gameRepository->find($dto->gameID),
-											$dto->visibility
-			);
+			return new PlaythroughTemplate($dto->name, $dto->description, $user, $game, $dto->visibility);
 
 		}
 
