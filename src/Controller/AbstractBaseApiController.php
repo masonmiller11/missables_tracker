@@ -4,9 +4,9 @@
 
 	use App\DTO\DTOInterface;
 	use App\DTO\Transformer\RequestTransformer\RequestDTOTransformerInterface;
+	use App\Entity\EntityInterface;
 	use App\Entity\User;
 	use App\Exception\ValidationException;
-	use App\Service\EntityAssembler;
 	use App\Service\IGDBHelper;
 	use App\Service\ResponseHelper;
 	use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -34,11 +34,6 @@
 		protected RequestStack $request;
 
 		/**
-		 * @var EntityAssembler
-		 */
-		protected EntityAssembler $entityAssembler;
-
-		/**
 		 * @var ValidatorInterface
 		 */
 		protected ValidatorInterface $validator;
@@ -59,13 +54,11 @@
 		 *
 		 * @param IGDBHelper         $IGDBHelper
 		 * @param ResponseHelper     $responseHelper
-		 * @param EntityAssembler    $entityHelper
 		 * @param RequestStack       $request
 		 * @param ValidatorInterface $validator
 		 */
 		public function __construct (IGDBHelper $IGDBHelper,
 		                             ResponseHelper $responseHelper,
-		                             EntityAssembler $entityHelper,
 		                             RequestStack $request,
 		                             EntityManagerInterface $entityManager,
 		                             ValidatorInterface $validator) {
@@ -73,7 +66,6 @@
 			$this->IGDBHelper = $IGDBHelper;
 			$this->responseHelper = $responseHelper;
 			$this->request = $request;
-			$this->entityAssembler = $entityHelper;
 			$this->validator = $validator;
 			$this->entityManager = $entityManager;
 
@@ -112,11 +104,35 @@
 		 */
 		protected function transformOne(Request $request, RequestDTOTransformerInterface $transformer): DTOInterface {
 
-			$dto = $transformer->transformFromRequest($request);
+			return $transformer->transformFromRequest($request);
 
-			$this->validate($dto);
+		}
 
-			return $dto;
+		/**
+		 * @param Request $request
+		 * @param RequestDTOTransformerInterface $dtoTransformer
+		 * @param string $type
+		 * @param callable $entityAssembler
+		 *
+		 * @return EntityInterface
+		 * @throws \Exception
+		 */
+		protected function doCreate (Request $request,
+		                             RequestDTOTransformerInterface $dtoTransformer,
+		                             string $type,
+		                             callable $entityAssembler): EntityInterface {
+
+			$user = $this->getUser();
+
+			$dto = $this->transformOne($request, $dtoTransformer);
+
+			Assert($dto instanceof $type);
+
+			$entity = $entityAssembler($dto, $user);
+			$this->entityManager->persist($entity);
+			$this->entityManager->flush();
+
+			return $entity;
 
 		}
 
