@@ -1,6 +1,6 @@
 <?php
 	namespace App\Service;
-	
+
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -20,11 +20,11 @@
 		}
 
 		/**
-		 * @param Object|iterable $object
+		 * @param Object|iterable|null $object
 		 *
 		 * @return iterable|JsonResponse|Response
 		 */
-		public function createResponse (Object|iterable $object): iterable|JsonResponse|Response {
+		public function createResponse (Object|iterable|null $object): iterable|JsonResponse|Response {
 
 			if (!$object || $object === []) {
 				throw new NotFoundHttpException();
