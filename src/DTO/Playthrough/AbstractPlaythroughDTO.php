@@ -17,17 +17,10 @@
 		 * @Assert\NotNull,
 		 * @Assert\Type("integer")
 		 */
-		public mixed $ownerID;
-
-		/**
-		 * @Assert\NotNull,
-		 * @Assert\Type("integer")
-		 */
 		public mixed $gameID;
 
 		/**
 		 * @Assert\All({
-		 *     @Assert\NotNull,
 		 *     @Assert\Type("integer")
 		 * })
 		 */
@@ -35,7 +28,6 @@
 
 		/**
 		 * @Assert\All({
-		 *     @Assert\NotNull,
 		 *     @Assert\Type("integer")
 		 * })
 		 * @Assert\Unique
@@ -44,7 +36,6 @@
 
 		/**
 		 * @Assert\All({
-		 *     @Assert\NotNull,
 		 *     @Assert\Type("integer")
 		 * })
 		 * @Assert\Unique
