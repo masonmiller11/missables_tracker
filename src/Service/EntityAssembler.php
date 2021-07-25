@@ -3,7 +3,9 @@
 
 	use App\DTO\Game\GameDTO;
 	use App\DTO\Game\IGDBGameResponseDTO;
+	use App\DTO\Playthrough\PlaythroughTemplateDTO;
 	use App\Entity\Game;
+	use App\Repository\GameRepository;
 
 	class EntityAssembler {
 
@@ -13,7 +15,7 @@
 		 * @return Game*
 		 * @throws \Exception
 		 */
-		public function assembleGame (IGDBGameResponseDTO|GameDTO $dto): Game {
+		public static function assembleGame (IGDBGameResponseDTO|GameDTO $dto): Game {
 
 			if (!($dto->releaseDate instanceof \DateTimeImmutable)) {
 
