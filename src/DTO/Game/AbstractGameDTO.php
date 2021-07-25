@@ -61,6 +61,8 @@
 		 */
 		public mixed $artworks;
 
+		public mixed $releaseDate;
+
 		#[Assert\Choice(callback: [Genre::class, 'values'])]
 		public mixed $genre;
 

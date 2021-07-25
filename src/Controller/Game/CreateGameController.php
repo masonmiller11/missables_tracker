@@ -4,8 +4,10 @@
 	use App\Controller\AbstractBaseApiController;
 	use App\DTO\Game\GameDTO;
 	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
-	use App\Service\EntityAssembler;
+	use App\Repository\GameRepository;
+	use App\Transformer\GameEntityTransformer;
 	use Doctrine\ORM\EntityManager;
+	use Doctrine\ORM\Mapping\Entity;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
@@ -22,21 +24,14 @@
 		 * @Route(methods={"POST"}, name="create")
 		 *
 		 * @param Request                   $request
-		 * @param GameRequestDTOTransformer $transformer
+		 * @param GameRequestDTOTransformer $dtoTransformer
 		 *
 		 * @return Response
 		 * @throws \Exception
 		 */
-		public function create(Request $request, GameRequestDTOTransformer $transformer): Response {
+		public function create(Request $request, GameRequestDTOTransformer $dtoTransformer, GameRepository $gameRepository): Response {
 
-			$dto = $this->transformOne($request, $transformer);
-
-			Assert($dto instanceof GameDTO);
-			$this->validate($dto);
-
-			$game = EntityAssembler::assembleGame($dto);
-			$this->entityManager->persist($game);
-			$this->entityManager->flush();
+			$game = $this->doCreate($request, $dtoTransformer, GameDTO::class, [new GameEntityTransformer($this->entityManager, $this->validator), 'assemble']);
 
 			return $this->responseHelper->returnResourceCreatedResponse('games/read/' . $game->getId());
 

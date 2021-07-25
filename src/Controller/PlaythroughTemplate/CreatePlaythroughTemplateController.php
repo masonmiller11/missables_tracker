@@ -6,7 +6,7 @@
 	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
 	use App\DTO\Transformer\RequestTransformer\PlaythroughTemplateRequestDTOTransformer;
 	use App\Repository\GameRepository;
-	use App\Service\EntityAssembler;
+	use App\Transformer\PlaythroughTemplateEntityTransformer;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -34,21 +34,15 @@
 							   PlaythroughTemplateRequestDTOTransformer $transformer,
 							   GameRepository $gameRepository): Response {
 
-			$dto = $this->transformOne($request, $transformer);
+			$playthroughTemplate = $this->doCreate($request,
+												   $transformer,
+											  PlaythroughTemplateDTO::class,
+												   [new PlaythroughTemplateEntityTransformer(
+												   	    $this->entityManager,
+												        $this->validator,
+												        $gameRepository), 'assemble'
+												   ]);
 
-			Assert($dto instanceof PlaythroughTemplateDTO);
-			$this->validate($dto);
-
-			$user = $this->getUser();
-			$game = $gameRepository->find($dto->gameID);
-
-			if (!$game) {
-				throw new NotFoundHttpException();
-			}
-
-			$playthroughTemplate = EntityAssembler::assembePlaythroughTemplate($dto, $game, $user);
-			$this->entityManager->persist($playthroughTemplate);
-			$this->entityManager->flush();
 
 			return $this->responseHelper->returnResourceCreatedResponse('templates/read/' . $playthroughTemplate->getId());
 
