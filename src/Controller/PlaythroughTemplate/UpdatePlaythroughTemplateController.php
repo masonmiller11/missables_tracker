@@ -30,9 +30,10 @@
 		 * @param GameRepository $gameRepository
 		 * @param PlaythroughTemplateRepository $playthroughTemplateRepository
 		 * @param PlaythroughTemplateRequestDTOTransformer $playthroughTemplateRequestDTOTransformer
+		 * @param PlaythroughTemplateEntityTransformer $playthroughTemplateEntityTransformer
 		 * @return Response
 		 */
-		public function create(Request $request, string|int $id,
+		public function update(Request $request, string|int $id,
 							   GameRepository $gameRepository,
 							   PlaythroughTemplateRepository $playthroughTemplateRepository,
 							   PlaythroughTemplateRequestDTOTransformer $playthroughTemplateRequestDTOTransformer,
