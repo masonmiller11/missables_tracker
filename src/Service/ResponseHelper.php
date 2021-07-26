@@ -70,4 +70,16 @@
 
 		}
 
+		/**
+		 * @return JsonResponse
+		 */
+		public function returnResourceDeletedResponse (): JsonResponse {
+
+			return new JsonResponse([
+				'status' => 'resource deleted'
+			], Response::HTTP_OK, [
+			]);
+
+		}
+
 	}

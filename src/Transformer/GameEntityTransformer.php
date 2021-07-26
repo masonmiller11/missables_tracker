@@ -64,7 +64,7 @@
 			// TODO: Implement update() method.
 		}
 
-		public function delete(DTOInterface $dto, bool $skipValidation = false): EntityInterface {
+		public function delete(int $id): void {
 			// TODO: Implement delete() method.
 		}
 	}

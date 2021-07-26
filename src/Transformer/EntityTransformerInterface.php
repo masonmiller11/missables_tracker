@@ -12,6 +12,6 @@
 
 		public function update(int $id, Request $request, bool $skipValidation = false): EntityInterface;
 
-		public function delete(DTOInterface $dto, bool $skipValidation = false): EntityInterface;
+		public function delete(int $id): void;
 
 	}

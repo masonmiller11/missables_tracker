@@ -26,7 +26,7 @@ class PlaythroughFixtures extends Fixture implements DependentFixtureInterface
 						'test name' . $i,
 						'test description' . $i,
 						$this->getReference('game_' . $gameReference),
-						$this->getReference('playthrough_template_' . $playthroughTemplateReference),
+						1+$i,
 						$this->getReference(UserFixtures::USER_REFERENCE),
 						rand(0, 1)
 					);

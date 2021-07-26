@@ -12,30 +12,27 @@
 	 * Class CreatePlaythroughTemplateController
 	 *
 	 * @package App\Controller\PlaythroughTemplate
-	 * @Route(path="/templates/update", name="templates.")
+	 * @Route(path="/templates/delete", name="templates.")
 	 */
-	class UpdatePlaythroughTemplateController extends AbstractBaseApiController {
+	class DeletePlaythroughTemplateController extends AbstractBaseApiController {
 
 		/**
-		 * @Route(path="/{id<\d+>}", methods={"PATCH"}, name="update")
+		 * @Route(path="/{id<\d+>}", methods={"DELETE"}, name="delete")
 		 *
-		 * @param Request $request
 		 * @param string|int $id
 		 * @param PlaythroughTemplateRepository $playthroughTemplateRepository
 		 * @param PlaythroughTemplateEntityTransformer $playthroughTemplateEntityTransformer
 		 * @return Response
 		 */
-		public function update(Request $request, string|int $id,
+		public function delete(string|int $id,
 							   PlaythroughTemplateRepository $playthroughTemplateRepository,
 		                       PlaythroughTemplateEntityTransformer $playthroughTemplateEntityTransformer): Response {
 
 			$this->confirmResourceOwner($playthroughTemplateRepository->find($id));
 
-			$playthroughTemplate = $this->doUpdate($request,
-				$id,
-				$playthroughTemplateEntityTransformer);
+			$this->doDelete($id, $playthroughTemplateEntityTransformer);
 
-			return $this->responseHelper->returnResourceUpdatedResponse('templates/read/' . $playthroughTemplate->getId());
+			return $this->responseHelper->returnResourceDeletedResponse();
 
 		}
 	}
