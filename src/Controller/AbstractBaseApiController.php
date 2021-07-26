@@ -98,7 +98,7 @@
 
 		}
 
-		protected function confirmOwner (EntityInterface $entity) {
+		protected function confirmResourceOwner (EntityInterface $entity) {
 
 			if (!(method_exists($entity, 'getOwner'))) {
 				throw new InvalidArgumentException();
@@ -157,6 +157,12 @@
 		protected function doUpdate (Request $request, int $id, EntityTransformerInterface $entityTransformer): EntityInterface {
 
 			return $entityTransformer->update($id, $request);
+
+		}
+
+		protected function doDelete (int $id, EntityTransformerInterface $entityTransformer): void {
+
+			$entityTransformer->delete($id);
 
 		}
 

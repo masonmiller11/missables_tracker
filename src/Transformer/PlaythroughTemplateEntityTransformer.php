@@ -14,7 +14,7 @@
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-	class PlaythroughTemplateEntityTransformer extends AbstractEntityTransformer {
+	final class PlaythroughTemplateEntityTransformer extends AbstractEntityTransformer {
 
 		/**
 		 * @var GameRepository
@@ -96,9 +96,7 @@
 			$tempDTO->gameID = $playthroughTemplate->getGame()->getId();
 			$this->validate($tempDTO);
 
-			$updatedPlaythroughTemplate = $this->doUpdate(json_decode($request->getContent(), true), $playthroughTemplate);
-
-			return $updatedPlaythroughTemplate;
+			return $this->doUpdate(json_decode($request->getContent(), true), $playthroughTemplate);
 
 		}
 
@@ -122,7 +120,12 @@
 
 		}
 
-		public function delete(DTOInterface $dto, bool $skipValidation = false): EntityInterface {
-			// TODO: Implement delete() method.
+		public function delete(int $id): void {
+
+			$playthroughTemplate = $this->playthroughTemplateRepository->find($id);
+
+			$this->entityManager->remove($playthroughTemplate);
+			$this->entityManager->flush();
+
 		}
 	}
