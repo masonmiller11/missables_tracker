@@ -47,7 +47,7 @@
 			)->toArray();
 
 			if ($object instanceof Playthrough) {
-				$data['templateId'] = $object->getTemplate()->getId();
+				$data['templateId'] = $object->getTemplateId();
 
 				$data['sections'] = $object->getSections()->map(
 					fn(Section $section) => [

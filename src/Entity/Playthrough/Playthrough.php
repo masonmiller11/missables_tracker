@@ -30,12 +30,11 @@
 		private Game $game;
 
 		/**
-		 * @var PlaythroughTemplate
+		 * @var int|null
 		 *
-		 * @ORM\ManyToOne(targetEntity="App\Entity\Playthrough\PlaythroughTemplate", inversedBy="playthroughs")
-		 * @ORM\JoinColumn(nullable=false)
+		 * @ORM\Column(type="integer", options={"unsigned":true}, nullable=true)
 		 */
-		private PlaythroughTemplate $template;
+		private ?int $templateId;
 
 		/**
 		 * @var User
@@ -61,22 +60,24 @@
 
 		/**
 		 * Playthrough constructor.
+		 * @param string $name
+		 * @param string $description
 		 * @param Game $game
-		 * @param PlaythroughTemplate $template
+		 * @param int $templateId
 		 * @param User $owner
 		 * @param bool $visibility
 		 */
 		#[Pure] public function __construct(string $name,
 		                                    string $description,
 		                                    Game $game,
-										    PlaythroughTemplate $template,
+										    int $templateId,
 											User $owner,
 											bool $visibility) {
 
 			$this->sections = new ArrayCollection();
 
 			$this->game = $game;
-			$this->template = $template;
+			$this->templateId = $templateId;
 			$this->owner = $owner;
 			$this->visibility = $visibility;
 			$this->name = $name;
@@ -94,6 +95,15 @@
 		}
 
 		/**
+		 * @param int|null $id
+		 * @return static
+		 */
+		public function setTemplateId(?int $id): static {
+			$this->templateId = $id;
+			return $this;
+		}
+
+		/**
 		 * @return Game
 		 */
 		public function getGame(): Game {
@@ -101,10 +111,10 @@
 		}
 
 		/**
-		 * @return PlaythroughTemplate
+		 * @return int|null
 		 */
-		public function getTemplate(): PlaythroughTemplate {
-			return $this->template;
+		public function getTemplateId(): ?int {
+			return $this->getTemplateId();
 		}
 
 		/**
