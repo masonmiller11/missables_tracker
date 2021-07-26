@@ -2,16 +2,10 @@
 	namespace App\Controller\PlaythroughTemplate;
 
 	use App\Controller\AbstractBaseApiController;
-	use App\DTO\Playthrough\PlaythroughTemplateDTO;
-	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
-	use App\DTO\Transformer\RequestTransformer\PlaythroughTemplateRequestDTOTransformer;
-	use App\Repository\GameRepository;
 	use App\Repository\PlaythroughTemplateRepository;
 	use App\Transformer\PlaythroughTemplateEntityTransformer;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
-	use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 	use Symfony\Component\Routing\Annotation\Route;
 
 	/**
@@ -27,25 +21,15 @@
 		 *
 		 * @param Request $request
 		 * @param string|int $id
-		 * @param GameRepository $gameRepository
 		 * @param PlaythroughTemplateRepository $playthroughTemplateRepository
-		 * @param PlaythroughTemplateRequestDTOTransformer $playthroughTemplateRequestDTOTransformer
 		 * @param PlaythroughTemplateEntityTransformer $playthroughTemplateEntityTransformer
 		 * @return Response
 		 */
 		public function update(Request $request, string|int $id,
-							   GameRepository $gameRepository,
 							   PlaythroughTemplateRepository $playthroughTemplateRepository,
-							   PlaythroughTemplateRequestDTOTransformer $playthroughTemplateRequestDTOTransformer,
 		                       PlaythroughTemplateEntityTransformer $playthroughTemplateEntityTransformer): Response {
 
-			$authenticatedUser = $this->getUser();
-			$template = $playthroughTemplateRepository->find($id);
-			$owner =  $template->getOwner();
-
-			if ($owner !== $authenticatedUser) {
-				throw new AccessDeniedHttpException;
-			}
+			$this->confirmOwner($playthroughTemplateRepository->find($id));
 
 			$playthroughTemplate = $this->doUpdate($request,
 				$id,
