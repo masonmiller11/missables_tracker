@@ -12,8 +12,10 @@
 	use App\Transformer\EntityTransformerInterface;
 	use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 	use Doctrine\ORM\EntityManagerInterface;
+	use http\Exception\InvalidArgumentException;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\RequestStack;
+	use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 	use Symfony\Component\HttpFoundation\Request;
 
@@ -92,6 +94,21 @@
 			if (count($errors) > 0) {
 				$errorString = (string)$errors;
 				throw new ValidationException($errorString);
+			}
+
+		}
+
+		protected function confirmOwner (EntityInterface $entity) {
+
+			if (!(method_exists($entity, 'getOwner'))) {
+				throw new InvalidArgumentException();
+			}
+
+			$authenticatedUser = $this->getUser();
+			$owner =  $entity->getOwner();
+
+			if ($owner !== $authenticatedUser) {
+				throw new AccessDeniedHttpException;
 			}
 
 		}
