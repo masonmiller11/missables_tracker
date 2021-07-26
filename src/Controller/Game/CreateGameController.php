@@ -29,9 +29,11 @@
 		 * @return Response
 		 * @throws \Exception
 		 */
-		public function create(Request $request, GameRequestDTOTransformer $dtoTransformer, GameRepository $gameRepository): Response {
+		public function create(Request $request,
+		                       GameRequestDTOTransformer $dtoTransformer,
+		                       GameEntityTransformer $gameEntityTransformer): Response {
 
-			$game = $this->doCreate($request, $dtoTransformer, GameDTO::class, [new GameEntityTransformer($this->entityManager, $this->validator), 'assemble']);
+			$game = $this->doCreate($request, $dtoTransformer, GameDTO::class, $gameEntityTransformer);
 
 			return $this->responseHelper->returnResourceCreatedResponse('games/read/' . $game->getId());
 

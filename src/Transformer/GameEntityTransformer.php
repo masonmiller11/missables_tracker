@@ -8,6 +8,7 @@
 	use App\Entity\EntityInterface;
 	use App\Entity\Game;
 	use App\Entity\User;
+	use Symfony\Component\HttpFoundation\Request;
 
 	class GameEntityTransformer extends AbstractEntityTransformer {
 
@@ -56,7 +57,10 @@
 
 		}
 
-		public function update(DTOInterface $dto, bool $skipValidation = false): EntityInterface {
+		public function update(int $id, Request $request, bool $skipValidation = false): EntityInterface {
+
+
+
 			// TODO: Implement update() method.
 		}
 

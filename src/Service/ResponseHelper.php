@@ -55,4 +55,19 @@
 
 		}
 
+		/**
+		 * @param string $uri
+		 *
+		 * @return JsonResponse
+		 */
+		public function returnResourceUpdatedResponse (string $uri): JsonResponse {
+
+			return new JsonResponse([
+				'status' => 'resource updated'
+			], Response::HTTP_OK, [
+//				"Location" => $uri
+			]);
+
+		}
+
 	}

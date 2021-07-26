@@ -32,16 +32,14 @@
 		 */
 		public function create(Request $request,
 							   PlaythroughTemplateRequestDTOTransformer $transformer,
-							   GameRepository $gameRepository): Response {
+							   GameRepository $gameRepository,
+							   PlaythroughTemplateEntityTransformer $playthroughTemplateEntityTransformer): Response {
 
 			$playthroughTemplate = $this->doCreate($request,
 												   $transformer,
 											  PlaythroughTemplateDTO::class,
-												   [new PlaythroughTemplateEntityTransformer(
-												   	    $this->entityManager,
-												        $this->validator,
-												        $gameRepository), 'assemble'
-												   ]);
+												   $playthroughTemplateEntityTransformer
+												   );
 
 
 			return $this->responseHelper->returnResourceCreatedResponse('templates/read/' . $playthroughTemplate->getId());

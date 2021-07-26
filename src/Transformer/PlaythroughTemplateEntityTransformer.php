@@ -3,12 +3,15 @@
 
 	use App\DTO\DTOInterface;
 	use App\DTO\Playthrough\PlaythroughTemplateDTO;
+	use App\DTO\Transformer\RequestTransformer\PlaythroughTemplateRequestDTOTransformer;
 	use App\Entity\EntityInterface;
 	use App\Entity\Playthrough\PlaythroughTemplate;
 	use App\Entity\User;
 	use App\Repository\GameRepository;
+	use App\Repository\PlaythroughTemplateRepository;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
+	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	class PlaythroughTemplateEntityTransformer extends AbstractEntityTransformer {
@@ -18,16 +21,30 @@
 		 */
 		private GameRepository $gameRepository;
 
+		/**
+		 * @var User
+		 */
 		private User $user;
+
+		/**
+		 * @var PlaythroughTemplateRequestDTOTransformer
+		 */
+		private PlaythroughTemplateRequestDTOTransformer $DTOTransformer;
+
+		private PlaythroughTemplateRepository $playthroughTemplateRepository;
 
 		#[Pure]
 		public function __construct(EntityManagerInterface $entityManager,
 		                            ValidatorInterface $validator,
-		                            GameRepository $gameRepository) {
+		                            GameRepository $gameRepository,
+									PlaythroughTemplateRequestDTOTransformer $DTOTransformer,
+									PlaythroughTemplateRepository $playthroughTemplateRepository) {
 
 			parent::__construct($entityManager, $validator);
 
 			$this->gameRepository = $gameRepository;
+			$this->DTOTransformer = $DTOTransformer;
+			$this->playthroughTemplateRepository = $playthroughTemplateRepository;
 
 		}
 
@@ -71,8 +88,38 @@
 
 		}
 
-		public function update(DTOInterface $dto, bool $skipValidation = false): EntityInterface {
-			// TODO: Implement update() method.
+		public function update(int $id, Request $request, bool $skipValidation = false): EntityInterface {
+
+			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
+			$playthroughTemplate = $this->playthroughTemplateRepository->find($id);
+
+			$tempDTO->gameID = $playthroughTemplate->getGame()->getId();
+			$this->validate($tempDTO);
+
+			$updatedPlaythroughTemplate = $this->doUpdate(json_decode($request->getContent(), true), $playthroughTemplate);
+
+			return $updatedPlaythroughTemplate;
+
+		}
+
+		private function doUpdate (array $data, PlaythroughTemplate $playthroughTemplate): PlaythroughTemplate {
+
+			if (isset($data['visibility'])) {
+				$playthroughTemplate->setVisibility($data['visibility']);
+			}
+			if (isset($data['name'])) {
+				$playthroughTemplate->setName($data['name']);
+			}
+			if (isset($data['description'])) {
+				$playthroughTemplate->setDescription($data['description']);
+
+			}
+
+			$this->entityManager->persist($playthroughTemplate);
+			$this->entityManager->flush();
+
+			return $playthroughTemplate;
+
 		}
 
 		public function delete(DTOInterface $dto, bool $skipValidation = false): EntityInterface {
