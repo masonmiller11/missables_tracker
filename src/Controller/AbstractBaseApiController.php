@@ -9,6 +9,7 @@
 	use App\Exception\ValidationException;
 	use App\Service\IGDBHelper;
 	use App\Service\ResponseHelper;
+	use App\Transformer\EntityTransformerInterface;
 	use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -112,7 +113,7 @@
 		 * @param Request $request
 		 * @param RequestDTOTransformerInterface $dtoTransformer
 		 * @param string $type
-		 * @param callable $entityAssembler
+		 * @param EntityTransformerInterface $entityTransformer
 		 *
 		 * @return EntityInterface
 		 * @throws \Exception
@@ -120,7 +121,7 @@
 		protected function doCreate (Request $request,
 		                             RequestDTOTransformerInterface $dtoTransformer,
 		                             string $type,
-		                             callable $entityAssembler): EntityInterface {
+		                             EntityTransformerInterface $entityTransformer): EntityInterface {
 
 			$user = $this->getUser();
 
@@ -128,11 +129,17 @@
 
 			Assert($dto instanceof $type);
 
-			$entity = $entityAssembler($dto, $user);
+			$entity = $entityTransformer->assemble($dto, $user);
 			$this->entityManager->persist($entity);
 			$this->entityManager->flush();
 
 			return $entity;
+
+		}
+
+		protected function doUpdate (Request $request, int $id, EntityTransformerInterface $entityTransformer): EntityInterface {
+
+			return $entityTransformer->update($id, $request);
 
 		}
 
