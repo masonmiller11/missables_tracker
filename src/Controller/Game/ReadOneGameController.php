@@ -13,7 +13,7 @@
 	 * @package App\Controller
 	 * @Route(path="/games/read", name="games.")
 	 */
-	final class GetOneGameController extends AbstractBaseApiController {
+	final class ReadOneGameController extends AbstractBaseApiController {
 
 		/**
 		 * @Route(path="/{id<\d+>}", methods={"GET"}, name="read")
