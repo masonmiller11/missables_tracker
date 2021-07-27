@@ -24,7 +24,7 @@
 		 *
 		 * @return iterable|JsonResponse|Response
 		 */
-		public function createResponse (Object|iterable|null $object): iterable|JsonResponse|Response {
+		public function createReadResponse (Object|iterable|null $object): iterable|JsonResponse|Response {
 
 			if (!$object || $object === []) {
 				throw new NotFoundHttpException();
@@ -45,7 +45,7 @@
 		 *
 		 * @return JsonResponse
 		 */
-		public function returnResourceCreatedResponse (string $uri): JsonResponse {
+		public function createResourceCreatedResponse (string $uri): JsonResponse {
 
 			return new JsonResponse([
 					'status' => 'resource created'
@@ -60,7 +60,7 @@
 		 *
 		 * @return JsonResponse
 		 */
-		public function returnResourceUpdatedResponse (string $uri): JsonResponse {
+		public function createResourceUpdatedResponse (string $uri): JsonResponse {
 
 			return new JsonResponse([
 				'status' => 'resource updated'
@@ -73,7 +73,7 @@
 		/**
 		 * @return JsonResponse
 		 */
-		public function returnResourceDeletedResponse (): JsonResponse {
+		public function createResourceDeletedResponse (): JsonResponse {
 
 			return new JsonResponse([
 				'status' => 'resource deleted'

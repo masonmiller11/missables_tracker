@@ -25,7 +25,7 @@
 			$user = $this->getUser();
 			$playthroughs = $user->getPlaythroughs();
 
-			return $this->responseHelper->createResponse($playthroughs);
+			return $this->responseHelper->createReadResponse($playthroughs);
 
 		}
 

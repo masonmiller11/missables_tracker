@@ -13,7 +13,7 @@
 	 * @package App\Controller
 	 * @Route(path="/games/read", name="games.")
 	 */
-	final class ReadOneGameController extends AbstractBaseApiController {
+	final class ReadGameController extends AbstractBaseApiController {
 
 		/**
 		 * @Route(path="/{id<\d+>}", methods={"GET"}, name="read")
@@ -31,7 +31,7 @@
 
 			$game = $gameRepository->find($id);
 
-			return $this->responseHelper->createResponse($game);
+			return $this->responseHelper->createReadResponse($game);
 
 		}
 
