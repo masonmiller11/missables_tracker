@@ -14,7 +14,7 @@
 	 * @package App\Controller\PlaythroughTemplate
 	 * @Route(path="/templates/delete", name="templates.")
 	 */
-	class DeletePlaythroughTemplateController extends AbstractBaseApiController {
+	final class DeletePlaythroughTemplateController extends AbstractBaseApiController {
 
 		/**
 		 * @Route(path="/{id<\d+>}", methods={"DELETE"}, name="delete")
