@@ -55,9 +55,10 @@
 		/**
 		 * AbstractBaseApiController constructor.
 		 *
-		 * @param IGDBHelper         $IGDBHelper
-		 * @param ResponseHelper     $responseHelper
-		 * @param RequestStack       $request
+		 * @param IGDBHelper $IGDBHelper
+		 * @param ResponseHelper $responseHelper
+		 * @param RequestStack $request
+		 * @param EntityManagerInterface $entityManager
 		 * @param ValidatorInterface $validator
 		 */
 		public function __construct (IGDBHelper $IGDBHelper,
@@ -98,6 +99,9 @@
 
 		}
 
+		/**
+		 * @param EntityInterface $entity
+		 */
 		protected function confirmResourceOwner (EntityInterface $entity) {
 
 			if (!(method_exists($entity, 'getOwner'))) {
@@ -154,12 +158,22 @@
 
 		}
 
+		/**
+		 * @param Request $request
+		 * @param int $id
+		 * @param EntityTransformerInterface $entityTransformer
+		 * @return EntityInterface
+		 */
 		protected function doUpdate (Request $request, int $id, EntityTransformerInterface $entityTransformer): EntityInterface {
 
 			return $entityTransformer->update($id, $request);
 
 		}
 
+		/**
+		 * @param int $id
+		 * @param EntityTransformerInterface $entityTransformer
+		 */
 		protected function doDelete (int $id, EntityTransformerInterface $entityTransformer): void {
 
 			$entityTransformer->delete($id);

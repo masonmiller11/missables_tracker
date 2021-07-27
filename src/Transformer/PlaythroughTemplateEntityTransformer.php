@@ -88,6 +88,12 @@
 
 		}
 
+		/**
+		 * @param int $id
+		 * @param Request $request
+		 * @param bool $skipValidation
+		 * @return EntityInterface
+		 */
 		public function update(int $id, Request $request, bool $skipValidation = false): EntityInterface {
 
 			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
@@ -100,6 +106,11 @@
 
 		}
 
+		/**
+		 * @param array $data
+		 * @param PlaythroughTemplate $playthroughTemplate
+		 * @return PlaythroughTemplate
+		 */
 		private function doUpdate (array $data, PlaythroughTemplate $playthroughTemplate): PlaythroughTemplate {
 
 			if (isset($data['visibility'])) {
@@ -120,6 +131,9 @@
 
 		}
 
+		/**
+		 * @param int $id
+		 */
 		public function delete(int $id): void {
 
 			$playthroughTemplate = $this->playthroughTemplateRepository->find($id);
