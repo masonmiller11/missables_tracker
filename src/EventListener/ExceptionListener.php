@@ -37,7 +37,7 @@
 
 			if ($exception instanceof NotFoundHttpException) {
 				$response = new JsonResponse(['status' => 'error',
-					'message' => 'resource not found'], Response::HTTP_NOT_FOUND);
+					'message' => $exception->getMessage() ?? 'resource not found'], Response::HTTP_NOT_FOUND);
 			}
 
 			if ($exception instanceof TransportException) {

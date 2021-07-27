@@ -12,6 +12,7 @@
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
+	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	final class PlaythroughTemplateEntityTransformer extends AbstractEntityTransformer {
@@ -31,8 +32,19 @@
 		 */
 		private PlaythroughTemplateRequestDTOTransformer $DTOTransformer;
 
+		/**
+		 * @var PlaythroughTemplateRepository
+		 */
 		private PlaythroughTemplateRepository $playthroughTemplateRepository;
 
+		/**
+		 * PlaythroughTemplateEntityTransformer constructor.
+		 * @param EntityManagerInterface $entityManager
+		 * @param ValidatorInterface $validator
+		 * @param GameRepository $gameRepository
+		 * @param PlaythroughTemplateRequestDTOTransformer $DTOTransformer
+		 * @param PlaythroughTemplateRepository $playthroughTemplateRepository
+		 */
 		#[Pure]
 		public function __construct(EntityManagerInterface $entityManager,
 		                            ValidatorInterface $validator,
@@ -79,6 +91,10 @@
 
 			$game = $this->gameRepository->find($dto->gameID);
 
+			if (!$game) {
+				throw new NotFoundHttpException('game not found');
+			}
+
 			$playthroughTemplate = new PlaythroughTemplate($dto->name, $dto->description, $this->user, $game, $dto->visibility);
 
 			$this->entityManager->persist($playthroughTemplate);
@@ -121,7 +137,6 @@
 			}
 			if (isset($data['description'])) {
 				$playthroughTemplate->setDescription($data['description']);
-
 			}
 
 			$this->entityManager->persist($playthroughTemplate);
