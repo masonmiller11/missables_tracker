@@ -6,6 +6,10 @@
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\RequestStack;
 
+	/**
+	 * Interface EntityTransformerInterface
+	 * @package App\Transformer
+	 */
 	interface EntityTransformerInterface {
 
 		public function create(DTOInterface $dto, bool $skipValidation = false): EntityInterface;
