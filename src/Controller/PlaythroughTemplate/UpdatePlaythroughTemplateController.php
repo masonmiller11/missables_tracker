@@ -14,7 +14,7 @@
 	 * @package App\Controller\PlaythroughTemplate
 	 * @Route(path="/templates/update", name="templates.")
 	 */
-	class UpdatePlaythroughTemplateController extends AbstractBaseApiController {
+	final class UpdatePlaythroughTemplateController extends AbstractBaseApiController {
 
 		/**
 		 * @Route(path="/{id<\d+>}", methods={"PATCH"}, name="update")

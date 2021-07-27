@@ -18,7 +18,7 @@
 	 * @package App\Controller\PlaythroughTemplate
 	 * @Route(path="/templates/create", name="templates.")
 	 */
-	class CreatePlaythroughTemplateController extends AbstractBaseApiController {
+	final class CreatePlaythroughTemplateController extends AbstractBaseApiController {
 
 		/**
 		 * @Route(methods={"POST"}, name="create")
@@ -26,6 +26,7 @@
 		 * @param Request                                  $request
 		 * @param PlaythroughTemplateRequestDTOTransformer $transformer
 		 * @param GameRepository                           $gameRepository
+		 * @param PlaythroughTemplateEntityTransformer     $playthroughTemplateEntityTransformer
 		 *
 		 * @return Response
 		 * @throws \Exception
