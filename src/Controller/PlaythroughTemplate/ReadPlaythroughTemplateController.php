@@ -16,12 +16,12 @@
 	 * Class CreatePlaythroughTemplateController
 	 *
 	 * @package App\Controller\PlaythroughTemplate
-	 * @Route(path="/templates/create", name="templates.")
+	 * @Route(path="/templates", name="templates.")
 	 */
-	final class CreatePlaythroughTemplateController extends AbstractBaseApiController {
+	final class ReadPlaythroughTemplateController extends AbstractBaseApiController {
 
 		/**
-		 * @Route(methods={"POST"}, name="create")
+		 * @Route(path="/{id<\d+>}",methods={"read"}, name="read")
 		 *
 		 * @param Request                                  $request
 		 * @param PlaythroughTemplateRequestDTOTransformer $transformer
@@ -43,7 +43,7 @@
 												   );
 
 
-			return $this->responseHelper->createResourceCreatedResponse('templates/read/' . $playthroughTemplate->getId());
+			return $this->responseHelper->returnResourceCreatedResponse('templates/read/' . $playthroughTemplate->getId());
 
 		}
 	}

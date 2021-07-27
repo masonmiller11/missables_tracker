@@ -26,7 +26,7 @@
 			$user = $this->getUser();
 			$templates = $user->getPlaythroughTemplates();
 
-			return $this->responseHelper->createResponse($templates);
+			return $this->responseHelper->createReadResponse($templates);
 
 		}
 
@@ -41,7 +41,7 @@
 		public function listByGame (int $gameID, PlaythroughTemplateRepository $repository ): Response {
 
 				$templates = $repository->findByGame($gameID);
-				return $this->responseHelper->createResponse($templates);
+				return $this->responseHelper->createReadResponse($templates);
 
 		}
 
@@ -56,7 +56,7 @@
 		public function listByAuthor (int $authorID, PlaythroughTemplateRepository $repository): Response {
 
 			$templates = $repository->findByAuthor($authorID);
-			return $this->responseHelper->createResponse($templates);
+			return $this->responseHelper->createReadResponse($templates);
 
 
 		}

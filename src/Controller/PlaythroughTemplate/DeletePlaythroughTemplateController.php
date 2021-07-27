@@ -32,7 +32,7 @@
 
 			$this->doDelete($id, $playthroughTemplateEntityTransformer);
 
-			return $this->responseHelper->returnResourceDeletedResponse();
+			return $this->responseHelper->createResourceDeletedResponse();
 
 		}
 	}

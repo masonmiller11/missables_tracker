@@ -35,7 +35,7 @@
 				$id,
 				$playthroughTemplateEntityTransformer);
 
-			return $this->responseHelper->returnResourceUpdatedResponse('templates/read/' . $playthroughTemplate->getId());
+			return $this->responseHelper->createResourceUpdatedResponse('templates/read/' . $playthroughTemplate->getId());
 
 		}
 	}

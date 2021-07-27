@@ -26,7 +26,7 @@
 
 			$games = $gameRepository->topTenByNumberOfTemplates();
 
-			return $this->responseHelper->createResponse($games);
+			return $this->responseHelper->createReadResponse($games);
 
 		}
 
