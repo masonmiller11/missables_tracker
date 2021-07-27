@@ -3,10 +3,10 @@
 
 	use App\Entity\Playthrough\Playthrough;
 	use App\Entity\Playthrough\PlaythroughTemplate;
-	use App\Entity\Section\Section;
-	use App\Entity\Step\Step;
+	use App\Entity\Section\SectionTemplate;
+	use App\Entity\Step\StepTemplate;
 
-	class PlaythroughNormalizer extends  AbstractPlaythroughNormalizer {
+	class PlaythroughTemplateNormalizer extends  AbstractPlaythroughNormalizer {
 
 		/**
 		 * @param Playthrough|PlaythroughTemplate $object
@@ -18,17 +18,14 @@
 
 			$data = $this->createData($object);
 
-			$data['templateId'] = $object->getTemplateId();
-
 			$data['sections'] = $object->getSections()->map(
-				fn(Section $section) => [
+				fn(SectionTemplate $section) => [
 					'id'=>$section->getId(),
 					'name'=>$section->getName(),
 					'description'=>$section->getDescription(),
 					'steps'=>$section->getSteps()->map(
-						fn(Step $step) => [
+						fn(StepTemplate $step) => [
 							'id'=>$step->getId(),
-							'isCompleted'=>$step->isCompleted(),
 							'name'=>$step->getName(),
 							'description'=>$step->getDescription()
 						]
@@ -36,13 +33,15 @@
 				]
 			)->toArray();
 
+			$data['likes'] = $object->countLikes();
+
 			return $data;
 
 		}
 
 		public function supportsNormalization($data, string $format = null, array $context = []): bool {
 
-			return $data instanceof Playthrough;
+			return $data instanceof PlaythroughTemplate;
 
 		}
 
