@@ -23,9 +23,9 @@
 		/**
 		 * @Route(methods={"POST"}, name="create")
 		 *
-		 * @param Request                   $request
+		 * @param Request $request
 		 * @param GameRequestDTOTransformer $dtoTransformer
-		 *
+		 * @param GameEntityTransformer $gameEntityTransformer
 		 * @return Response
 		 * @throws \Exception
 		 */
