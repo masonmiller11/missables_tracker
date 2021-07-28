@@ -66,6 +66,11 @@
 		private Collection|Selectable|array $likes;
 
 		/**
+		 * @ORM\Column(type="integer", options={"unsigned":true})
+		 */
+		private int $numberOfLikes;
+
+		/**
 		 * PlaythroughTemplate constructor.
 		 *
 		 * @param string $name
@@ -79,6 +84,7 @@
 			$this->playthroughs = new ArrayCollection();
 			$this->sectionTemplates = new ArrayCollection();
 			$this->likes = new ArrayCollection();
+			$this->numberOfLikes = 0;
 
 			$this->owner = $owner;
 			$this->game = $game;
@@ -131,6 +137,12 @@
 			return $this->likes;
 		}
 
+		/**
+		 * @return int
+		 */
+		public function getNumberOfLikes(): int {
+			return $this->numberOfLikes;
+		}
 
 		/**
 		 * @return int
