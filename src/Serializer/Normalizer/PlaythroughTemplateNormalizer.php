@@ -33,7 +33,7 @@
 				]
 			)->toArray();
 
-			$data['likes'] = $object->countLikes();
+			$data['likes'] = $object->getNumberOfLikes();
 
 			return $data;
 

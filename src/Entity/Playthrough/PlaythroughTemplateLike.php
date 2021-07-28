@@ -11,7 +11,7 @@
 
 	/**
 	 * @ORM\Entity()
-	 * @ORM\Table(name="playthrough_templates_likes")
+	 * @ORM\Table(name="playthrough_template_likes")
 	 */
 	class PlaythroughTemplateLike implements EntityInterface {
 
