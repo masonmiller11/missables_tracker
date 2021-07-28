@@ -2,9 +2,9 @@
 	namespace App\Repository;
 
 	use App\Entity\Game;
-	use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 	use Doctrine\ORM\NonUniqueResultException;
 	use Doctrine\Persistence\ManagerRegistry;
+	use JetBrains\PhpStorm\ArrayShape;
 
 	/**
 		 * @method Game|null find($id, $lockMode = null, $lockVersion = null)
@@ -12,7 +12,7 @@
 		 * @method Game[]    findAll()
 		 * @method Game[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
 		 */
-	class GameRepository extends ServiceEntityRepository {
+	class GameRepository extends AbstractBaseRepository {
 
 		public function __construct(ManagerRegistry $registry) {
 			parent::__construct($registry, Game::class);
@@ -37,15 +37,20 @@
 			return $qb->getQuery()->getResult();
 		}
 
-		public function topTenByNumberOfTemplates (): array | null {
+		/**
+		 * @param int $page
+		 * @param int $pageSize
+		 * @return array|null
+		 */
+		#[ArrayShape(['items' => "array", 'totalItems' => "int", 'pageCount' => "float"])]
+		public function findAllOrderByTemplates (int $page, int $pageSize): array | null {
 			$qb = $this->createQueryBuilder('game')
 				->select('COUNT(template) AS HIDDEN myCount', 'game')
 				->leftJoin('game.playthroughTemplates', 'template')
 				->orderBy('myCount', 'DESC')
-				->groupBy('game')
-				->setMaxResults(10);
+				->groupBy('game');
 
-			return $qb->getQuery()->getResult();
+			return $this->doPagination($qb, $page, $pageSize, 'games');
 		}
 
 	}
