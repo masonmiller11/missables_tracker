@@ -30,7 +30,6 @@
 			$qb = $this->createQueryBuilder('playthrough')
 				->select('playthrough')
 				->andWhere('owner.id = :ownerId')
-				->andWhere('playthrough.visibility = true')
 				->leftJoin('playthrough.owner', 'owner')
 				->setParameter('ownerId', $ownerId);
 
