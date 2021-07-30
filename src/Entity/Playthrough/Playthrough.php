@@ -114,7 +114,7 @@
 		 * @return int|null
 		 */
 		public function getTemplateId(): ?int {
-			return $this->getTemplateId();
+			return $this->templateId;
 		}
 
 		/**
