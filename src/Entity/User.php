@@ -16,7 +16,7 @@
 	 * @ORM\Entity()
 	 * @ORM\Table(name="users")
 	 */
-	class User implements PasswordAuthenticatedUserInterface, UserInterface {
+	class User implements PasswordAuthenticatedUserInterface, UserInterface, EntityInterface {
 
 		use EntityTrait;
 
