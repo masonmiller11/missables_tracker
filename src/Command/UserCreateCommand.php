@@ -32,7 +32,7 @@
 
 		protected function execute(InputInterface $input, OutputInterface $output) :int {
 
-			$user = new User($input->getArgument('email'));
+			$user = new User($input->getArgument('email'),'testusername');
 
 			if ($password = $input->getOption('password')) {
 
