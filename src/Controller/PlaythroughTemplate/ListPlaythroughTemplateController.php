@@ -45,7 +45,7 @@
 		                            int $pageSize,
 		                            PlaythroughTemplateRepository $repository ): Response {
 
-				$templates = $repository->findByGame($gameID, $page, $pageSize);
+				$templates = $repository->findAllByGame($gameID, $page, $pageSize);
 				return $this->responseHelper->createReadResponse($templates);
 
 		}
@@ -65,7 +65,7 @@
 		                              int $pageSize,
 		                              PlaythroughTemplateRepository $repository): Response {
 
-			$templates = $repository->findByAuthor($authorID, $page, $pageSize);
+			$templates = $repository->findAllByAuthor($authorID, $page, $pageSize);
 			return $this->responseHelper->createReadResponse($templates);
 
 

@@ -25,7 +25,7 @@
 		 * @return array|null
 		 */
 		#[ArrayShape(['items' => "array", 'totalItems' => "int", 'pageCount' => "float"])]
-		public function findByGame(int $gameId, int $page, int $pageSize): array|null {
+		public function findAllByGame(int $gameId, int $page, int $pageSize): array|null {
 			$qb = $this->createQueryBuilder('template')
 				->select('template')
 				->andWhere('game.id = :gameId')
@@ -45,7 +45,7 @@
 		 * @return array|null
 		 */
 		#[ArrayShape(['items' => "array", 'totalItems' => "int", 'pageCount' => "float"])]
-		public function findByAuthor(int $authorId, int $page, int $pageSize): array|null {
+		public function findAllByAuthor(int $authorId, int $page, int $pageSize): array|null {
 			$qb = $this->createQueryBuilder('template')
 				->select('template')
 				->andWhere('author.id = :authorId')
