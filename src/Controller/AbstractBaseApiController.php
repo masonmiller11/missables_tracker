@@ -7,6 +7,7 @@
 	use App\Entity\EntityInterface;
 	use App\Entity\User;
 	use App\Exception\ValidationException;
+	use App\Repository\AbstractBaseRepository;
 	use App\Service\IGDBHelper;
 	use App\Service\ResponseHelper;
 	use App\Transformer\EntityTransformerInterface;
@@ -16,6 +17,7 @@
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\RequestStack;
 	use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 	use Symfony\Component\HttpFoundation\Request;
 
@@ -89,7 +91,7 @@
 		 * @param DTOInterface $dto
 		 * @throws ValidationException
 		 */
-		protected function validate(DTOInterface $dto) {
+		protected function validate(DTOInterface $dto): void {
 
 			$errors = $this->validator->validate($dto);
 			if (count($errors) > 0) {
@@ -100,9 +102,9 @@
 		}
 
 		/**
-		 * @param EntityInterface $entity
+		 * @param Object $entity
 		 */
-		protected function confirmResourceOwner (EntityInterface $entity) {
+		private function confirmResourceOwner (Object $entity): void {
 
 			if (!(method_exists($entity, 'getOwner'))) {
 				throw new InvalidArgumentException();
@@ -113,6 +115,22 @@
 
 			if ($owner !== $authenticatedUser) {
 				throw new AccessDeniedHttpException;
+			}
+
+		}
+
+		/**
+		 * @param AbstractBaseRepository $repository
+		 * @param int                    $id
+		 *
+		 * @return void
+		 */
+		private function doesEntityExist(AbstractBaseRepository $repository, int $id): void {
+
+			$entity = $repository->find($id);
+
+			if (!$entity) {
+				throw new NotFoundHttpException('resource does not exist');
 			}
 
 		}
@@ -159,22 +177,36 @@
 		}
 
 		/**
-		 * @param Request $request
-		 * @param int $id
+		 * @param Request                    $request
+		 * @param int                        $id
 		 * @param EntityTransformerInterface $entityTransformer
+		 * @param AbstractBaseRepository     $repository
+		 *
 		 * @return EntityInterface
 		 */
-		protected function doUpdate (Request $request, int $id, EntityTransformerInterface $entityTransformer): EntityInterface {
+		protected function doUpdate (Request $request,
+									 int $id,
+									 EntityTransformerInterface $entityTransformer,
+									 AbstractBaseRepository $repository): EntityInterface {
+
+			$this->doesEntityExist($repository, $id);
+			$this->confirmResourceOwner($repository->find($id));
 
 			return $entityTransformer->update($id, $request);
 
 		}
 
 		/**
-		 * @param int $id
+		 * @param int                        $id
 		 * @param EntityTransformerInterface $entityTransformer
+		 * @param AbstractBaseRepository     $repository
 		 */
-		protected function doDelete (int $id, EntityTransformerInterface $entityTransformer): void {
+		protected function doDelete (int $id,
+									 EntityTransformerInterface $entityTransformer,
+									 AbstractBaseRepository $repository): void {
+
+			$this->doesEntityExist($repository, $id);
+			$this->confirmResourceOwner($repository->find($id));
 
 			$entityTransformer->delete($id);
 
