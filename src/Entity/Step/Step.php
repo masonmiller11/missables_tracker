@@ -32,9 +32,11 @@
 
 		/**
 		 * Step constructor.
-		 * @param string $name
-		 * @param string $description
+		 *
+		 * @param string  $name
+		 * @param string  $description
 		 * @param Section $section
+		 * @param int     $position
 		 */
 		public function __construct(string $name, string $description, Section $section, int $position) {
 
