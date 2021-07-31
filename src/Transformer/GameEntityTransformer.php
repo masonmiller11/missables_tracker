@@ -59,8 +59,6 @@
 
 		public function update(int $id, Request $request, bool $skipValidation = false): EntityInterface {
 
-
-
 			// TODO: Implement update() method.
 		}
 
