@@ -4,8 +4,9 @@
 	use App\Controller\AbstractBaseApiController;
 	use App\DTO\Playthrough\PlaythroughTemplateDTO;
 	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
-	use App\DTO\Transformer\RequestTransformer\PlaythroughTemplateRequestDTOTransformer;
+	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughTemplateRequestDTOTransformer;
 	use App\Repository\GameRepository;
+	use App\Transformer\PlaythroughEntityTransformer;
 	use App\Transformer\PlaythroughTemplateEntityTransformer;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
@@ -23,18 +24,16 @@
 		/**
 		 * @Route(methods={"POST"}, name="create")
 		 *
-		 * @param Request                                  $request
+		 * @param Request $request
 		 * @param PlaythroughTemplateRequestDTOTransformer $transformer
-		 * @param GameRepository                           $gameRepository
-		 * @param PlaythroughTemplateEntityTransformer     $playthroughTemplateEntityTransformer
+		 * @param PlaythroughTemplateEntityTransformer $playthroughTemplateEntityTransformer
 		 *
 		 * @return Response
 		 * @throws \Exception
 		 */
 		public function create(Request $request,
-							   PlaythroughTemplateRequestDTOTransformer $transformer,
-							   GameRepository $gameRepository,
-							   PlaythroughTemplateEntityTransformer $playthroughTemplateEntityTransformer): Response {
+		                       PlaythroughTemplateRequestDTOTransformer $transformer,
+		                       PlaythroughTemplateEntityTransformer $playthroughTemplateEntityTransformer): Response {
 
 			$playthroughTemplate = $this->doCreate($request,
 												   $transformer,
