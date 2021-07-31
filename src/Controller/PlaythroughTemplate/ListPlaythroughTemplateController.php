@@ -23,6 +23,8 @@
 		 */
 		public function listThisUsers(string|int $page): Response {
 
+			//TODO use paginator for this in future.
+
 			$user = $this->getUser();
 			$templates = $user->getPlaythroughTemplates();
 
