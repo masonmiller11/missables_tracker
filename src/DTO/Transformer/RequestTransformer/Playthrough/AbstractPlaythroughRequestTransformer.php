@@ -1,17 +1,18 @@
 <?php
 	namespace App\DTO\Transformer\RequestTransformer\Playthrough;
 
-	use App\DTO\Playthrough\AbstractPlaythroughDTO;
+	use App\DTO\Playthrough\AbstractPlaythroughEntity;
 	use App\DTO\Transformer\RequestTransformer\AbstractRequestDTOTransformer;
 
 	abstract class AbstractPlaythroughRequestTransformer extends AbstractRequestDTOTransformer {
 
 		/**
-		 * @param AbstractPlaythroughDTO $dto
-		 * @param array $data
-		 * @return AbstractPlaythroughDTO
+		 * @param AbstractPlaythroughEntity $dto
+		 * @param array                     $data
+		 *
+		 * @return AbstractPlaythroughEntity
 		 */
-		protected function assemblePlaythroughDTO (AbstractPlaythroughDTO $dto, array $data): AbstractPlaythroughDTO {
+		protected function assemblePlaythroughDTO(AbstractPlaythroughEntity $dto, array $data): AbstractPlaythroughEntity {
 
 			$dto->visibility = $data['visibility'] ?? false;
 			$dto->gameID = $data['game'];
