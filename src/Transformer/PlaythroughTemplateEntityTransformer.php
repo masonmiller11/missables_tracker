@@ -3,7 +3,7 @@
 
 	use App\DTO\DTOInterface;
 	use App\DTO\Playthrough\PlaythroughTemplateDTO;
-	use App\DTO\Transformer\RequestTransformer\PlaythroughTemplateRequestDTOTransformer;
+	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughTemplateRequestDTOTransformer;
 	use App\Entity\EntityInterface;
 	use App\Entity\Playthrough\PlaythroughTemplate;
 	use App\Entity\User;
@@ -49,8 +49,8 @@
 		public function __construct(EntityManagerInterface $entityManager,
 		                            ValidatorInterface $validator,
 		                            GameRepository $gameRepository,
-									PlaythroughTemplateRequestDTOTransformer $DTOTransformer,
-									PlaythroughTemplateRepository $playthroughTemplateRepository) {
+		                            PlaythroughTemplateRequestDTOTransformer $DTOTransformer,
+		                            PlaythroughTemplateRepository $playthroughTemplateRepository) {
 
 			parent::__construct($entityManager, $validator);
 
