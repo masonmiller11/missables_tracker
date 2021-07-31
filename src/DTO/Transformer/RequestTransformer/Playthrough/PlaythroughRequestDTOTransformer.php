@@ -1,9 +1,7 @@
 <?php
 	namespace App\DTO\Transformer\RequestTransformer\Playthrough;
 
-	use App\DTO\Playthrough\AbstractPlaythroughDTO;
 	use App\DTO\Playthrough\PlaythroughDTO;
-	use App\DTO\Playthrough\PlaythroughTemplateDTO;
 	use App\Exception\ValidationException;
 	use Symfony\Component\HttpFoundation\Request;
 
