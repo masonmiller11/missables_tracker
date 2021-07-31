@@ -1,7 +1,6 @@
 <?php
 	namespace App\Transformer;
 
-	use App\DTO\Playthrough\AbstractPlaythroughEntity;
 	use App\Entity\Playthrough\PlaythroughInterface;
 	use App\Entity\Playthrough\PlaythroughTemplate;
 
