@@ -3,7 +3,7 @@
 
 	use App\Controller\AbstractBaseApiController;
 	use App\Repository\PlaythroughTemplateRepository;
-	use App\Transformer\PlaythroughTemplateEntityTransformer;
+	use App\Transformer\PlaythroughEntityTransformer;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
@@ -22,12 +22,12 @@
 		 * @param Request $request
 		 * @param string|int $id
 		 * @param PlaythroughTemplateRepository $playthroughTemplateRepository
-		 * @param PlaythroughTemplateEntityTransformer $playthroughTemplateEntityTransformer
+		 * @param PlaythroughEntityTransformer $playthroughTemplateEntityTransformer
 		 * @return Response
 		 */
 		public function update(Request $request, string|int $id,
-							   PlaythroughTemplateRepository $playthroughTemplateRepository,
-		                       PlaythroughTemplateEntityTransformer $playthroughTemplateEntityTransformer): Response {
+		                       PlaythroughTemplateRepository $playthroughTemplateRepository,
+		                       PlaythroughEntityTransformer $playthroughTemplateEntityTransformer): Response {
 
 			$this->confirmResourceOwner($playthroughTemplateRepository->find($id));
 
