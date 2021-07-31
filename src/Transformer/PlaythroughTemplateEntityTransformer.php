@@ -15,7 +15,7 @@
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-	final class PlaythroughTemplateEntityTransformer extends AbstractEntityTransformer {
+	final class PlaythroughTemplateEntityTransformer extends AbstractPlaythroughEntityTransformer {
 
 		/**
 		 * @var GameRepository
@@ -119,30 +119,6 @@
 			$this->validate($tempDTO);
 
 			return $this->doUpdate(json_decode($request->getContent(), true), $playthroughTemplate);
-
-		}
-
-		/**
-		 * @param array $data
-		 * @param PlaythroughTemplate $playthroughTemplate
-		 * @return PlaythroughTemplate
-		 */
-		private function doUpdate (array $data, PlaythroughTemplate $playthroughTemplate): PlaythroughTemplate {
-
-			if (isset($data['visibility'])) {
-				$playthroughTemplate->setVisibility($data['visibility']);
-			}
-			if (isset($data['name'])) {
-				$playthroughTemplate->setName($data['name']);
-			}
-			if (isset($data['description'])) {
-				$playthroughTemplate->setDescription($data['description']);
-			}
-
-			$this->entityManager->persist($playthroughTemplate);
-			$this->entityManager->flush();
-
-			return $playthroughTemplate;
 
 		}
 

@@ -6,9 +6,9 @@
 	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughRequestDTOTransformer;
 	use App\Entity\EntityInterface;
 	use App\Entity\Playthrough\Playthrough;
-	use App\Entity\Playthrough\PlaythroughTemplate;
 	use App\Entity\User;
 	use App\Repository\GameRepository;
+	use App\Repository\PlaythroughRepository;
 	use App\Repository\PlaythroughTemplateRepository;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
@@ -16,7 +16,7 @@
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-	final class PlaythroughEntityTransformer extends AbstractEntityTransformer {
+	final class PlaythroughEntityTransformer extends AbstractPlaythroughEntityTransformer {
 
 		/**
 		 * @var GameRepository
@@ -33,6 +33,8 @@
 		 */
 		private PlaythroughRequestDTOTransformer $DTOTransformer;
 
+		private PlaythroughRepository $playthroughRepository;
+
 		/**
 		 * @var PlaythroughTemplateRepository
 		 */
@@ -40,17 +42,20 @@
 
 		/**
 		 * PlaythroughTemplateEntityTransformer constructor.
-		 * @param EntityManagerInterface $entityManager
-		 * @param ValidatorInterface $validator
-		 * @param GameRepository $gameRepository
+		 *
+		 * @param EntityManagerInterface           $entityManager
+		 * @param ValidatorInterface               $validator
+		 * @param GameRepository                   $gameRepository
 		 * @param PlaythroughRequestDTOTransformer $DTOTransformer
-		 * @param PlaythroughTemplateRepository $playthroughTemplateRepository
+		 * @param PlaythroughRepository            $playthroughRepository
+		 * @param PlaythroughTemplateRepository    $playthroughTemplateRepository
 		 */
 		#[Pure]
 		public function __construct(EntityManagerInterface $entityManager,
 		                            ValidatorInterface $validator,
 		                            GameRepository $gameRepository,
 		                            PlaythroughRequestDTOTransformer $DTOTransformer,
+		                            PlaythroughRepository $playthroughRepository,
 		                            PlaythroughTemplateRepository $playthroughTemplateRepository) {
 
 			parent::__construct($entityManager, $validator);
@@ -58,6 +63,7 @@
 			$this->gameRepository = $gameRepository;
 			$this->DTOTransformer = $DTOTransformer;
 			$this->playthroughTemplateRepository = $playthroughTemplateRepository;
+			$this->playthroughRepository = $playthroughRepository;
 
 		}
 
@@ -119,18 +125,16 @@
 		 */
 		public function update(int $id, Request $request, bool $skipValidation = false): EntityInterface {
 
-			//no op
+			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
 
-		}
+			$playthrough = $this->playthroughRepository->find($id);
 
-		/**
-		 * @param array $data
-		 * @param PlaythroughTemplate $playthroughTemplate
-		 * @return PlaythroughTemplate
-		 */
-		private function doUpdate (array $data, PlaythroughTemplate $playthroughTemplate): PlaythroughTemplate {
+			$tempDTO->gameID = $playthrough->getGame()->getId();
+			$tempDTO->templateId = $playthrough->getTemplateId();
+			$this->validate($tempDTO);
 
-			//no op
+			return $this->doUpdate(json_decode($request->getContent(), true), $playthrough);
+
 		}
 
 		/**
@@ -138,7 +142,10 @@
 		 */
 		public function delete(int $id): void {
 
-			//no op
+			$playthrough = $this->playthroughRepository->find($id);
+
+			$this->entityManager->remove($playthrough);
+			$this->entityManager->flush();
 
 		}
 	}
