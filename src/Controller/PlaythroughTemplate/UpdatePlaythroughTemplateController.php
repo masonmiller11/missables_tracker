@@ -29,13 +29,13 @@
 		                       PlaythroughTemplateRepository $playthroughTemplateRepository,
 		                       PlaythroughEntityTransformer $playthroughTemplateEntityTransformer): Response {
 
-			$this->confirmResourceOwner($playthroughTemplateRepository->find($id));
-
 			$playthroughTemplate = $this->doUpdate($request,
 				$id,
-				$playthroughTemplateEntityTransformer);
+				$playthroughTemplateEntityTransformer,
+				$playthroughTemplateRepository);
 
 			return $this->responseHelper->createResourceUpdatedResponse('templates/read/' . $playthroughTemplate->getId());
 
 		}
+
 	}

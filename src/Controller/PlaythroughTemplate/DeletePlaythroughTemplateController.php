@@ -28,9 +28,8 @@
 		                       PlaythroughTemplateRepository $playthroughTemplateRepository,
 		                       PlaythroughEntityTransformer $playthroughTemplateEntityTransformer): Response {
 
-			$this->confirmResourceOwner($playthroughTemplateRepository->find($id));
 
-			$this->doDelete($id, $playthroughTemplateEntityTransformer);
+			$this->doDelete($id, $playthroughTemplateEntityTransformer, $playthroughTemplateRepository);
 
 			return $this->responseHelper->createResourceDeletedResponse();
 
