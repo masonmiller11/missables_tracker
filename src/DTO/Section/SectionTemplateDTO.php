@@ -2,12 +2,12 @@
 
 	namespace App\DTO\Section;
 
-	class SectionDTO extends  AbstractSectionDTO {
+	class SectionTemplateDTO extends  AbstractSectionDTO {
 
 		/**
 		 * @Assert\NotNull,
 		 * @Assert\Type("integer")
 		 */
-		public mixed $playthroughId;
+		public mixed $templateId;
 
 	}
