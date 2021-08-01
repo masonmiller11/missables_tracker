@@ -181,11 +181,7 @@
 
 			Assert($dto instanceof $type);
 
-			$entity = $entityTransformer->assemble($dto, $user);
-			$this->entityManager->persist($entity);
-			$this->entityManager->flush();
-
-			return $entity;
+			return $entityTransformer->create($dto, $user);
 
 		}
 

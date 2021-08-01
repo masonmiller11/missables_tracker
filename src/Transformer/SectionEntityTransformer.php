@@ -1,32 +1,20 @@
 <?php
 	namespace App\Transformer;
 
-	use App\DTO\DTOInterface;
-	use App\DTO\Playthrough\PlaythroughTemplateDTO;
 	use App\DTO\Section\SectionDTO;
-	use App\DTO\Section\SectionTemplateDTO;
-	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughTemplateRequestDTOTransformer;
 	use App\DTO\Transformer\RequestTransformer\Section\SectionRequestTransformer;
-	use App\DTO\Transformer\RequestTransformer\Section\SectionTemplateRequestTransformer;
-	use App\Entity\EntityInterface;
-	use App\Entity\Playthrough\PlaythroughTemplate;
 	use App\Entity\Section\Section;
-	use App\Entity\Section\SectionTemplate;
-	use App\Entity\User;
-	use App\Repository\AbstractBaseRepository;
-	use App\Repository\GameRepository;
 	use App\Repository\PlaythroughRepository;
-	use App\Repository\PlaythroughTemplateRepository;
 	use App\Repository\SectionRepository;
-	use App\Repository\StepRepository;
-	use App\Repository\SectionTemplateRepository;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-	final class SectionEntityTransformer extends AbstractSectionEntityTransformer {
+	final class SectionEntityTransformer extends AbstractEntityTransformer {
+
+		use StepSectionCheckDataTrait;
 
 		/**
 		 * @var PlaythroughRepository
@@ -58,46 +46,20 @@
 		}
 
 		/**
-		 * @param SectionDTO $dto
-		 * @param User $user
 		 *
 		 * @return Section
 		 */
-		public function assemble (SectionDTO $dto, User $user): Section {
+		public function doCreateWork (): Section {
 
-			$this->user = $user;
+			assert($this->dto instanceof SectionDTO);
 
-			return $this->create($dto);
-
-		}
-
-		/**
-		 *
-		 * @param DTOInterface $dto
-		 * @param bool         $skipValidation
-		 *
-		 * @return Section
-		 */
-		public function create (DTOInterface $dto, bool $skipValidation = false): Section {
-
-			if (!$skipValidation) {
-				$this->validate($dto);
-			}
-
-			assert($dto instanceof SectionDTO);
-
-			$playthrough = $this->playthroughRepository->find($dto->playthroughId);
+			$playthrough = $this->playthroughRepository->find($this->dto->playthroughId);
 
 			if (!$playthrough) {
 				throw new NotFoundHttpException('playthrough not found');
 			}
 
-			$section = new Section($dto->name, $dto->description, $playthrough, $dto->position);
-
-			$this->entityManager->persist($section);
-			$this->entityManager->flush();
-
-			return $section;
+			return new Section($this->dto->name, $this->dto->name, $playthrough, $this->dto->name);
 
 		}
 
@@ -105,22 +67,21 @@
 		 * @param int $id
 		 * @param Request $request
 		 * @param bool $skipValidation
-		 * @return EntityInterface
+		 * @return Section
 		 */
-		public function update(int $id, Request $request, bool $skipValidation = false): EntityInterface {
-
-			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
+		public function doUpdateWork(int $id, Request $request, bool $skipValidation = false): Section {
 
 			$section = $this->repository->find($id);
 
+			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
 			$tempDTO->playthroughId = $section->getPlaythrough()->getId();
-
-			//TODO Can we $this->>DTOTransformer in parent abstract class
-			//TODO... and set $this->DTOTransformer in this class?
-
 			$this->validate($tempDTO);
 
-			return $this->doUpdate(json_decode($request->getContent(), true), $section);
+			$section = $this->checkData($section, json_decode($request->getContent(), true));
+
+			Assert ($section instanceof Section);
+
+			return $section;
 
 		}
 

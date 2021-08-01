@@ -5,7 +5,6 @@
 	use App\Entity\EntityInterface;
 	use App\Entity\User;
 	use Symfony\Component\HttpFoundation\Request;
-	use Symfony\Component\HttpFoundation\RequestStack;
 
 	/**
 	 * Interface EntityTransformerInterface

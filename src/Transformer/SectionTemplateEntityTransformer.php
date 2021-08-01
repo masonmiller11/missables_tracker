@@ -1,16 +1,9 @@
 <?php
 	namespace App\Transformer;
 
-	use App\DTO\DTOInterface;
-	use App\DTO\Playthrough\PlaythroughTemplateDTO;
 	use App\DTO\Section\SectionTemplateDTO;
-	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughTemplateRequestDTOTransformer;
 	use App\DTO\Transformer\RequestTransformer\Section\SectionTemplateRequestTransformer;
-	use App\Entity\EntityInterface;
-	use App\Entity\Playthrough\PlaythroughTemplate;
 	use App\Entity\Section\SectionTemplate;
-	use App\Entity\User;
-	use App\Repository\GameRepository;
 	use App\Repository\PlaythroughTemplateRepository;
 	use App\Repository\SectionTemplateRepository;
 	use Doctrine\ORM\EntityManagerInterface;
@@ -19,7 +12,9 @@
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-	final class SectionTemplateEntityTransformer extends AbstractSectionEntityTransformer {
+	final class SectionTemplateEntityTransformer extends AbstractEntityTransformer {
+
+		use StepSectionCheckDataTrait;
 
 		/**
 		 * @var PlaythroughTemplateRepository
@@ -51,46 +46,21 @@
 		}
 
 		/**
-		 * @param SectionTemplateDTO $dto
-		 * @param User               $user
 		 *
 		 * @return SectionTemplate
 		 */
-		public function assemble (SectionTemplateDTO $dto, User $user): SectionTemplate {
+		public function doCreateWork (): SectionTemplate {
 
-			$this->user = $user;
 
-			return $this->create($dto);
+			assert($this->dto instanceof SectionTemplateDTO);
 
-		}
-
-		/**
-		 *
-		 * @param DTOInterface $dto
-		 * @param bool         $skipValidation
-		 *
-		 * @return SectionTemplate
-		 */
-		public function create (DTOInterface $dto, bool $skipValidation = false): SectionTemplate {
-
-			if (!$skipValidation) {
-				$this->validate($dto);
-			}
-
-			assert($dto instanceof SectionTemplateDTO);
-
-			$playthroughTemplate = $this->playthroughTemplateRepository->find($dto->templateId);
+			$playthroughTemplate = $this->playthroughTemplateRepository->find($this->dto->templateId);
 
 			if (!$playthroughTemplate) {
 				throw new NotFoundHttpException('template not found');
 			}
 
-			$sectionTemplate = new SectionTemplate($dto->name, $dto->description, $playthroughTemplate, $dto->position);
-
-			$this->entityManager->persist($sectionTemplate);
-			$this->entityManager->flush();
-
-			return $sectionTemplate;
+			return new SectionTemplate($this->dto->name, $this->dto->description, $playthroughTemplate, $this->dto->position);
 
 		}
 
@@ -98,19 +68,22 @@
 		 * @param int $id
 		 * @param Request $request
 		 * @param bool $skipValidation
-		 * @return EntityInterface
+		 * @return SectionTemplate
 		 */
-		public function update(int $id, Request $request, bool $skipValidation = false): EntityInterface {
-
-			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
+		public function doUpdateWork(int $id, Request $request, bool $skipValidation = false): SectionTemplate {
 
 			$sectionTemplate = $this->repository->find($id);
 
-			$tempDTO->templateId = $sectionTemplate->getPlaythrough()->getId();
 
+			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
+			$tempDTO->templateId = $sectionTemplate->getPlaythrough()->getId();
 			$this->validate($tempDTO);
 
-			return $this->doUpdate(json_decode($request->getContent(), true), $sectionTemplate);
+			$sectionTemplate = $this->checkData($sectionTemplate, json_decode($request->getContent(), true));
+
+			Assert($sectionTemplate instanceof SectionTemplate);
+
+			return $sectionTemplate;
 
 		}
 

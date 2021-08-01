@@ -1,29 +1,10 @@
 <?php
 	namespace App\Transformer;
 
-	use App\DTO\DTOInterface;
-	use App\DTO\Playthrough\PlaythroughTemplateDTO;
-	use App\DTO\Section\SectionDTO;
-	use App\DTO\Section\SectionTemplateDTO;
-	use App\DTO\Step\StepDTO;
 	use App\DTO\Step\StepTemplateDTO;
-	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughTemplateRequestDTOTransformer;
-	use App\DTO\Transformer\RequestTransformer\Section\SectionRequestTransformer;
-	use App\DTO\Transformer\RequestTransformer\Section\SectionTemplateRequestTransformer;
-	use App\DTO\Transformer\RequestTransformer\Step\StepRequestTransformer;
 	use App\DTO\Transformer\RequestTransformer\Step\StepTemplateRequestTransformer;
-	use App\Entity\EntityInterface;
-	use App\Entity\Playthrough\PlaythroughTemplate;
-	use App\Entity\Section\Section;
-	use App\Entity\Section\SectionTemplate;
-	use App\Entity\Step\Step;
 	use App\Entity\Step\StepTemplate;
-	use App\Entity\User;
 	use App\Repository\GameRepository;
-	use App\Repository\PlaythroughRepository;
-	use App\Repository\PlaythroughTemplateRepository;
-	use App\Repository\SectionRepository;
-	use App\Repository\StepRepository;
 	use App\Repository\SectionTemplateRepository;
 	use App\Repository\StepTemplateRepository;
 	use Doctrine\ORM\EntityManagerInterface;
@@ -32,24 +13,24 @@
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-	final class StepTemplateEntityTransformer extends AbstractStepEntityTransformer {
+	final class StepTemplateEntityTransformer extends AbstractEntityTransformer {
 
-		private StepTemplateRepository $stepTemplateRepository;
+		use StepSectionCheckDataTrait;
+
+		private SectionTemplateRepository $sectionTemplateRepository;
 
 		/**
 		 * PlaythroughTemplateEntityTransformer constructor.
 		 *
-		 * @param EntityManagerInterface         $entityManager
-		 * @param ValidatorInterface             $validator
-		 * @param GameRepository                 $gameRepository
+		 * @param EntityManagerInterface $entityManager
+		 * @param ValidatorInterface $validator
 		 * @param StepTemplateRequestTransformer $DTOTransformer
-		 * @param SectionTemplateRepository      $sectionRepository
-		 * @param StepTemplateRepository         $stepTemplateRepository
+		 * @param SectionTemplateRepository $sectionRepository
+		 * @param StepTemplateRepository $stepTemplateRepository
 		 */
 		#[Pure]
 		public function __construct(EntityManagerInterface $entityManager,
 		                            ValidatorInterface $validator,
-		                            GameRepository $gameRepository,
 									StepTemplateRequestTransformer $DTOTransformer,
 		                            SectionTemplateRepository $sectionRepository,
 									StepTemplateRepository $stepTemplateRepository) {
@@ -57,52 +38,26 @@
 			parent::__construct($entityManager, $validator);
 
 			$this->DTOTransformer = $DTOTransformer;
-			$this->stepTemplateRepository = $stepTemplateRepository;
-			$this->repository = $sectionRepository;
-
-		}
-
-		/**
-		 * @param StepTemplateDTO $dto
-		 * @param User $user
-		 *
-		 * @return StepTemplate
-		 */
-		public function assemble (StepTemplateDTO $dto, User $user): StepTemplate {
-
-			$this->user = $user;
-
-			return $this->create($dto);
+			$this->repository = $stepTemplateRepository;
+			$this->sectionTemplateRepository = $sectionRepository;
 
 		}
 
 		/**
 		 *
-		 * @param DTOInterface $dto
-		 * @param bool         $skipValidation
-		 *
 		 * @return StepTemplate
 		 */
-		public function create (DTOInterface $dto, bool $skipValidation = false): StepTemplate {
+		public function doCreateWork (): StepTemplate {
 
-			if (!$skipValidation) {
-				$this->validate($dto);
-			}
+			assert($this->dto instanceof StepTemplateDTO);
 
-			assert($dto instanceof StepTemplateDTO);
-
-			$sectionTemplate = $this->repository->find($dto->sectionTemplateId);
+			$sectionTemplate = $this->sectionTemplateRepository->find($this->dto->sectionTemplateId);
 
 			if (!$sectionTemplate) {
 				throw new NotFoundHttpException('section template not found');
 			}
 
-			$stepTemplate = new StepTemplate($dto->name, $dto->description, $sectionTemplate, $dto->position);
-
-			$this->entityManager->persist($stepTemplate);
-			$this->entityManager->flush();
-
-			return $stepTemplate;
+			return new StepTemplate($this->dto->name, $this->dto->description, $sectionTemplate, $this->dto->position);
 
 		}
 
@@ -110,22 +65,21 @@
 		 * @param int $id
 		 * @param Request $request
 		 * @param bool $skipValidation
-		 * @return EntityInterface
+		 * @return StepTemplate
 		 */
-		public function update(int $id, Request $request, bool $skipValidation = false): EntityInterface {
-
-			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
+		public function doUpdateWork(int $id, Request $request, bool $skipValidation = false): StepTemplate {
 
 			$stepTemplate = $this->stepTemplateRepository->find($id);
 
+			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
 			$tempDTO->sectionTemplateId = $stepTemplate->getSection()->getId();
-
-			//TODO Can we $this->>DTOTransformer in parent abstract class
-			//TODO... and set $this->DTOTransformer in this class?
-
 			$this->validate($tempDTO);
 
-			return $this->doUpdate(json_decode($request->getContent(), true), $stepTemplate);
+			$stepTemplate = $this->checkData($stepTemplate, json_decode($request->getContent(), true));
+
+			Assert ($stepTemplate instanceof StepTemplate);
+
+			return $stepTemplate;
 
 		}
 
