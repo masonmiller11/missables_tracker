@@ -24,18 +24,6 @@
 		private GameRepository $gameRepository;
 
 		/**
-		 * @var User
-		 */
-		private User $user;
-
-		/**
-		 * @var PlaythroughRequestDTOTransformer
-		 */
-		private PlaythroughRequestDTOTransformer $DTOTransformer;
-
-		private PlaythroughRepository $playthroughRepository;
-
-		/**
 		 * @var PlaythroughTemplateRepository
 		 */
 		private PlaythroughTemplateRepository $playthroughTemplateRepository;
@@ -63,7 +51,6 @@
 			$this->gameRepository = $gameRepository;
 			$this->DTOTransformer = $DTOTransformer;
 			$this->playthroughTemplateRepository = $playthroughTemplateRepository;
-			$this->playthroughRepository = $playthroughRepository;
 			$this->repository = $playthroughRepository;
 
 		}
@@ -128,7 +115,7 @@
 
 			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
 
-			$playthrough = $this->playthroughRepository->find($id);
+			$playthrough = $this->repository->find($id);
 
 			$tempDTO->gameID = $playthrough->getGame()->getId();
 			$tempDTO->templateId = $playthrough->getTemplateId();

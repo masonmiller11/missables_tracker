@@ -31,36 +31,22 @@
 	final class StepEntityTransformer extends AbstractStepEntityTransformer {
 
 		/**
-		 * @var User
-		 */
-		private User $user;
-
-		/**
-		 * @var StepRequestTransformer
-		 */
-		private StepRequestTransformer $DTOTransformer;
-
-		/**
 		 * @var SectionRepository
 		 */
 		private SectionRepository $sectionRepository;
-
-		private StepRepository $stepRepository;
 
 		/**
 		 * PlaythroughTemplateEntityTransformer constructor.
 		 *
 		 * @param EntityManagerInterface $entityManager
-		 * @param ValidatorInterface     $validator
-		 * @param GameRepository         $gameRepository
+		 * @param ValidatorInterface $validator
 		 * @param StepRequestTransformer $DTOTransformer
-		 * @param SectionRepository      $sectionRepository
-		 * @param StepRepository         $stepRepository
+		 * @param SectionRepository $sectionRepository
+		 * @param StepRepository $stepRepository
 		 */
 		#[Pure]
 		public function __construct(EntityManagerInterface $entityManager,
 		                            ValidatorInterface $validator,
-		                            GameRepository $gameRepository,
 									StepRequestTransformer $DTOTransformer,
 		                            SectionRepository $sectionRepository,
 									StepRepository $stepRepository) {
@@ -68,8 +54,8 @@
 			parent::__construct($entityManager, $validator);
 
 			$this->DTOTransformer = $DTOTransformer;
-			$this->stepRepository = $stepRepository;
 			$this->sectionRepository = $sectionRepository;
+			$this->repository = $stepRepository;
 
 		}
 
@@ -127,7 +113,7 @@
 
 			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
 
-			$step = $this->stepRepository->find($id);
+			$step = $this->repository->find($id);
 
 			$tempDTO->sectionId = $step->getSection()->getId();
 
@@ -140,18 +126,4 @@
 
 		}
 
-		/**
-		 * @param int $id
-		 */
-		public function delete(int $id): void {
-
-			$step = $this->stepRepository->find($id);
-
-			$this->entityManager->remove($step);
-			$this->entityManager->flush();
-
-			//TODO move this functionality into a doDelete method on AbstractEntityTransformer
-			//TODO ... that takes in the repository and entity as parameters.
-
-		}
 	}

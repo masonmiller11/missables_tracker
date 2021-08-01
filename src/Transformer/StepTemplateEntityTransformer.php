@@ -34,21 +34,6 @@
 
 	final class StepTemplateEntityTransformer extends AbstractStepEntityTransformer {
 
-		/**
-		 * @var User
-		 */
-		private User $user;
-
-		/**
-		 * @var StepTemplateRequestTransformer
-		 */
-		private StepTemplateRequestTransformer $DTOTransformer;
-
-		/**
-		 * @var SectionTemplateRepository
-		 */
-		private SectionTemplateRepository $sectionTemplateRepository;
-
 		private StepTemplateRepository $stepTemplateRepository;
 
 		/**
@@ -73,7 +58,7 @@
 
 			$this->DTOTransformer = $DTOTransformer;
 			$this->stepTemplateRepository = $stepTemplateRepository;
-			$this->sectionTemplateRepository = $sectionRepository;
+			$this->repository = $sectionRepository;
 
 		}
 
@@ -106,7 +91,7 @@
 
 			assert($dto instanceof StepTemplateDTO);
 
-			$sectionTemplate = $this->sectionTemplateRepository->find($dto->sectionTemplateId);
+			$sectionTemplate = $this->repository->find($dto->sectionTemplateId);
 
 			if (!$sectionTemplate) {
 				throw new NotFoundHttpException('section template not found');
@@ -144,18 +129,4 @@
 
 		}
 
-		/**
-		 * @param int $id
-		 */
-		public function delete(int $id): void {
-
-			$stepTemplate = $this->stepTemplateRepository->find($id);
-
-			$this->entityManager->remove($stepTemplate);
-			$this->entityManager->flush();
-
-			//TODO move this functionality into a doDelete method on AbstractEntityTransformer
-			//TODO ... that takes in the repository and entity as parameters.
-
-		}
 	}

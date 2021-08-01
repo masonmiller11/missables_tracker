@@ -29,41 +29,22 @@
 	final class SectionEntityTransformer extends AbstractSectionEntityTransformer {
 
 		/**
-		 * @var User
-		 */
-		private User $user;
-
-		/**
-		 * @var SectionRequestTransformer
-		 */
-		private SectionRequestTransformer $DTOTransformer;
-
-		/**
 		 * @var PlaythroughRepository
 		 */
 		private PlaythroughRepository $playthroughRepository;
 
 		/**
-		 * @var SectionRepository
-		 */
-		private SectionRepository $sectionRepository;
-
-		protected AbstractBaseRepository $repository; //TODO delete this test.
-
-		/**
 		 * PlaythroughTemplateEntityTransformer constructor.
 		 *
-		 * @param EntityManagerInterface    $entityManager
-		 * @param ValidatorInterface        $validator
-		 * @param GameRepository            $gameRepository
+		 * @param EntityManagerInterface $entityManager
+		 * @param ValidatorInterface $validator
 		 * @param SectionRequestTransformer $DTOTransformer
-		 * @param PlaythroughRepository     $playthroughRepository
-		 * @param SectionRepository         $sectionRepository
+		 * @param PlaythroughRepository $playthroughRepository
+		 * @param SectionRepository $sectionRepository
 		 */
 		#[Pure]
 		public function __construct(EntityManagerInterface $entityManager,
 		                            ValidatorInterface $validator,
-		                            GameRepository $gameRepository,
 									SectionRequestTransformer $DTOTransformer,
 		                            PlaythroughRepository $playthroughRepository,
 									SectionRepository $sectionRepository) {
@@ -71,8 +52,7 @@
 			parent::__construct($entityManager, $validator);
 
 			$this->DTOTransformer = $DTOTransformer;
-			$this->sectionRepository = $sectionRepository;
-			$this->repository = $sectionRepository; //TODO delete this test.
+			$this->repository = $sectionRepository;
 			$this->playthroughRepository = $playthroughRepository;
 
 		}
@@ -131,7 +111,7 @@
 
 			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
 
-			$section = $this->sectionRepository->find($id);
+			$section = $this->repository->find($id);
 
 			$tempDTO->playthroughId = $section->getPlaythrough()->getId();
 
@@ -144,18 +124,4 @@
 
 		}
 
-		// /**
-		//  * @param int $id
-		//  */
-		// public function delete(int $id): void {
-		//
-		// 	$section = $this->sectionRepository->find($id);
-		//
-		// 	$this->entityManager->remove($section);
-		// 	$this->entityManager->flush();
-		//
-		// 	//TODO move this functionality into a doDelete method on AbstractEntityTransformer
-		// 	//TODO ... that takes in the repository and entity as parameters.
-		//
-		// }
 	}
