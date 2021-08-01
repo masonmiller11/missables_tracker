@@ -17,7 +17,7 @@
 
 	/**
 	 * @package App\Controller\
-	 * @Route(path="/step/update", name="step.")
+	 * @Route(path="/step/template/update", name="step_template.")
 	 */
 	final class UpdateStepTemplateController extends AbstractBaseApiController {
 
