@@ -6,6 +6,7 @@
 	use App\Entity\Playthrough\PlaythroughTemplate;
 	use App\Repository\GameRepository;
 	use App\Repository\PlaythroughTemplateRepository;
+	use App\Transformer\Trait\PlaythroughCheckDataTrait;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;

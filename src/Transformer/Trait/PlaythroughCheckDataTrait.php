@@ -1,5 +1,5 @@
 <?php
-	namespace App\Transformer;
+	namespace App\Transformer\Trait;
 
 	use App\Entity\Playthrough\PlaythroughInterface;
 
