@@ -4,6 +4,7 @@
 	use App\DTO\DTOInterface;
 	use App\Exception\ValidationException;
 	use Doctrine\ORM\EntityManagerInterface;
+	use http\Exception\RuntimeException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	Abstract class AbstractEntityTransformer implements EntityTransformerInterface {
@@ -30,13 +31,28 @@
 		 * @param DTOInterface $dto
 		 * @throws ValidationException
 		 */
-		protected function validate(DTOInterface $dto) {
+		protected function validate(DTOInterface $dto): void {
 
 			$errors = $this->validator->validate($dto);
 			if (count($errors) > 0) {
 				$errorString = (string)$errors;
 				throw new ValidationException($errorString);
 			}
+
+		}
+
+		public function delete(int $id): void{
+
+			if (!isset($this->repository)) {
+				throw new RuntimeException('repository is not set in ' . static::class);
+			}
+
+			$section = $this->repository->find($id);
+
+			$this->entityManager->remove($section);
+			$this->entityManager->flush();
+
+			//TODO test and then delete this
 
 		}
 
