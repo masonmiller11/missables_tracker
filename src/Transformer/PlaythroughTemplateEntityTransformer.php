@@ -22,20 +22,6 @@
 		 */
 		private GameRepository $gameRepository;
 
-		/**
-		 * @var User
-		 */
-		private User $user;
-
-		/**
-		 * @var PlaythroughTemplateRequestDTOTransformer
-		 */
-		private PlaythroughTemplateRequestDTOTransformer $DTOTransformer;
-
-		/**
-		 * @var PlaythroughTemplateRepository
-		 */
-		private PlaythroughTemplateRepository $playthroughTemplateRepository;
 
 		/**
 		 * PlaythroughTemplateEntityTransformer constructor.
@@ -56,7 +42,7 @@
 
 			$this->gameRepository = $gameRepository;
 			$this->DTOTransformer = $DTOTransformer;
-			$this->playthroughTemplateRepository = $playthroughTemplateRepository;
+			$this->repository = $playthroughTemplateRepository;
 
 		}
 
@@ -113,7 +99,7 @@
 		public function update(int $id, Request $request, bool $skipValidation = false): EntityInterface {
 
 			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
-			$playthroughTemplate = $this->playthroughTemplateRepository->find($id);
+			$playthroughTemplate = $this->repository->find($id);
 
 			$tempDTO->gameID = $playthroughTemplate->getGame()->getId();
 			$this->validate($tempDTO);
@@ -122,15 +108,4 @@
 
 		}
 
-		/**
-		 * @param int $id
-		 */
-		public function delete(int $id): void {
-
-			$playthroughTemplate = $this->playthroughTemplateRepository->find($id);
-
-			$this->entityManager->remove($playthroughTemplate);
-			$this->entityManager->flush();
-
-		}
 	}

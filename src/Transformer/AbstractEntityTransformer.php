@@ -2,6 +2,8 @@
 	namespace App\Transformer;
 
 	use App\DTO\DTOInterface;
+	use App\DTO\Transformer\RequestTransformer\AbstractRequestDTOTransformer;
+	use App\Entity\User;
 	use App\Exception\ValidationException;
 	use App\Repository\AbstractBaseRepository;
 	use Doctrine\ORM\EntityManagerInterface;
@@ -20,10 +22,24 @@
 		 */
 		protected ValidatorInterface $validator;
 
+		/**
+		 * @var AbstractBaseRepository
+		 */
 		protected AbstractBaseRepository $repository;
 
-		public function __construct(EntityManagerInterface $entityManager,
-									ValidatorInterface $validator)  {
+		/**
+		 * @var AbstractRequestDTOTransformer
+		 */
+		protected AbstractRequestDTOTransformer $DTOTransformer;
+
+		protected User $user;
+
+		/**
+		 * AbstractEntityTransformer constructor.
+		 * @param EntityManagerInterface $entityManager
+		 * @param ValidatorInterface $validator
+		 */
+		public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator)  {
 
 			$this->entityManager = $entityManager;
 			$this->validator = $validator;

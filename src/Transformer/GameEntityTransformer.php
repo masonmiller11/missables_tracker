@@ -7,7 +7,6 @@
 	use App\DTO\Game\IGDBGameResponseDTO;
 	use App\Entity\EntityInterface;
 	use App\Entity\Game;
-	use App\Entity\User;
 	use Symfony\Component\HttpFoundation\Request;
 
 	class GameEntityTransformer extends AbstractEntityTransformer {
