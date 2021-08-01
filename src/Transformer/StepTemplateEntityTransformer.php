@@ -7,6 +7,7 @@
 	use App\Repository\GameRepository;
 	use App\Repository\SectionTemplateRepository;
 	use App\Repository\StepTemplateRepository;
+	use App\Transformer\Trait\StepSectionCheckDataTrait;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;

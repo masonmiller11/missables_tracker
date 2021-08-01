@@ -6,6 +6,7 @@
 	use App\Entity\Section\SectionTemplate;
 	use App\Repository\PlaythroughTemplateRepository;
 	use App\Repository\SectionTemplateRepository;
+	use App\Transformer\Trait\StepSectionCheckDataTrait;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;

@@ -6,6 +6,7 @@
 	use App\Entity\Step\Step;
 	use App\Repository\SectionRepository;
 	use App\Repository\StepRepository;
+	use App\Transformer\Trait\StepSectionCheckDataTrait;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
