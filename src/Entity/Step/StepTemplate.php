@@ -3,7 +3,9 @@
 
 	use App\Entity\EntityTrait;
 	use App\Entity\Section\SectionTemplate;
+	use App\Entity\User;
 	use Doctrine\ORM\Mapping as ORM;
+	use JetBrains\PhpStorm\Pure;
 
 	/**
 	 * @ORM\Entity()
@@ -47,6 +49,14 @@
 		 */
 		public function getSection(): SectionTemplate {
 			return $this->sectionTemplate;
+		}
+
+		/**
+		 * @return User
+		 */
+		#[Pure]
+		public function getOwner(): User {
+			return $this->sectionTemplate->getOwner();
 		}
 
 	}

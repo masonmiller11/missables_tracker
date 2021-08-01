@@ -3,6 +3,7 @@
 
 	use App\Entity\EntityTrait;
 	use App\Entity\Section\Section;
+	use App\Entity\User;
 	use Doctrine\ORM\Mapping as ORM;
 
 	/**
@@ -63,6 +64,10 @@
 		 */
 		public function getSection(): Section {
 			return $this->section;
+		}
+
+		public function getOwner(): User {
+			return $this->section->getOwner();
 		}
 
 		/**

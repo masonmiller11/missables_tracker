@@ -18,6 +18,8 @@
 
 		public function getPosition(): int;
 
+		public function getOwner (): User;
+
 		public function setName(string $name) :static;
 
 		public function setDescription(?string $description): static;

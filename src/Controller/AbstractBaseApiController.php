@@ -108,17 +108,6 @@
 		 */
 		private function confirmResourceOwner (Object $entity): void {
 
-			if ($entity instanceof StepInterface) {
-
-				return;
-			}
-
-			//TODO these entities need getOwner at some point. Otherwise anyone can edit them.
-
-			if ($entity instanceof SectionInterface) {
-				return;
-			}
-
 			if (!(method_exists($entity, 'getOwner'))) {
 				throw new InvalidArgumentException();
 			}
