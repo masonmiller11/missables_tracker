@@ -5,6 +5,8 @@
 	use App\DTO\DTOInterface;
 	use App\DTO\Transformer\RequestTransformer\RequestDTOTransformerInterface;
 	use App\Entity\EntityInterface;
+	use App\Entity\Section\SectionInterface;
+	use App\Entity\Step\StepInterface;
 	use App\Entity\User;
 	use App\Exception\ValidationException;
 	use App\Repository\AbstractBaseRepository;
@@ -13,11 +15,11 @@
 	use App\Transformer\EntityTransformerInterface;
 	use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 	use Doctrine\ORM\EntityManagerInterface;
-	use http\Exception\InvalidArgumentException;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\RequestStack;
 	use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+	use Symfony\Component\Validator\Exception\InvalidArgumentException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 	use Symfony\Component\HttpFoundation\Request;
 
@@ -105,6 +107,17 @@
 		 * @param Object $entity
 		 */
 		private function confirmResourceOwner (Object $entity): void {
+
+			if ($entity instanceof StepInterface) {
+
+				return;
+			}
+
+			//TODO these entities need getOwner at some point. Otherwise anyone can edit them.
+
+			if ($entity instanceof SectionInterface) {
+				return;
+			}
 
 			if (!(method_exists($entity, 'getOwner'))) {
 				throw new InvalidArgumentException();

@@ -3,6 +3,7 @@
 
 	use App\Controller\AbstractBaseApiController;
 	use App\DTO\Step\StepDTO;
+	use App\DTO\Step\StepTemplateDTO;
 	use App\DTO\Transformer\RequestTransformer\Step\StepTemplateRequestTransformer;
 	use App\Transformer\StepTemplateEntityTransformer;
 	use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +32,7 @@
 
 			$stepTemplate = $this->doCreate($request,
 				$transformer,
-				StepDTO::class,
+				StepTemplateDTO::class,
 				$stepTemplateEntityTransformer
 			);
 
