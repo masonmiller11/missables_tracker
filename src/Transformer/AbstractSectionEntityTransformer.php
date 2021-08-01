@@ -7,6 +7,8 @@
 
 	abstract class AbstractSectionEntityTransformer extends AbstractEntityTransformer {
 
+		use StepSectionUpdateTrait;
+
 		/**
 		 * @param array            $data
 		 * @param SectionInterface $section
@@ -15,15 +17,7 @@
 		 */
 		protected function doUpdate (array $data, SectionInterface $section): SectionInterface {
 
-			if (isset($data['position'])) {
-				$section->setPosition($data['position']);
-			}
-			if (isset($data['name'])) {
-				$section->setName($data['name']);
-			}
-			if (isset($data['description'])) {
-				$section->setDescription($data['description']);
-			}
+			$section = $this->checkDataKeys($section, $data);
 
 			$this->entityManager->persist($section);
 			$this->entityManager->flush();

@@ -74,12 +74,12 @@
 		}
 
 		/**
-		 * @param SectionTemplateDTO $dto
-		 * @param User               $user
+		 * @param StepDTO $dto
+		 * @param User $user
 		 *
 		 * @return Step
 		 */
-		public function assemble (SectionTemplateDTO $dto, User $user): Step {
+		public function assemble (StepDTO $dto, User $user): Step {
 
 			$this->user = $user;
 

@@ -23,10 +23,12 @@
 					'id'=>$section->getId(),
 					'name'=>$section->getName(),
 					'description'=>$section->getDescription(),
+					'position'=>$section->getPosition(),
 					'steps'=>$section->getSteps()->map(
 						fn(StepTemplate $step) => [
 							'id'=>$step->getId(),
 							'name'=>$step->getName(),
+							'position'=>$step->getPosition(),
 							'description'=>$step->getDescription()
 						]
 					)->toArray()

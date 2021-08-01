@@ -24,11 +24,13 @@
 				fn(Section $section) => [
 					'id'=>$section->getId(),
 					'name'=>$section->getName(),
+					'position'=>$section->getPosition(),
 					'description'=>$section->getDescription(),
 					'steps'=>$section->getSteps()->map(
 						fn(Step $step) => [
 							'id'=>$step->getId(),
 							'isCompleted'=>$step->isCompleted(),
+							'position'=>$step->getPosition(),
 							'name'=>$step->getName(),
 							'description'=>$step->getDescription()
 						]
