@@ -64,6 +64,7 @@
 			$this->DTOTransformer = $DTOTransformer;
 			$this->playthroughTemplateRepository = $playthroughTemplateRepository;
 			$this->playthroughRepository = $playthroughRepository;
+			$this->repository = $playthroughRepository;
 
 		}
 
@@ -137,15 +138,4 @@
 
 		}
 
-		/**
-		 * @param int $id
-		 */
-		public function delete(int $id): void {
-
-			$playthrough = $this->playthroughRepository->find($id);
-
-			$this->entityManager->remove($playthrough);
-			$this->entityManager->flush();
-
-		}
 	}

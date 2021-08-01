@@ -3,6 +3,7 @@
 
 	use App\DTO\DTOInterface;
 	use App\Exception\ValidationException;
+	use App\Repository\AbstractBaseRepository;
 	use Doctrine\ORM\EntityManagerInterface;
 	use http\Exception\RuntimeException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -18,6 +19,8 @@
 		 * @var ValidatorInterface
 		 */
 		protected ValidatorInterface $validator;
+
+		protected AbstractBaseRepository $repository;
 
 		public function __construct(EntityManagerInterface $entityManager,
 									ValidatorInterface $validator)  {
@@ -51,8 +54,6 @@
 
 			$this->entityManager->remove($section);
 			$this->entityManager->flush();
-
-			//TODO test and then delete this
 
 		}
 
