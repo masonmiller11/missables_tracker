@@ -2,6 +2,7 @@
 	namespace App\DTO\Step;
 
 	use App\DTO\DTOInterface;
+	use Symfony\Component\Validator\Constraints as Assert;
 
 	abstract class AbstractStepDTO implements DTOInterface {
 
