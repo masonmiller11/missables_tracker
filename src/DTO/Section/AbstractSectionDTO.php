@@ -1,7 +1,9 @@
 <?php
 	namespace App\DTO\Section;
 
-	abstract class AbstractSectionDTO {
+	use App\DTO\DTOInterface;
+
+	abstract class AbstractSectionDTO implements DTOInterface {
 
 		/**
 		 * @Assert\NotBlank ()
