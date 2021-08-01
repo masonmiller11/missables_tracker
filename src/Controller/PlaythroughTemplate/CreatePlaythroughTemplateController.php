@@ -3,14 +3,10 @@
 
 	use App\Controller\AbstractBaseApiController;
 	use App\DTO\Playthrough\PlaythroughTemplateDTO;
-	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
 	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughTemplateRequestDTOTransformer;
-	use App\Repository\GameRepository;
-	use App\Transformer\PlaythroughEntityTransformer;
 	use App\Transformer\PlaythroughTemplateEntityTransformer;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
-	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 	use Symfony\Component\Routing\Annotation\Route;
 
 	/**
@@ -24,9 +20,9 @@
 		/**
 		 * @Route(methods={"POST"}, name="create")
 		 *
-		 * @param Request $request
+		 * @param Request                                  $request
 		 * @param PlaythroughTemplateRequestDTOTransformer $transformer
-		 * @param PlaythroughTemplateEntityTransformer $playthroughTemplateEntityTransformer
+		 * @param PlaythroughTemplateEntityTransformer     $playthroughTemplateEntityTransformer
 		 *
 		 * @return Response
 		 * @throws \Exception
@@ -37,7 +33,7 @@
 
 			$playthroughTemplate = $this->doCreate($request,
 												   $transformer,
-											  PlaythroughTemplateDTO::class,
+												   PlaythroughTemplateDTO::class,
 												   $playthroughTemplateEntityTransformer
 												   );
 
