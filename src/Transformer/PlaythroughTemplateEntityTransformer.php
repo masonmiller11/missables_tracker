@@ -1,12 +1,9 @@
 <?php
 	namespace App\Transformer;
 
-	use App\DTO\DTOInterface;
 	use App\DTO\Playthrough\PlaythroughTemplateDTO;
 	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughTemplateRequestDTOTransformer;
-	use App\Entity\EntityInterface;
 	use App\Entity\Playthrough\PlaythroughTemplate;
-	use App\Entity\User;
 	use App\Repository\GameRepository;
 	use App\Repository\PlaythroughTemplateRepository;
 	use Doctrine\ORM\EntityManagerInterface;
@@ -15,13 +12,14 @@
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-	final class PlaythroughTemplateEntityTransformer extends AbstractPlaythroughEntityTransformer {
+	final class PlaythroughTemplateEntityTransformer extends AbstractEntityTransformer {
+
+		use PlaythroughCheckDataTrait;
 
 		/**
 		 * @var GameRepository
 		 */
 		private GameRepository $gameRepository;
-
 
 		/**
 		 * PlaythroughTemplateEntityTransformer constructor.
@@ -47,46 +45,20 @@
 		}
 
 		/**
-		 * @param PlaythroughTemplateDTO $dto
-		 * @param User $user
 		 *
 		 * @return PlaythroughTemplate
 		 */
-		public function assemble (PlaythroughTemplateDTO $dto, User $user): PlaythroughTemplate {
+		public function doCreateWork (): PlaythroughTemplate {
 
-			$this->user = $user;
+			assert($this->dto instanceof  PlaythroughTemplateDTO);
 
-			return $this->create($dto);
-
-		}
-
-		/**
-		 *
-		 * @param DTOInterface $dto
-		 * @param bool $skipValidation
-		 *
-		 * @return PlaythroughTemplate
-		 */
-		public function create (DTOInterface $dto, bool $skipValidation = false): PlaythroughTemplate {
-
-			if (!$skipValidation) {
-				$this->validate($dto);
-			}
-
-			assert($dto instanceof PlaythroughTemplateDTO);
-
-			$game = $this->gameRepository->find($dto->gameID);
+			$game = $this->gameRepository->find($this->dto->gameID);
 
 			if (!$game) {
 				throw new NotFoundHttpException('game not found');
 			}
 
-			$playthroughTemplate = new PlaythroughTemplate($dto->name, $dto->description, $this->user, $game, $dto->visibility);
-
-			$this->entityManager->persist($playthroughTemplate);
-			$this->entityManager->flush();
-
-			return $playthroughTemplate;
+			return new PlaythroughTemplate($this->dto->name, $this->dto->description, $this->user, $game, $this->dto->visibility);
 
 		}
 
@@ -94,17 +66,21 @@
 		 * @param int $id
 		 * @param Request $request
 		 * @param bool $skipValidation
-		 * @return EntityInterface
+		 * @return PlaythroughTemplate
 		 */
-		public function update(int $id, Request $request, bool $skipValidation = false): EntityInterface {
+		public function doUpdateWork(int $id, Request $request, bool $skipValidation = false): PlaythroughTemplate {
 
-			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
 			$playthroughTemplate = $this->repository->find($id);
 
+			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
 			$tempDTO->gameID = $playthroughTemplate->getGame()->getId();
 			$this->validate($tempDTO);
 
-			return $this->doUpdate(json_decode($request->getContent(), true), $playthroughTemplate);
+			$playthroughTemplate = $this->checkData(json_decode($request->getContent(), true), $playthroughTemplate);
+
+			Assert($playthroughTemplate instanceof PlaythroughTemplate);
+
+			return $playthroughTemplate;
 
 		}
 
