@@ -138,19 +138,6 @@
 		}
 
 		/**
-		 * @param Request                        $request
-		 * @param RequestDTOTransformerInterface $transformer
-		 *
-		 * @return DTOInterface
-		 * @throws \Exception
-		 */
-		protected function transformOne(Request $request, RequestDTOTransformerInterface $transformer): DTOInterface {
-
-			return $transformer->transformFromRequest($request);
-
-		}
-
-		/**
 		 * @param Request $request
 		 * @param RequestDTOTransformerInterface $dtoTransformer
 		 * @param string $type
@@ -166,7 +153,7 @@
 
 			$user = $this->getUser();
 
-			$dto = $this->transformOne($request, $dtoTransformer);
+			$dto = $dtoTransformer->transformFromRequest($request);
 
 			Assert($dto instanceof $type);
 
