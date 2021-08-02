@@ -35,7 +35,7 @@
 			StepTemplateRepository $stepTemplateRepository,
 			StepTemplateEntityTransformer $stepTemplateEntityTransformer): Response {
 
-			$stepTemplate = $this->doUpdate($request,
+			$stepTemplate = $this->updateOne($request,
 				$id,
 				$stepTemplateEntityTransformer,
 				$stepTemplateRepository);

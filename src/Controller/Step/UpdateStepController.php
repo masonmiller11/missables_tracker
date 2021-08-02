@@ -33,7 +33,7 @@
 			StepRepository $stepRepository,
 			StepEntityTransformer $stepEntityTransformer): Response {
 
-			$step = $this->doUpdate($request,
+			$step = $this->updateOne($request,
 				$id,
 				$stepEntityTransformer,
 				$stepRepository);

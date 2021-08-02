@@ -169,7 +169,7 @@
 		 *
 		 * @return EntityInterface
 		 */
-		protected function doUpdate (Request $request,
+		protected function updateOne (Request $request,
 									 int $id,
 									 EntityTransformerInterface $entityTransformer,
 									 AbstractBaseRepository $repository): EntityInterface {
@@ -186,7 +186,7 @@
 		 * @param EntityTransformerInterface $entityTransformer
 		 * @param AbstractBaseRepository     $repository
 		 */
-		protected function doDelete (int $id,
+		protected function deleteOne (int $id,
 									 EntityTransformerInterface $entityTransformer,
 									 AbstractBaseRepository $repository): void {
 

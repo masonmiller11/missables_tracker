@@ -30,7 +30,7 @@
 			PlaythroughRepository $playthroughRepository,
 			PlaythroughEntityTransformer $playthroughEntityTransformer): Response {
 
-			$playthroughTemplate = $this->doUpdate($request,
+			$playthroughTemplate = $this->updateOne($request,
 				$id,
 				$playthroughEntityTransformer,
 				$playthroughRepository);

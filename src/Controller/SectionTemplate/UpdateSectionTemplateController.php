@@ -35,7 +35,7 @@
 			SectionTemplateRepository $sectionTemplateRepository,
 			SectionTemplateEntityTransformer $sectionTemplateEntityTransformer): Response {
 
-			$sectionTemplate = $this->doUpdate($request,
+			$sectionTemplate = $this->updateOne($request,
 				$id,
 				$sectionTemplateEntityTransformer,
 				$sectionTemplateRepository);

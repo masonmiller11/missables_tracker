@@ -33,7 +33,7 @@
 			SectionRepository $sectionRepository,
 			SectionEntityTransformer $sectionEntityTransformer): Response {
 
-			$section = $this->doUpdate($request,
+			$section = $this->updateOne($request,
 				$id,
 				$sectionEntityTransformer,
 				$sectionRepository);

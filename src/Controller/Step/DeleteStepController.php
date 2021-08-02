@@ -33,7 +33,7 @@
 			StepRepository $stepRepository,
 			StepEntityTransformer $stepEntityTransformer): Response {
 
-			$this->doDelete($id, $stepEntityTransformer, $stepRepository);
+			$this->deleteOne($id, $stepEntityTransformer, $stepRepository);
 
 			return $this->responseHelper->createResourceDeletedResponse();
 
