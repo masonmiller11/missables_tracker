@@ -33,7 +33,7 @@
 			SectionTemplateRepository $sectionTemplateRepository,
 			SectionTemplateEntityTransformer $sectionTemplateEntityTransformer): Response {
 
-			$this->doDelete($id, $sectionTemplateEntityTransformer, $sectionTemplateRepository);
+			$this->deleteOne($id, $sectionTemplateEntityTransformer, $sectionTemplateRepository);
 
 			return $this->responseHelper->createResourceDeletedResponse();
 

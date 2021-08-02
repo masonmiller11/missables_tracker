@@ -31,7 +31,7 @@
 			SectionRepository $sectionRepository,
 			SectionEntityTransformer $sectionEntityTransformer): Response {
 
-			$this->doDelete($id, $sectionEntityTransformer, $sectionRepository);
+			$this->deleteOne($id, $sectionEntityTransformer, $sectionRepository);
 
 			return $this->responseHelper->createResourceDeletedResponse();
 
