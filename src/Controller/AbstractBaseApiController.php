@@ -146,7 +146,7 @@
 		 * @return EntityInterface
 		 * @throws \Exception
 		 */
-		protected function doCreate (Request $request,
+		protected function createOne (Request $request,
 		                             RequestDTOTransformerInterface $dtoTransformer,
 		                             string $type,
 		                             EntityTransformerInterface $entityTransformer): EntityInterface {

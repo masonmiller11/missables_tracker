@@ -35,7 +35,7 @@
 			SectionRequestTransformer $transformer,
 			SectionEntityTransformer $sectionEntityTransformer): Response {
 
-			$section = $this->doCreate($request,
+			$section = $this->createOne($request,
 				$transformer,
 				SectionDTO::class,
 				$sectionEntityTransformer

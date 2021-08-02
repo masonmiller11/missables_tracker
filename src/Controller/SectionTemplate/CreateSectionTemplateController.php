@@ -29,7 +29,7 @@
 			SectionTemplateRequestTransformer $transformer,
 			SectionTemplateEntityTransformer $sectionTemplateEntityTransformer): Response {
 
-			$sectionTemplate = $this->doCreate($request,
+			$sectionTemplate = $this->createOne($request,
 				$transformer,
 				SectionTemplateDTO::class,
 				$sectionTemplateEntityTransformer

@@ -30,7 +30,7 @@
 			StepTemplateRequestTransformer $transformer,
 			StepTemplateEntityTransformer $stepTemplateEntityTransformer): Response {
 
-			$stepTemplate = $this->doCreate($request,
+			$stepTemplate = $this->createOne($request,
 				$transformer,
 				StepTemplateDTO::class,
 				$stepTemplateEntityTransformer
