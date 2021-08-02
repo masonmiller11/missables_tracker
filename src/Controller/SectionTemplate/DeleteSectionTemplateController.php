@@ -29,8 +29,7 @@
 		 *
 		 * @return Response
 		 */
-		public function delete(string|int $id,
-			SectionTemplateRepository $sectionTemplateRepository,
+		public function delete(string|int $id, SectionTemplateRepository $sectionTemplateRepository,
 			SectionTemplateEntityTransformer $sectionTemplateEntityTransformer): Response {
 
 			$this->deleteOne($id, $sectionTemplateEntityTransformer, $sectionTemplateRepository);

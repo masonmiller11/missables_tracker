@@ -31,14 +31,10 @@
 		 *
 		 * @return Response
 		 */
-		public function update(Request $request, string|int $id,
-			StepTemplateRepository $stepTemplateRepository,
+		public function update(Request $request, string|int $id, StepTemplateRepository $stepTemplateRepository,
 			StepTemplateEntityTransformer $stepTemplateEntityTransformer): Response {
 
-			$stepTemplate = $this->updateOne($request,
-				$id,
-				$stepTemplateEntityTransformer,
-				$stepTemplateRepository);
+			$stepTemplate = $this->updateOne($request, $id, $stepTemplateEntityTransformer, $stepTemplateRepository);
 
 			return $this->responseHelper->createResourceUpdatedResponse('step/template/read/' . $stepTemplate->getId());
 

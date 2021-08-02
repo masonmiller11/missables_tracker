@@ -29,9 +29,8 @@
 		 * @return Response
 		 * @throws \Exception
 		 */
-		public function create(Request $request,
-		                       GameRequestDTOTransformer $dtoTransformer,
-		                       GameEntityTransformer $gameEntityTransformer): Response {
+		public function create(Request $request, GameRequestDTOTransformer $dtoTransformer,
+			GameEntityTransformer $gameEntityTransformer): Response {
 
 			$game = $this->createOne($request, $dtoTransformer, GameDTO::class, $gameEntityTransformer);
 

@@ -31,15 +31,10 @@
 		 * @return Response
 		 * @throws \Exception
 		 */
-		public function create(Request $request,
-			SectionRequestTransformer $transformer,
+		public function create(Request $request, SectionRequestTransformer $transformer,
 			SectionEntityTransformer $sectionEntityTransformer): Response {
 
-			$section = $this->createOne($request,
-				$transformer,
-				SectionDTO::class,
-				$sectionEntityTransformer
-			);
+			$section = $this->createOne($request, $transformer, SectionDTO::class, $sectionEntityTransformer);
 
 			return $this->responseHelper->createResourceCreatedResponse('section/read/' . $section->getId());
 

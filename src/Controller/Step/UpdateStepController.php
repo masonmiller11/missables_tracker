@@ -29,14 +29,10 @@
 		 *
 		 * @return Response
 		 */
-		public function update(Request $request, string|int $id,
-			StepRepository $stepRepository,
+		public function update(Request $request, string|int $id, StepRepository $stepRepository,
 			StepEntityTransformer $stepEntityTransformer): Response {
 
-			$step = $this->updateOne($request,
-				$id,
-				$stepEntityTransformer,
-				$stepRepository);
+			$step = $this->updateOne($request, $id, $stepEntityTransformer, $stepRepository);
 
 			return $this->responseHelper->createResourceUpdatedResponse('step/read/' . $step->getId());
 
