@@ -31,8 +31,7 @@
 		 *
 		 * @return Response
 		 */
-		public function delete(string|int $id,
-			StepTemplateRepository $stepTemplateRepository,
+		public function delete(string|int $id, StepTemplateRepository $stepTemplateRepository,
 			StepTemplateEntityTransformer $stepTemplateEntityTransformer): Response {
 
 			$this->deleteOne($id, $stepTemplateEntityTransformer, $stepTemplateRepository);

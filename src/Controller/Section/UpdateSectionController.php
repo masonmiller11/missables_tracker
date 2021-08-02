@@ -29,14 +29,10 @@
 		 *
 		 * @return Response
 		 */
-		public function update(Request $request, string|int $id,
-			SectionRepository $sectionRepository,
+		public function update(Request $request, string|int $id, SectionRepository $sectionRepository,
 			SectionEntityTransformer $sectionEntityTransformer): Response {
 
-			$section = $this->updateOne($request,
-				$id,
-				$sectionEntityTransformer,
-				$sectionRepository);
+			$section = $this->updateOne($request, $id, $sectionEntityTransformer, $sectionRepository);
 
 			return $this->responseHelper->createResourceUpdatedResponse('section/read/' . $section->getId());
 

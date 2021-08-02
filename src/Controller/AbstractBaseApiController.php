@@ -5,8 +5,6 @@
 	use App\DTO\DTOInterface;
 	use App\DTO\Transformer\RequestTransformer\RequestDTOTransformerInterface;
 	use App\Entity\EntityInterface;
-	use App\Entity\Section\SectionInterface;
-	use App\Entity\Step\StepInterface;
 	use App\Entity\User;
 	use App\Exception\ValidationException;
 	use App\Repository\AbstractBaseRepository;
@@ -49,7 +47,6 @@
 		 * @var ServiceEntityRepository
 		 */
 		protected ServiceEntityRepository $repository;
-
 
 		/**
 		 * @var EntityManagerInterface
