@@ -34,7 +34,7 @@
 		                       PlaythroughRequestDTOTransformer $transformer,
 		                       PlaythroughEntityTransformer $playthroughTemplateEntityTransformer): Response {
 
-			$playthrough = $this->doCreate($request,
+			$playthrough = $this->createOne($request,
 				$transformer,
 				PlaythroughDTO::class,
 				$playthroughTemplateEntityTransformer

@@ -33,7 +33,7 @@
 		                       GameRequestDTOTransformer $dtoTransformer,
 		                       GameEntityTransformer $gameEntityTransformer): Response {
 
-			$game = $this->doCreate($request, $dtoTransformer, GameDTO::class, $gameEntityTransformer);
+			$game = $this->createOne($request, $dtoTransformer, GameDTO::class, $gameEntityTransformer);
 
 			return $this->responseHelper->createResourceCreatedResponse('games/read/' . $game->getId());
 
