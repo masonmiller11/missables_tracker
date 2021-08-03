@@ -31,13 +31,10 @@
 		 *
 		 * @return Response
 		 */
-		public function update(Request $request, string|int $id,
-			SectionTemplateRepository $sectionTemplateRepository,
+		public function update(Request $request, string|int $id, SectionTemplateRepository $sectionTemplateRepository,
 			SectionTemplateEntityTransformer $sectionTemplateEntityTransformer): Response {
 
-			$sectionTemplate = $this->doUpdate($request,
-				$id,
-				$sectionTemplateEntityTransformer,
+			$sectionTemplate = $this->updateOne($request, $id, $sectionTemplateEntityTransformer,
 				$sectionTemplateRepository);
 
 			return $this->responseHelper->createResourceUpdatedResponse('section/template/read/' . $sectionTemplate->getId());

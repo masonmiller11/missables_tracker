@@ -27,16 +27,11 @@
 		 * @return Response
 		 * @throws \Exception
 		 */
-		public function create(Request $request,
-		                       PlaythroughTemplateRequestDTOTransformer $transformer,
-		                       PlaythroughTemplateEntityTransformer $playthroughTemplateEntityTransformer): Response {
+		public function create(Request $request, PlaythroughTemplateRequestDTOTransformer $transformer,
+			PlaythroughTemplateEntityTransformer $playthroughTemplateEntityTransformer): Response {
 
-			$playthroughTemplate = $this->doCreate($request,
-												   $transformer,
-												   PlaythroughTemplateDTO::class,
-												   $playthroughTemplateEntityTransformer
-												   );
-
+			$playthroughTemplate = $this->createOne($request, $transformer, PlaythroughTemplateDTO::class,
+				$playthroughTemplateEntityTransformer);
 
 			return $this->responseHelper->createResourceCreatedResponse('templates/read/' . $playthroughTemplate->getId());
 

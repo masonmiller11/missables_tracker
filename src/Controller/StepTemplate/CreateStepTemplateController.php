@@ -26,13 +26,10 @@
 		 * @return Response
 		 * @throws \Exception
 		 */
-		public function create(Request $request,
-			StepTemplateRequestTransformer $transformer,
+		public function create(Request $request, StepTemplateRequestTransformer $transformer,
 			StepTemplateEntityTransformer $stepTemplateEntityTransformer): Response {
 
-			$stepTemplate = $this->doCreate($request,
-				$transformer,
-				StepTemplateDTO::class,
+			$stepTemplate = $this->createOne($request, $transformer, StepTemplateDTO::class,
 				$stepTemplateEntityTransformer
 			);
 

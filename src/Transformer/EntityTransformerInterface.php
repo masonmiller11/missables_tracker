@@ -3,8 +3,8 @@
 
 	use App\DTO\DTOInterface;
 	use App\Entity\EntityInterface;
+	use App\Entity\User;
 	use Symfony\Component\HttpFoundation\Request;
-	use Symfony\Component\HttpFoundation\RequestStack;
 
 	/**
 	 * Interface EntityTransformerInterface
@@ -12,7 +12,7 @@
 	 */
 	interface EntityTransformerInterface {
 
-		public function create(DTOInterface $dto, bool $skipValidation = false): EntityInterface;
+		public function create(DTOInterface $dto, User $user, bool $skipValidation = false): EntityInterface;
 
 		public function update(int $id, Request $request, bool $skipValidation = false): EntityInterface;
 

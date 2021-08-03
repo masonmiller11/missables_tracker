@@ -25,13 +25,10 @@
 		 * @return Response
 		 * @throws \Exception
 		 */
-		public function create(Request $request,
-			SectionTemplateRequestTransformer $transformer,
+		public function create(Request $request, SectionTemplateRequestTransformer $transformer,
 			SectionTemplateEntityTransformer $sectionTemplateEntityTransformer): Response {
 
-			$sectionTemplate = $this->doCreate($request,
-				$transformer,
-				SectionTemplateDTO::class,
+			$sectionTemplate = $this->createOne($request, $transformer, SectionTemplateDTO::class,
 				$sectionTemplateEntityTransformer
 			);
 

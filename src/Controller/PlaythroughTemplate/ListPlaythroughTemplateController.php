@@ -42,10 +42,8 @@
 		 *
 		 * @return Response
 		 */
-		public function listByGame (int $gameID,
-		                            int $page,
-		                            int $pageSize,
-		                            PlaythroughTemplateRepository $repository ): Response {
+		public function listByGame (int $gameID, int $page, int $pageSize,
+			PlaythroughTemplateRepository $repository ): Response {
 
 				$templates = $repository->findAllByGame($gameID, $page, $pageSize);
 				return $this->responseHelper->createReadResponse($templates);
@@ -62,10 +60,8 @@
 		 *
 		 * @return Response
 		 */
-		public function listByAuthor (int $authorID,
-		                              int $page,
-		                              int $pageSize,
-		                              PlaythroughTemplateRepository $repository): Response {
+		public function listByAuthor (int $authorID, int $page, int $pageSize,
+			PlaythroughTemplateRepository $repository): Response {
 
 			$templates = $repository->findAllByAuthor($authorID, $page, $pageSize);
 			return $this->responseHelper->createReadResponse($templates);

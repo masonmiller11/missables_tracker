@@ -30,10 +30,8 @@
 			PlaythroughRepository $playthroughRepository,
 			PlaythroughEntityTransformer $playthroughEntityTransformer): Response {
 
-			$playthroughTemplate = $this->doUpdate($request,
-				$id,
-				$playthroughEntityTransformer,
-				$playthroughRepository);
+			$playthroughTemplate = $this->updateOne($request, $id,
+				$playthroughEntityTransformer, $playthroughRepository);
 
 			return $this->responseHelper->createResourceUpdatedResponse('playthroughs/read/' . $playthroughTemplate->getId());
 

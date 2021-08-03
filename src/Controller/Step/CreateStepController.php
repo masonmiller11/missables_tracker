@@ -25,14 +25,10 @@
 		 * @return Response
 		 * @throws \Exception
 		 */
-		public function create(Request $request,
-			StepRequestTransformer $transformer,
+		public function create(Request $request, StepRequestTransformer $transformer,
 			StepEntityTransformer $stepEntityTransformer): Response {
 
-			$step = $this->doCreate($request,
-				$transformer,
-				StepDTO::class,
-				$stepEntityTransformer
+			$step = $this->createOne($request, $transformer, StepDTO::class, $stepEntityTransformer
 			);
 
 			return $this->responseHelper->createResourceCreatedResponse('step/read/' . $step->getId());

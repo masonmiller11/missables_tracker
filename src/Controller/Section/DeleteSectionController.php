@@ -27,11 +27,10 @@
 		 *
 		 * @return Response
 		 */
-		public function delete(string|int $id,
-			SectionRepository $sectionRepository,
+		public function delete(string|int $id, SectionRepository $sectionRepository,
 			SectionEntityTransformer $sectionEntityTransformer): Response {
 
-			$this->doDelete($id, $sectionEntityTransformer, $sectionRepository);
+			$this->deleteOne($id, $sectionEntityTransformer, $sectionRepository);
 
 			return $this->responseHelper->createResourceDeletedResponse();
 
