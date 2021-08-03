@@ -1,13 +1,11 @@
 <?php
 	namespace App\Transformer;
 
-	use App\DTO\DTOInterface;
 	use App\DTO\Game\AbstractGameDTO;
 	use App\DTO\Game\GameDTO;
 	use App\DTO\Game\IGDBGameResponseDTO;
 	use App\Entity\EntityInterface;
 	use App\Entity\Game;
-	use App\Entity\User;
 	use Symfony\Component\HttpFoundation\Request;
 
 	class GameEntityTransformer extends AbstractEntityTransformer {
@@ -21,34 +19,9 @@
 		 */
 		public function assemble (IGDBGameResponseDTO|GameDTO $dto): Game {
 
-			if (!($dto->releaseDate instanceof \DateTimeImmutable)) {
+			$this->dto = $dto;
 
-				$this->releaseDateTimeImmutable = new \DateTimeImmutable(date('Y-m-d', ((int)$dto->releaseDate)));
-
-			}
-
-			return $this->create($dto);
-
-		}
-
-		/**
-		 * @param DTOInterface $dto
-		 * @param bool $skipValidation
-		 * @return Game
-		 */
-		public function create (DTOInterface $dto, bool $skipValidation = false): Game {
-
-			assert($dto instanceof AbstractGameDTO);
-
-			if (!$skipValidation) {
-				$this->validate($dto);
-			}
-
-			$game = new Game(
-				$dto->genre, $dto->title, $dto->internetGameDatabaseID, $dto->screenshots, $dto->artworks, $dto->cover,
-				$dto->platforms, $dto->slug, $dto->rating, $dto->summary, $dto->storyline,
-				$this->releaseDateTimeImmutable ?? $dto->releaseDate
-			);
+			$game = $this->doCreateWork();
 
 			$this->entityManager->persist($game);
 			$this->entityManager->flush();
@@ -57,12 +30,29 @@
 
 		}
 
-		public function update(int $id, Request $request, bool $skipValidation = false): EntityInterface {
+		/**
+		 * @return Game
+		 * @throws \Exception
+		 */
+		protected function doCreateWork(): Game {
 
-			// TODO: Implement update() method.
+			assert ($this->dto instanceof AbstractGameDTO);
+
+			if (!($this->dto->releaseDate instanceof \DateTimeImmutable)) {
+
+				$this->releaseDateTimeImmutable = new \DateTimeImmutable(date('Y-m-d', ((int)$this->dto->releaseDate)));
+
+			}
+
+			return new Game(
+				$this->dto->genre, $this->dto->title, $this->dto->internetGameDatabaseID, $this->dto->screenshots, $this->dto->artworks, $this->dto->cover,
+				$this->dto->platforms, $this->dto->slug, $this->dto->rating, $this->dto->summary, $this->dto->storyline,
+				$this->releaseDateTimeImmutable ?? $this->dto->releaseDate
+			);
+
 		}
 
-		public function delete(int $id): void {
-			// TODO: Implement delete() method.
+		protected function doUpdateWork(int $id, Request $request, bool $skipValidation): EntityInterface {
+			// no op
 		}
 	}

@@ -26,12 +26,10 @@
 		 * @return Response
 		 */
 		public function update(Request $request, string|int $id,
-		                       PlaythroughTemplateRepository $playthroughTemplateRepository,
-		                       PlaythroughEntityTransformer $playthroughTemplateEntityTransformer): Response {
+			PlaythroughTemplateRepository $playthroughTemplateRepository,
+			PlaythroughEntityTransformer $playthroughTemplateEntityTransformer): Response {
 
-			$playthroughTemplate = $this->doUpdate($request,
-				$id,
-				$playthroughTemplateEntityTransformer,
+			$playthroughTemplate = $this->updateOne($request, $id, $playthroughTemplateEntityTransformer,
 				$playthroughTemplateRepository);
 
 			return $this->responseHelper->createResourceUpdatedResponse('templates/read/' . $playthroughTemplate->getId());

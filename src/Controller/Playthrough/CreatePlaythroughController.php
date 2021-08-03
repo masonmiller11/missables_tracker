@@ -3,10 +3,7 @@
 
 	use App\Controller\AbstractBaseApiController;
 	use App\DTO\Playthrough\PlaythroughDTO;
-	use App\DTO\Playthrough\PlaythroughTemplateDTO;
 	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughRequestDTOTransformer;
-	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughTemplateRequestDTOTransformer;
-	use App\Repository\GameRepository;
 	use App\Transformer\PlaythroughEntityTransformer;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
@@ -34,7 +31,7 @@
 		                       PlaythroughRequestDTOTransformer $transformer,
 		                       PlaythroughEntityTransformer $playthroughTemplateEntityTransformer): Response {
 
-			$playthrough = $this->doCreate($request,
+			$playthrough = $this->createOne($request,
 				$transformer,
 				PlaythroughDTO::class,
 				$playthroughTemplateEntityTransformer

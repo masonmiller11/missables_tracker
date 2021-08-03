@@ -1,41 +1,26 @@
 <?php
 	namespace App\Transformer;
 
-	use App\DTO\DTOInterface;
 	use App\DTO\Playthrough\PlaythroughTemplateDTO;
 	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughTemplateRequestDTOTransformer;
-	use App\Entity\EntityInterface;
 	use App\Entity\Playthrough\PlaythroughTemplate;
-	use App\Entity\User;
 	use App\Repository\GameRepository;
 	use App\Repository\PlaythroughTemplateRepository;
+	use App\Transformer\Trait\PlaythroughCheckDataTrait;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-	final class PlaythroughTemplateEntityTransformer extends AbstractPlaythroughEntityTransformer {
+	final class PlaythroughTemplateEntityTransformer extends AbstractEntityTransformer {
+
+		use PlaythroughCheckDataTrait;
 
 		/**
 		 * @var GameRepository
 		 */
 		private GameRepository $gameRepository;
-
-		/**
-		 * @var User
-		 */
-		private User $user;
-
-		/**
-		 * @var PlaythroughTemplateRequestDTOTransformer
-		 */
-		private PlaythroughTemplateRequestDTOTransformer $DTOTransformer;
-
-		/**
-		 * @var PlaythroughTemplateRepository
-		 */
-		private PlaythroughTemplateRepository $playthroughTemplateRepository;
 
 		/**
 		 * PlaythroughTemplateEntityTransformer constructor.
@@ -56,51 +41,25 @@
 
 			$this->gameRepository = $gameRepository;
 			$this->DTOTransformer = $DTOTransformer;
-			$this->playthroughTemplateRepository = $playthroughTemplateRepository;
-
-		}
-
-		/**
-		 * @param PlaythroughTemplateDTO $dto
-		 * @param User $user
-		 *
-		 * @return PlaythroughTemplate
-		 */
-		public function assemble (PlaythroughTemplateDTO $dto, User $user): PlaythroughTemplate {
-
-			$this->user = $user;
-
-			return $this->create($dto);
+			$this->repository = $playthroughTemplateRepository;
 
 		}
 
 		/**
 		 *
-		 * @param DTOInterface $dto
-		 * @param bool $skipValidation
-		 *
 		 * @return PlaythroughTemplate
 		 */
-		public function create (DTOInterface $dto, bool $skipValidation = false): PlaythroughTemplate {
+		public function doCreateWork (): PlaythroughTemplate {
 
-			if (!$skipValidation) {
-				$this->validate($dto);
-			}
+			assert($this->dto instanceof  PlaythroughTemplateDTO);
 
-			assert($dto instanceof PlaythroughTemplateDTO);
-
-			$game = $this->gameRepository->find($dto->gameID);
+			$game = $this->gameRepository->find($this->dto->gameID);
 
 			if (!$game) {
 				throw new NotFoundHttpException('game not found');
 			}
 
-			$playthroughTemplate = new PlaythroughTemplate($dto->name, $dto->description, $this->user, $game, $dto->visibility);
-
-			$this->entityManager->persist($playthroughTemplate);
-			$this->entityManager->flush();
-
-			return $playthroughTemplate;
+			return new PlaythroughTemplate($this->dto->name, $this->dto->description, $this->user, $game, $this->dto->visibility);
 
 		}
 
@@ -108,29 +67,22 @@
 		 * @param int $id
 		 * @param Request $request
 		 * @param bool $skipValidation
-		 * @return EntityInterface
+		 * @return PlaythroughTemplate
 		 */
-		public function update(int $id, Request $request, bool $skipValidation = false): EntityInterface {
+		public function doUpdateWork(int $id, Request $request, bool $skipValidation = false): PlaythroughTemplate {
+
+			$playthroughTemplate = $this->repository->find($id);
 
 			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
-			$playthroughTemplate = $this->playthroughTemplateRepository->find($id);
-
 			$tempDTO->gameID = $playthroughTemplate->getGame()->getId();
 			$this->validate($tempDTO);
 
-			return $this->doUpdate(json_decode($request->getContent(), true), $playthroughTemplate);
+			$playthroughTemplate = $this->checkData(json_decode($request->getContent(), true), $playthroughTemplate);
+
+			Assert($playthroughTemplate instanceof PlaythroughTemplate);
+
+			return $playthroughTemplate;
 
 		}
 
-		/**
-		 * @param int $id
-		 */
-		public function delete(int $id): void {
-
-			$playthroughTemplate = $this->playthroughTemplateRepository->find($id);
-
-			$this->entityManager->remove($playthroughTemplate);
-			$this->entityManager->flush();
-
-		}
 	}

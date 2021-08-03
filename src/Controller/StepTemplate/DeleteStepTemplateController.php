@@ -31,11 +31,10 @@
 		 *
 		 * @return Response
 		 */
-		public function delete(string|int $id,
-			StepTemplateRepository $stepTemplateRepository,
+		public function delete(string|int $id, StepTemplateRepository $stepTemplateRepository,
 			StepTemplateEntityTransformer $stepTemplateEntityTransformer): Response {
 
-			$this->doDelete($id, $stepTemplateEntityTransformer, $stepTemplateRepository);
+			$this->deleteOne($id, $stepTemplateEntityTransformer, $stepTemplateRepository);
 
 			return $this->responseHelper->createResourceDeletedResponse();
 

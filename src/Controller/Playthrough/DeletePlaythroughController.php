@@ -30,7 +30,7 @@
 			PlaythroughRepository $playthroughRepository,
 			PlaythroughEntityTransformer $playthroughEntityTransformer): Response {
 
-			$this->doDelete($id, $playthroughEntityTransformer, $playthroughRepository);
+			$this->deleteOne($id, $playthroughEntityTransformer, $playthroughRepository);
 
 			return $this->responseHelper->createResourceDeletedResponse();
 

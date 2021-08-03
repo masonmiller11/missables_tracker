@@ -5,8 +5,6 @@
 	use App\DTO\DTOInterface;
 	use App\DTO\Transformer\RequestTransformer\RequestDTOTransformerInterface;
 	use App\Entity\EntityInterface;
-	use App\Entity\Section\SectionInterface;
-	use App\Entity\Step\StepInterface;
 	use App\Entity\User;
 	use App\Exception\ValidationException;
 	use App\Repository\AbstractBaseRepository;
@@ -49,7 +47,6 @@
 		 * @var ServiceEntityRepository
 		 */
 		protected ServiceEntityRepository $repository;
-
 
 		/**
 		 * @var EntityManagerInterface
@@ -108,17 +105,6 @@
 		 */
 		private function confirmResourceOwner (Object $entity): void {
 
-			if ($entity instanceof StepInterface) {
-
-				return;
-			}
-
-			//TODO these entities need getOwner at some point. Otherwise anyone can edit them.
-
-			if ($entity instanceof SectionInterface) {
-				return;
-			}
-
 			if (!(method_exists($entity, 'getOwner'))) {
 				throw new InvalidArgumentException();
 			}
@@ -149,19 +135,6 @@
 		}
 
 		/**
-		 * @param Request                        $request
-		 * @param RequestDTOTransformerInterface $transformer
-		 *
-		 * @return DTOInterface
-		 * @throws \Exception
-		 */
-		protected function transformOne(Request $request, RequestDTOTransformerInterface $transformer): DTOInterface {
-
-			return $transformer->transformFromRequest($request);
-
-		}
-
-		/**
 		 * @param Request $request
 		 * @param RequestDTOTransformerInterface $dtoTransformer
 		 * @param string $type
@@ -170,22 +143,18 @@
 		 * @return EntityInterface
 		 * @throws \Exception
 		 */
-		protected function doCreate (Request $request,
+		protected function createOne (Request $request,
 		                             RequestDTOTransformerInterface $dtoTransformer,
 		                             string $type,
 		                             EntityTransformerInterface $entityTransformer): EntityInterface {
 
 			$user = $this->getUser();
 
-			$dto = $this->transformOne($request, $dtoTransformer);
+			$dto = $dtoTransformer->transformFromRequest($request);
 
 			Assert($dto instanceof $type);
 
-			$entity = $entityTransformer->assemble($dto, $user);
-			$this->entityManager->persist($entity);
-			$this->entityManager->flush();
-
-			return $entity;
+			return $entityTransformer->create($dto, $user);
 
 		}
 
@@ -197,7 +166,7 @@
 		 *
 		 * @return EntityInterface
 		 */
-		protected function doUpdate (Request $request,
+		protected function updateOne (Request $request,
 									 int $id,
 									 EntityTransformerInterface $entityTransformer,
 									 AbstractBaseRepository $repository): EntityInterface {
@@ -214,7 +183,7 @@
 		 * @param EntityTransformerInterface $entityTransformer
 		 * @param AbstractBaseRepository     $repository
 		 */
-		protected function doDelete (int $id,
+		protected function deleteOne (int $id,
 									 EntityTransformerInterface $entityTransformer,
 									 AbstractBaseRepository $repository): void {
 
