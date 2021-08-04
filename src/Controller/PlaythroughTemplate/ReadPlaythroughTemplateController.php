@@ -7,9 +7,6 @@
 	use Symfony\Component\Routing\Annotation\Route;
 
 	/**
-	 * Class ReadPlaythroughTemplateController
-	 *
-	 * @package App\Controller\PlaythroughTemplate
 	 * @Route(path="/templates/read", name="templates.")
 	 */
 	final class ReadPlaythroughTemplateController extends AbstractBaseApiController {
@@ -21,7 +18,6 @@
 		 * @param PlaythroughTemplateRepository $playthroughTemplateRepository
 		 *
 		 * @return Response
-		 * @throws \Exception
 		 */
 		public function read(string $id, PlaythroughTemplateRepository $playthroughTemplateRepository): Response {
 
