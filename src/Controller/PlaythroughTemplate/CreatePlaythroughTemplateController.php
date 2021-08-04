@@ -21,17 +21,17 @@
 		 * @Route(methods={"POST"}, name="create")
 		 *
 		 * @param Request                                  $request
-		 * @param PlaythroughTemplateRequestDTOTransformer $transformer
-		 * @param PlaythroughTemplateEntityTransformer     $playthroughTemplateEntityTransformer
+		 * @param PlaythroughTemplateRequestDTOTransformer $DTOtransformer
+		 * @param PlaythroughTemplateEntityTransformer     $entityTransformer
 		 *
 		 * @return Response
 		 * @throws \Exception
 		 */
-		public function create(Request $request, PlaythroughTemplateRequestDTOTransformer $transformer,
-			PlaythroughTemplateEntityTransformer $playthroughTemplateEntityTransformer): Response {
+		public function create(Request $request, PlaythroughTemplateRequestDTOTransformer $DTOtransformer,
+			PlaythroughTemplateEntityTransformer $entityTransformer): Response {
 
-			$playthroughTemplate = $this->createOne($request, $transformer, PlaythroughTemplateDTO::class,
-				$playthroughTemplateEntityTransformer);
+			$playthroughTemplate = $this->createOne($request, $DTOtransformer, PlaythroughTemplateDTO::class,
+				$entityTransformer);
 
 			return $this->responseHelper->createResourceCreatedResponse('templates/read/' . $playthroughTemplate->getId());
 
