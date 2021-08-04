@@ -107,10 +107,6 @@
 
 		public function update(int $id, Request $request, bool $skipValidation = false): EntityInterface {
 
-			if (!method_exists($this, 'doUpdateWork')) {
-				throw new RuntimeException('cannot run update on ' . static::class);
-			}
-
 			$entity = $this->doUpdateWork($id, $request, $skipValidation);
 
 			$this->entityManager->persist($entity);
