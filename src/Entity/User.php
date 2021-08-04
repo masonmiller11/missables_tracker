@@ -9,12 +9,23 @@
 	use Doctrine\Common\Collections\Selectable;
 	use Doctrine\ORM\Mapping as ORM;
 	use JetBrains\PhpStorm\Pure;
+	use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 	use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 	use Symfony\Component\Security\Core\User\UserInterface;
 
 	/**
 	 * @ORM\Entity()
 	 * @ORM\Table(name="users")
+	 * @UniqueEntity(
+	 *      fields={"email"},
+	 *      errorPath="email",
+	 *      message="It appears you have already registered with this email."
+	 *)
+	 * @UniqueEntity(
+	 *      fields={"username"},
+	 *      errorPath="username",
+	 *      message="Username is already taken."
+	 *)
 	 */
 	class User implements PasswordAuthenticatedUserInterface, UserInterface, EntityInterface {
 
