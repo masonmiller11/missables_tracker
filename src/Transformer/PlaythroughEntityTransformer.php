@@ -39,10 +39,8 @@
 		 * @param PlaythroughTemplateRepository    $playthroughTemplateRepository
 		 */
 		#[Pure]
-		public function __construct(EntityManagerInterface $entityManager,
-		                            ValidatorInterface $validator,
-		                            GameRepository $gameRepository,
-		                            PlaythroughRequestDTOTransformer $DTOTransformer,
+		public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator,
+		                            GameRepository $gameRepository, PlaythroughRequestDTOTransformer $DTOTransformer,
 		                            PlaythroughRepository $playthroughRepository,
 		                            PlaythroughTemplateRepository $playthroughTemplateRepository) {
 
