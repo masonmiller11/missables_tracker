@@ -14,7 +14,7 @@
 		public mixed $password;
 
 		/**
-		 * /**
+		 * @Assert\NotBlank
 		 * @Assert\Email(
 		 *     message = "The email '{{ value }}' is not a valid email."
 		 * )
@@ -22,6 +22,7 @@
 		public mixed $email;
 
 		/**
+		 *
 		 * @Assert\Length(
 		 *      min = 2,
 		 *      max = 50,
