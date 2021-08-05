@@ -73,6 +73,17 @@
 		/**
 		 * @return JsonResponse
 		 */
+		public static function createUserUpdatedResponse (): JsonResponse {
+
+			return new JsonResponse([
+				'status' => 'user updated'
+			]);
+
+		}
+
+		/**
+		 * @return JsonResponse
+		 */
 		public function createResourceDeletedResponse (): JsonResponse {
 
 			return new JsonResponse([
