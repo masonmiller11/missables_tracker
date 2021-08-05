@@ -77,7 +77,7 @@
 			$tempDTO->gameID = $playthroughTemplate->getGame()->getId();
 			$this->validate($tempDTO);
 
-			$playthroughTemplate = $this->checkData(json_decode($request->getContent(), true), $playthroughTemplate);
+			$playthroughTemplate = $this->checkAndSetData(json_decode($request->getContent(), true), $playthroughTemplate);
 
 			Assert($playthroughTemplate instanceof PlaythroughTemplate);
 
