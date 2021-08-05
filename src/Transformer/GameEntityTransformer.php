@@ -8,7 +8,7 @@
 	use App\Entity\Game;
 	use Symfony\Component\HttpFoundation\Request;
 
-	class GameEntityTransformer extends AbstractEntityTransformer {
+	final class GameEntityTransformer extends AbstractEntityTransformer {
 
 		private \DateTimeImmutable $releaseDateTimeImmutable;
 
