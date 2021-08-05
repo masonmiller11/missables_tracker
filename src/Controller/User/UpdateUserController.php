@@ -12,14 +12,15 @@
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+	use Symfony\Component\Routing\Annotation\Route;
 
-	/***
-	 * @Route(path="/user/update", name="user.update")
+	/**
+	 * @Route(path="/user/update", name="user.")
 	 */
 	final class UpdateUserController extends AbstractBaseApiController {
 
 		/**
-		 * @Route(methods={"PATCH"})
+		 * @Route(methods={"PATCH"}, name="update")
 		 *
 		 * @param Request               $request
 		 * @param UserEntityTransformer $userEntityTransformer
@@ -36,7 +37,7 @@
 		}
 
 		/**
-		 * @Route(path="/password", methods={"PATCH"})
+		 * @Route(path="/password", methods={"PATCH"}, name="update_password")
 		 *
 		 * @param Request               $request
 		 * @param UserEntityTransformer $userEntityTransformer
@@ -45,7 +46,7 @@
 		 */
 		public function updatePassword(Request $request, UserEntityTransformer $userEntityTransformer): Response {
 
-			$data = json_decode($request->getContent());
+			$data = json_decode($request->getContent(),true);
 
 			if (!isset($data['password'])) {
 				throw new ValidationException('new users must include password');
