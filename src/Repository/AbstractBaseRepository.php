@@ -16,6 +16,7 @@
 		 * @param QueryBuilder $qb
 		 * @param int $page
 		 * @param int $pageSize
+		 * @param string $itemsName
 		 * @return array
 		 */
 		#[ArrayShape(['items' => "array", 'totalItems' => "int", 'pageCount' => "float"])]
