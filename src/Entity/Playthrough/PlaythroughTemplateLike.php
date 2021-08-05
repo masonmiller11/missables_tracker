@@ -70,7 +70,4 @@
 			return $this->likedTemplate;
 		}
 
-
-
-
 	}
