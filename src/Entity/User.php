@@ -104,6 +104,13 @@
 		}
 
 		/**
+		 * @param string $username
+		 */
+		public function setUsername(string $username): void {
+			$this->username = $username;
+		}
+
+		/**
 		 * @return PlaythroughTemplate[]|Collection|Selectable
 		 */
 		public function getPlaythroughTemplates(): Collection|array|Selectable {
