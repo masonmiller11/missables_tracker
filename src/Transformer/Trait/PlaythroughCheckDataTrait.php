@@ -13,7 +13,7 @@
 		 *
 		 * @return PlaythroughInterface
 		 */
-		private function checkData (array $data, PlaythroughInterface $playthrough): PlaythroughInterface {
+		private function checkAndSetData (array $data, PlaythroughInterface $playthrough): PlaythroughInterface {
 
 			if (isset($data['visibility'])) {
 				$playthrough->setVisibility($data['visibility']);

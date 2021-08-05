@@ -92,7 +92,7 @@
 			$tempDTO->templateId = $playthrough->getTemplateId();
 			$this->validate($tempDTO);
 
-			$playthrough = $this->checkData(json_decode($request->getContent(), true), $playthrough);
+			$playthrough = $this->checkAndSetData(json_decode($request->getContent(), true), $playthrough);
 
 			Assert($playthrough instanceof Playthrough);
 
