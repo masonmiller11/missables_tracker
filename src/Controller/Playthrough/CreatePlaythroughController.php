@@ -10,9 +10,6 @@
 	use Symfony\Component\Routing\Annotation\Route;
 
 	/**
-	 * Class ListPlaythroughController
-	 *
-	 * @package App\Controller
 	 * @Route(path="/playthroughs/create", name="playthroughs.")
 	 */
 	class CreatePlaythroughController extends AbstractBaseApiController {
@@ -21,20 +18,20 @@
 		 * @Route(methods={"POST"}, name="create")
 		 *
 		 * @param Request $request
-		 * @param PlaythroughRequestDTOTransformer $transformer
-		 * @param PlaythroughEntityTransformer $playthroughTemplateEntityTransformer
+		 * @param PlaythroughRequestDTOTransformer $dtoTransformer
+		 * @param PlaythroughEntityTransformer $entityTransformer
 		 *
 		 * @return Response
 		 * @throws \Exception
 		 */
 		public function create(Request $request,
-		                       PlaythroughRequestDTOTransformer $transformer,
-		                       PlaythroughEntityTransformer $playthroughTemplateEntityTransformer): Response {
+		                       PlaythroughRequestDTOTransformer $dtoTransformer,
+		                       PlaythroughEntityTransformer $entityTransformer): Response {
 
 			$playthrough = $this->createOne($request,
-				$transformer,
+				$dtoTransformer,
 				PlaythroughDTO::class,
-				$playthroughTemplateEntityTransformer
+				$entityTransformer
 			);
 
 			return $this->responseHelper->createResourceCreatedResponse('playthroughs/read/' . $playthrough->getId());
