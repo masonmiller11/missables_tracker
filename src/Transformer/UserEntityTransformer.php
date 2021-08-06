@@ -27,7 +27,7 @@
 			$this->repository = $repository;
 		}
 
-		public function doCreateWork(): EntityInterface {
+		public function doCreateWork(): User {
 			assert ($this->dto instanceof UserDTO);
 
 			$user = new User ($this->dto->email, $this->dto->username);
