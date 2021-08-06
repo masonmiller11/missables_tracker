@@ -71,5 +71,5 @@ make. So the entire command for ```build``` is ```make build```.
 - ```start``` will start the containers.
 - ```exec-database``` will connect you into the database (it will ask for password).
 - ```exec-php``` will start a shell inside the php container.
-- ```exec-migration``` will create a migration file from outside container.
-- ```exec-migrate``` will run migrations from outside container.
+- ```exec-migration``` will create a migration file from outside the container.
+- ```exec-migrate``` will run migrations from outside the container.
