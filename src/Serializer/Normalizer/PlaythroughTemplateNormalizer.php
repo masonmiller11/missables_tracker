@@ -17,6 +17,7 @@
 		public function normalize ($object, string $format = null, array $context = []): array {
 
 			$data = $this->createData($object);
+			$data['likes'] = $object->countLikes();
 
 			$data['sections'] = $object->getSections()->map(
 				fn(SectionTemplate $section) => [
@@ -34,8 +35,6 @@
 					)->toArray()
 				]
 			)->toArray();
-
-			$data['likes'] = $object->getNumberOfLikes();
 
 			return $data;
 
