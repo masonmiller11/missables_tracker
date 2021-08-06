@@ -17,7 +17,7 @@ So if you were to start a playthrough of say, *Tales of Vesperia*, you'd search 
 another user (or add one yourself). You would then start a new playthrough based off that template and check items off
 as you progress.
 
-#Setup
+### Setup
  
 After you've cloned the project, run ```docker-compose up --build -d``` to set up containers.
 
@@ -27,7 +27,7 @@ Once the containers are up we'll need to install our dependencies by running
 You can run commands from inside the php container with: ```docker-compose exec php bash```. This starts a shell inside 
 the container.
 
-#Database
+### Database
 
 We'll need to add an environment variable for the database connection. You can add this to the .env file, but I usually
 keep it in .env.local: 
@@ -37,13 +37,13 @@ keep it in .env.local:
 Once that's set up, run migrations. Assuming you've bashed into the php container, 
 run: ```php bin/console doctrine:migrations:migrate```.
 
-#Security
+### Security
 
 This project uses lexik/jwt-authentication-bundle for security. Set up is pretty simple.
 Run ```php bin/console lekix:jwt:generate-keypair``` to generate a keypair that will live at config/jwt. Installing the
 bundle should have installed environment variables pointing to these files. 
 
-#Data Fixtures
+### Data Fixtures
 
 To populate the database with some dummy data, run: ```php/bin/console doctrine:fixtures:load```.
 
@@ -52,7 +52,7 @@ This will create a singer user account. The email (for login) will be 'testuser@
 
 You'll also get dummy data for games, templates, playthroughs, sections, steps, etc.
 
-#Internet Game Database
+### Internet Game Database
 
 When games are added to the database it uses [Internet Game Database](https://www.igdb.com/discover) to find information
 about game as well as cover art. You'll need to add your IGDB id and api secret as environment variables:
@@ -62,7 +62,7 @@ API_ID=id
 API_SECRET=secret
 ```
 
-#Makefile
+###Makefile
 
 There are some makefile commands to make navigating the project a bit easier. Each of these will need to begin with 
 make. So the entire command for ```build``` is ```make build```. 
