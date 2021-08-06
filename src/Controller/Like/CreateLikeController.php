@@ -13,7 +13,7 @@
 	/**
 	 * @Route(path="/like/create", name="like.")
 	 */
-	class CreateLikeController extends AbstractBaseApiController {
+	final class CreateLikeController extends AbstractBaseApiController {
 
 		/**
 		 * @Route(methods={"POST"}, name="create")

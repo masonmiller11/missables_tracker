@@ -38,4 +38,22 @@
 
 		}
 
+		/**
+		 * @param int $ownerId
+		 * @param int $page
+		 * @param int $pageSize
+		 * @return array|null
+		 */
+		#[ArrayShape(['items' => "array", 'totalItems' => "int", 'pageCount' => "float"])]
+		public function findAllByOwner(int $ownerId, int $page, int $pageSize): array|null {
+			$qb = $this->createQueryBuilder('templateLike')
+				->select('templateLike')
+				->andWhere('owner.id = :ownerId')
+				->leftJoin('templateLike.likedBy', 'owner')
+				->setParameter('ownerId', $ownerId);
+
+			return $this->doPagination($qb, $page, $pageSize, 'playthroughs');
+
+		}
+
 	}
