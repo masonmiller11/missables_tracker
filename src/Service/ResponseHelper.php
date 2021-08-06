@@ -84,6 +84,18 @@
 		/**
 		 * @return JsonResponse
 		 */
+		public static function createLikeCreatedResponse (): JsonResponse {
+
+			return new JsonResponse([
+				'status' => 'like updated'
+			]);
+
+		}
+
+
+		/**
+		 * @return JsonResponse
+		 */
 		public function createResourceDeletedResponse (): JsonResponse {
 
 			return new JsonResponse([
