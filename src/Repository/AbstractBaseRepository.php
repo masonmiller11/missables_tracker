@@ -32,8 +32,8 @@
 
 			$items = array();
 
-			foreach($paginator as $template) {
-				$items[] = $template;
+			foreach($paginator as $item) {
+				$items[] = $item;
 			}
 
 			$queryResults = [
