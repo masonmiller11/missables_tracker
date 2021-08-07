@@ -34,7 +34,7 @@
 			$searchTerm = $this->request->getCurrentRequest()->query->get('game');
 			$games = $gameRepository->searchByName($searchTerm);
 
-			return $this->responseHelper->createResponse($games);
+			return $this->responseHelper->createReadResponse($games);
 
 		}
 

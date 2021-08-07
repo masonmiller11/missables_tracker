@@ -1,6 +1,6 @@
 <?php
 	namespace App\Service;
-	
+
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -20,11 +20,11 @@
 		}
 
 		/**
-		 * @param Object|iterable $object
+		 * @param Object|iterable|null $object
 		 *
 		 * @return iterable|JsonResponse|Response
 		 */
-		public function createResponse (Object|iterable $object): iterable|JsonResponse|Response {
+		public function createReadResponse (Object|iterable|null $object): iterable|JsonResponse|Response {
 
 			if (!$object || $object === []) {
 				throw new NotFoundHttpException();
@@ -45,13 +45,63 @@
 		 *
 		 * @return JsonResponse
 		 */
-		public function returnResourceCreatedResponse (string $uri): JsonResponse {
+		public function createResourceCreatedResponse (string $uri): JsonResponse {
 
 			return new JsonResponse([
 					'status' => 'resource created'
 				], Response::HTTP_CREATED, [
 					"Location" => $uri
 				]);
+
+		}
+
+		/**
+		 * @param string $uri
+		 *
+		 * @return JsonResponse
+		 */
+		public function createResourceUpdatedResponse (string $uri): JsonResponse {
+
+			return new JsonResponse([
+				'status' => 'resource updated'
+			], Response::HTTP_OK, [
+//				"Location" => $uri
+			]);
+
+		}
+
+		/**
+		 * @return JsonResponse
+		 */
+		public static function createUserUpdatedResponse (): JsonResponse {
+
+			return new JsonResponse([
+				'status' => 'user updated'
+			]);
+
+		}
+
+		/**
+		 * @return JsonResponse
+		 */
+		public static function createLikeCreatedResponse (): JsonResponse {
+
+			return new JsonResponse([
+				'status' => 'like updated'
+			]);
+
+		}
+
+
+		/**
+		 * @return JsonResponse
+		 */
+		public function createResourceDeletedResponse (): JsonResponse {
+
+			return new JsonResponse([
+				'status' => 'resource deleted'
+			], Response::HTTP_OK, [
+			]);
 
 		}
 

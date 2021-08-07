@@ -11,7 +11,7 @@
 		 * @method Section[]    findAll()
 		 * @method Section[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
 		 */
-	class SectionRepository extends ServiceEntityRepository
+	class SectionRepository extends AbstractBaseRepository
 	{
 		public function __construct(ManagerRegistry $registry)
 		{

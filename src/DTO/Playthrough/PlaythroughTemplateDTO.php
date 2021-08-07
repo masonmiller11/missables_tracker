@@ -5,16 +5,4 @@
 
 	class PlaythroughTemplateDTO extends AbstractPlaythroughDTO {
 
-		/**
-		 * @Assert\NotNull()
-		 * @Assert\Type("int")
-		 */
-		public mixed $numberOfPlaythroughs;
-
-		/**
-		 * @Assert\NotNull()
-		 * @Assert\Type("int")
-		 */
-		public mixed $votes;
-
 	}
