@@ -2,6 +2,7 @@
 	namespace App\Controller\Playthrough;
 
 	use App\Controller\AbstractBaseApiController;
+	use App\Repository\PlaythroughRepository;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\HttpFoundation\Response;
 
@@ -14,18 +15,20 @@
 	final class ListPlaythroughController extends AbstractBaseApiController {
 
 		/**
-		 * @Route(path="/{page<\d+>?1}", methods={"GET"}, name="list")
+		 * @Route(path="/{page<\d+>?1}/{pageSize<\d+>?20}", methods={"GET"}, name="list")
 		 *
-		 * @param string|int $page
-		 *
+		 * @param int $page
+		 * @param int $pageSize
+		 * @param PlaythroughRepository $playthroughRepository
 		 * @return Response
 		 */
-		public function list(string|int $page): Response {
+		public function list(int $page, int $pageSize, PlaythroughRepository $playthroughRepository): Response {
 
-			$user = $this->getUser();
-			$playthroughs = $user->getPlaythroughs();
+			$ownerId = $this->getUser()->getId();
 
-			return $this->responseHelper->createResponse($playthroughs);
+			$playthroughs = $playthroughRepository->findAllByOwner($ownerId, $page, $pageSize);
+
+			return $this->responseHelper->createReadResponse($playthroughs);
 
 		}
 

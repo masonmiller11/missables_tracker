@@ -42,6 +42,7 @@
 		 * @param string $name
 		 * @param string $description
 		 * @param PlaythroughTemplate $playthroughTemplate
+		 * @param int $position
 		 */
 		#[Pure]
 		public function __construct(string $name,
@@ -62,6 +63,14 @@
 		 */
 		public function getPlaythrough(): PlaythroughTemplate {
 			return $this->playthroughTemplate;
+		}
+
+		/**
+		 * @return User
+		 */
+		#[Pure]
+		public function getOwner(): User {
+			return $this->playthroughTemplate->getOwner();
 		}
 
 		/**

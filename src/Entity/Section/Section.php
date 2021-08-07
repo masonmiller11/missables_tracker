@@ -4,6 +4,7 @@
 	use App\Entity\EntityTrait;
 	use App\Entity\Playthrough\Playthrough;
 	use App\Entity\Step\Step;
+	use App\Entity\User;
 	use Doctrine\Common\Collections\ArrayCollection;
 	use Doctrine\Common\Collections\Collection;
 	use Doctrine\Common\Collections\Selectable;
@@ -66,6 +67,14 @@
 		 */
 		public function getSteps(): array|Collection|Selectable {
 			return $this->steps;
+		}
+
+		/**
+		 * @return User
+		 */
+		#[Pure]
+		public function getOwner(): User {
+			return $this->playthrough->getOwner();
 		}
 
 	}

@@ -59,11 +59,16 @@
 		private Collection|Selectable|array $playthroughs;
 
 		/**
-		 * @var Collection|Selectable|User[]
+		 * @var Collection|Selectable|PlaythroughTemplateLike[]
 		 *
-		 * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="likedTemplates")
+		 * @ORM\OneToMany(targetEntity="App\Entity\Playthrough\PlaythroughTemplateLike", mappedBy="likedTemplate", cascade={"all"}, orphanRemoval=true)
 		 */
-		private Collection|Selectable|array $likedBy;
+		private Collection|Selectable|array $likes;
+
+		/**
+		 * @ORM\Column(type="integer", options={"unsigned":true})
+		 */
+		private int $numberOfLikes;
 
 		/**
 		 * PlaythroughTemplate constructor.
@@ -78,7 +83,8 @@
 
 			$this->playthroughs = new ArrayCollection();
 			$this->sectionTemplates = new ArrayCollection();
-			$this->likedBy = new ArrayCollection();
+			$this->likes = new ArrayCollection();
+			$this->numberOfLikes = 0;
 
 			$this->owner = $owner;
 			$this->game = $game;
@@ -125,11 +131,26 @@
 		}
 
 		/**
+		 * @return PlaythroughTemplateLike[]|Collection|Selectable
+		 */
+		public function getLikes(): Collection|array|Selectable {
+			return $this->likes;
+		}
+
+		/**
 		 * @return int
 		 */
-		public function getLikes(): int {
-			return $this->likedBy->count();
+		public function getNumberOfLikes(): int {
+			return $this->numberOfLikes;
 		}
+
+		/**
+		 * @return int
+		 */
+		public function countLikes(): int {
+			return $this->likes->count();
+		}
+
 
 		/**
 		 * @return bool

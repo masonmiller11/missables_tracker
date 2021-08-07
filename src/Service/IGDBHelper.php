@@ -8,6 +8,7 @@
 	use App\Exception\ValidationException;
 	use App\Repository\GameRepository;
 	use App\Repository\IGDBConfigRepository;
+	use App\Transformer\GameEntityTransformer;
 	use App\Utility\InternetGameDatabaseEndpoints;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Doctrine\ORM\NonUniqueResultException;
@@ -72,9 +73,9 @@
 		private ValidatorInterface $validator;
 
 		/**
-		 * @var EntityAssembler
+		 * @var GameEntityTransformer
 		 */
-		private EntityAssembler $entityAssembler;
+		private GameEntityTransformer $entityTransformer;
 
 		/**
 		 * @throws \Exception
@@ -87,7 +88,7 @@
 		                            GameRepository $gameRepository,
 		                            ValidatorInterface $validator,
 		                            IGDBGameResponseDTOTransformer $IGDBGameResponseDTOTransformer,
-									EntityAssembler $entityAssembler) {
+									GameEntityTransformer $entityTransformer) {
 
 			$this->client = $client;
 
@@ -97,7 +98,7 @@
 			$this->apiID = $apiID;
 			$this->apiSecret = $apiSecret;
 
-			$this->entityAssembler = $entityAssembler;
+			$this->entityTransformer = $entityTransformer;
 			$this->IGDBConfigRepository = $IGDBConfigRepository;
 			$this->IGDBGameResponseDTOTransformer = $IGDBGameResponseDTOTransformer;
 			$this->gameRepository = $gameRepository;
@@ -279,7 +280,7 @@
 			 */
 			if (!$gameIfInDatabase) {
 
-				$game = $this->entityAssembler->assembleGame($dto);
+				$game = $this->entityTransformer->assemble($dto);
 
 				$this->entityManager->persist($game);
 				$this->entityManager->flush();

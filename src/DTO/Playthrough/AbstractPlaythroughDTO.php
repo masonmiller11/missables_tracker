@@ -9,46 +9,47 @@
 
 		/**
 		 * @Assert\NotNull()
-		 * @Assert\Type("int")
-		 */
-		public mixed $id;
-
-		/**
-		 * @Assert\NotNull()
 		 * @Assert\Type("bool")
 		 */
 		public mixed $visibility;
 
 		/**
-		 * @Assert\NotBlank()
+		 * @Assert\NotNull,
+		 * @Assert\Type("integer")
 		 */
-		public mixed $owner;
+		public mixed $gameID;
 
 		/**
-		 * @Assert\NotNull()
 		 * @Assert\All({
-		 *     @Assert\NotBlank,
-		 *     @Assert\Type("string")
+		 *     @Assert\Type("integer")
 		 * })
-		 */
-		public mixed $game;
-
-		/**
-		 * @Assert\NotNull
-		 * @Assert\Type("array")
 		 */
 		public mixed $sections;
 
 		/**
-		 * @Assert\NotNull
+		 * @Assert\All({
+		 *     @Assert\Type("integer")
+		 * })
 		 * @Assert\Unique
 		 */
 		public mixed $stepPositions;
 
 		/**
-		 * @Assert\NotNull
+		 * @Assert\All({
+		 *     @Assert\Type("integer")
+		 * })
 		 * @Assert\Unique
 		 */
 		public mixed $sectionPositions;
+
+		/**
+		 * @Assert\NotBlank ()
+		 */
+		public mixed $name;
+
+		/**
+		 * @Assert\NotBlank ()
+		 */
+		public mixed $description;
 
 	}

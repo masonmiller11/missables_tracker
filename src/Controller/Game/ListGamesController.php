@@ -15,18 +15,20 @@
 	final class ListGamesController extends AbstractBaseApiController {
 
 		/**
-		 * @Route(path="/popular", methods={"GET"}, name="popular")
+		 * @Route(path="/popular/{page<\d+>?1}/{pageSize<\d+>?20}", methods={"GET"}, name="popular")
 		 *
 		 * @param GameRepository $gameRepository
+		 * @param int $page
+		 * @param int $pageSize
 		 * @return Response
 		 *
 		 * Queries the database for games, orders them by number of playthroughTemplates belonging and returns 10.
 		 */
-		public function listPopular(GameRepository $gameRepository): Response {
+		public function listPopular(GameRepository $gameRepository, int $page, int $pageSize): Response {
 
-			$games = $gameRepository->topTenByNumberOfTemplates();
+			$games = $gameRepository->findAllOrderByTemplates($page, $pageSize);
 
-			return $this->responseHelper->createResponse($games);
+			return $this->responseHelper->createReadResponse($games);
 
 		}
 

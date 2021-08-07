@@ -2,6 +2,7 @@
 	namespace App\DTO\Game;
 
 	use Symfony\Component\Validator\Constraints as Assert;
+	use App\Genre;
 
 	abstract class AbstractGameDTO {
 
@@ -60,10 +61,9 @@
 		 */
 		public mixed $artworks;
 
-		/**
-		 * @Assert\NotBlank()
-		 * @Assert\Choice(callback: [Genre::class, 'values'], message = "Choose a valid genre.")]
-		 */
+		public mixed $releaseDate;
+
+		#[Assert\Choice(callback: [Genre::class, 'values'])]
 		public mixed $genre;
 
 	}

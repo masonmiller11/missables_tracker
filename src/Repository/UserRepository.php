@@ -11,7 +11,7 @@
 		 * @method User[]    findAll()
 		 * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
 		 */
-	class UserRepository extends ServiceEntityRepository {
+	class UserRepository extends AbstractBaseRepository {
 
 		public function __construct(ManagerRegistry $registry) {
 			parent::__construct($registry, User::class);

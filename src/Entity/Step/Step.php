@@ -3,6 +3,7 @@
 
 	use App\Entity\EntityTrait;
 	use App\Entity\Section\Section;
+	use App\Entity\User;
 	use Doctrine\ORM\Mapping as ORM;
 
 	/**
@@ -32,9 +33,11 @@
 
 		/**
 		 * Step constructor.
-		 * @param string $name
-		 * @param string $description
+		 *
+		 * @param string  $name
+		 * @param string  $description
 		 * @param Section $section
+		 * @param int     $position
 		 */
 		public function __construct(string $name, string $description, Section $section, int $position) {
 
@@ -61,6 +64,10 @@
 		 */
 		public function getSection(): Section {
 			return $this->section;
+		}
+
+		public function getOwner(): User {
+			return $this->section->getOwner();
 		}
 
 		/**
