@@ -1,14 +1,11 @@
 <?php
 	namespace App\Repository;
 
-	use App\Entity\Playthrough\PlaythroughTemplate;
 	use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 	use Doctrine\ORM\QueryBuilder;
 	use Doctrine\ORM\Tools\Pagination\Paginator;
-	use Doctrine\Persistence\ManagerRegistry;
 	use JetBrains\PhpStorm\ArrayShape;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-	use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 	abstract class AbstractBaseRepository extends ServiceEntityRepository {
 
