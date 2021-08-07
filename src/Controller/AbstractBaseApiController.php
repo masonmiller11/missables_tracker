@@ -105,12 +105,12 @@
 		 */
 		private function confirmResourceOwner (Object $entity): void {
 
-			if (!(method_exists($entity, 'getOwner'))) {
+			if (!(method_exists($entity, 'getOwner') && method_exists($entity, 'getLikedBy'))) {
 				throw new InvalidArgumentException();
 			}
 
 			$authenticatedUser = $this->getUser();
-			$owner =  $entity->getOwner();
+			$owner =  $entity->getOwner() ?? $entity->getLikedBy();
 
 			if ($owner !== $authenticatedUser) {
 				throw new AccessDeniedHttpException;
