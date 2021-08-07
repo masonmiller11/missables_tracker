@@ -25,14 +25,14 @@
 		 *
 		 * @param Request $request
 		 * @param GameRequestDTOTransformer $dtoTransformer
-		 * @param GameEntityTransformer $gameEntityTransformer
+		 * @param GameEntityTransformer $entityTransformer
 		 * @return Response
 		 * @throws \Exception
 		 */
 		public function create(Request $request, GameRequestDTOTransformer $dtoTransformer,
-			GameEntityTransformer $gameEntityTransformer): Response {
+			GameEntityTransformer $entityTransformer): Response {
 
-			$game = $this->createOne($request, $dtoTransformer, GameDTO::class, $gameEntityTransformer);
+			$game = $this->createOne($request, $dtoTransformer, GameDTO::class, $entityTransformer);
 
 			return $this->responseHelper->createResourceCreatedResponse('games/read/' . $game->getId());
 
