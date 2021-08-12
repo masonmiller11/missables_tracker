@@ -8,8 +8,7 @@
 	class UserDTO implements DTOInterface {
 
 		/**
-		 * @Assert\NotBlank
-		 * @CustomAssert\Password
+		 * @CustomAssert\Password()
 		 */
 		public mixed $password;
 
