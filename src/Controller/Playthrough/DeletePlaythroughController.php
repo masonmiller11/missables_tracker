@@ -19,14 +19,13 @@
 		/**
 		 * @Route(path="/{id<\d+>}", methods={"DELETE"}, name="delete")
 		 *
-		 * @param Request                      $request
-		 * @param string|int                   $id
-		 * @param PlaythroughRepository        $playthroughRepository
+		 * @param string|int $id
+		 * @param PlaythroughRepository $playthroughRepository
 		 * @param PlaythroughEntityTransformer $playthroughEntityTransformer
 		 *
 		 * @return Response
 		 */
-		public function delete(Request $request, string|int $id,
+		public function delete(string|int $id,
 			PlaythroughRepository $playthroughRepository,
 			PlaythroughEntityTransformer $playthroughEntityTransformer): Response {
 
