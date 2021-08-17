@@ -7,6 +7,7 @@
 	use App\Transformer\LikeEntityTransformer;
 	use App\Transformer\StepTemplateEntityTransformer;
 	use Symfony\Component\HttpFoundation\Response;
+	use Symfony\Component\Routing\Annotation\Route;
 
 	/**
 	 * Class CreatePlaythroughTemplateController
