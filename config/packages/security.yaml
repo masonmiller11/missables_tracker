@@ -23,6 +23,10 @@ security:
                 check_path: /login
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        signup:
+            pattern: ^/signup$
+            stateless: true
+            anonymous: true
         main:
             pattern: ^/
             stateless: true
@@ -41,6 +45,10 @@ security:
     access_control:
         -
             path: ^/login$
+            roles: IS_AUTHENTICATED_ANONYMOUSLY
+
+        -
+            path: ^/signup$
             roles: IS_AUTHENTICATED_ANONYMOUSLY
 
         -
