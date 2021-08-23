@@ -10,6 +10,7 @@
 	use Doctrine\ORM\EntityManagerInterface;
 	use http\Exception\RuntimeException;
 	use Symfony\Component\HttpFoundation\Request;
+	use Symfony\Component\Validator\Exception\ValidationFailedException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	Abstract class AbstractEntityTransformer implements EntityTransformerInterface {
@@ -35,9 +36,9 @@
 		protected AbstractRequestDTOTransformer $DTOTransformer;
 
 		/**
-		 * @var User
+		 * @var User|null
 		 */
-		protected User $user;
+		protected ?User $user;
 
 		/**
 		 * @var DTOInterface
@@ -67,10 +68,8 @@
 		protected function validate(DTOInterface $dto): void {
 
 			$errors = $this->validator->validate($dto);
-			if (count($errors) > 0) {
-				$errorString = (string)$errors;
-				throw new ValidationException($errorString);
-			}
+
+			if (count($errors) > 0) throw new ValidationFailedException($errors->count(), $errors);
 
 		}
 
@@ -87,14 +86,10 @@
 
 		}
 
-		public function create(DTOInterface $dto, User $user, bool $skipValidation = false): EntityInterface {
+		public function create(DTOInterface $dto, User $user = null): EntityInterface {
 
 			$this->dto = $dto;
 			$this->user = $user;
-
-			if (!$skipValidation) {
-				$this->validate($dto);
-			}
 
 			$entity = $this->doCreateWork();
 
