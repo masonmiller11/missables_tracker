@@ -4,33 +4,24 @@
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-	use Symfony\Component\Serializer\SerializerInterface;
+	use Symfony\Component\Serializer\Serializer;
 
 	class ResponseHelper {
-
-		/**
-		 * @var SerializerInterface
-		 */
-		private SerializerInterface $serializer;
-
-		public function __construct(SerializerInterface $serializer) {
-
-			$this->serializer = $serializer;
-
-		}
 
 		/**
 		 * @param Object|iterable|null $object
 		 *
 		 * @return iterable|JsonResponse|Response
 		 */
-		public function createReadResponse (Object|iterable|null $object): iterable|JsonResponse|Response {
+		public static function createReadResponse (Object|iterable|null $object): iterable|JsonResponse|Response {
 
 			if (!$object || $object === []) {
 				throw new NotFoundHttpException();
 			}
 
-			return new Response($this->serializer->serialize($object, 'json',[
+			$serializer = new Serializer();
+
+			return new Response($serializer->serialize($object, 'json',[
 				'circular_reference_handler' => function ($object) {
 					return $object->getId();
 				}
@@ -45,7 +36,7 @@
 		 *
 		 * @return JsonResponse
 		 */
-		public function createResourceCreatedResponse (string $uri): JsonResponse {
+		public static function createResourceCreatedResponse (string $uri): JsonResponse {
 
 			return new JsonResponse([
 					'status' => 'resource created'
@@ -60,7 +51,7 @@
 		 *
 		 * @return JsonResponse
 		 */
-		public function createResourceUpdatedResponse (string $uri): JsonResponse {
+		public static function createResourceUpdatedResponse (string $uri): JsonResponse {
 
 			return new JsonResponse([
 				'status' => 'resource updated'
@@ -96,7 +87,7 @@
 		/**
 		 * @return JsonResponse
 		 */
-		public function createResourceDeletedResponse (): JsonResponse {
+		public static function createResourceDeletedResponse (): JsonResponse {
 
 			return new JsonResponse([
 				'status' => 'resource deleted'
