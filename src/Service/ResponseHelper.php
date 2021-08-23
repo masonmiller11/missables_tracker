@@ -105,4 +105,13 @@
 
 		}
 
+		public static function createValidationErrorResponse (array $errors): JsonResponse {
+
+			return new JsonResponse([
+				'status' => 'validation error',
+				"errors" => $errors
+			], Response::HTTP_BAD_REQUEST);
+
+		}
+
 	}
