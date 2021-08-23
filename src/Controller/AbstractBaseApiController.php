@@ -23,16 +23,6 @@
 	abstract class AbstractBaseApiController extends AbstractController {
 
 		/**
-		 * @var IGDBHelper
-		 */
-		protected IGDBHelper $IGDBHelper;
-
-		/**
-		 * @var ResponseHelper
-		 */
-		protected ResponseHelper $responseHelper;
-
-		/**
 		 * @var RequestStack
 		 */
 		protected RequestStack $request;
@@ -59,8 +49,6 @@
 		/**
 		 * AbstractBaseApiController constructor.
 		 *
-		 * @param IGDBHelper                     $IGDBHelper
-		 * @param ResponseHelper                 $responseHelper
 		 * @param RequestStack                   $request
 		 * @param EntityManagerInterface         $entityManager
 		 * @param ValidatorInterface             $validator
@@ -68,14 +56,12 @@
 		 * @param RequestDTOTransformerInterface $DTOTransformer
 		 * @param ServiceEntityRepository        $repository
 		 */
-		public function __construct (IGDBHelper $IGDBHelper, ResponseHelper $responseHelper, RequestStack $request,
+		public function __construct (RequestStack $request,
 									 EntityManagerInterface $entityManager, ValidatorInterface $validator,
 									 EntityTransformerInterface $entityTransformer,
 									 RequestDTOTransformerInterface $DTOTransformer, ServiceEntityRepository $repository
 								) {
 
-			$this->IGDBHelper = $IGDBHelper;
-			$this->responseHelper = $responseHelper;
 			$this->request = $request;
 			$this->validator = $validator;
 			$this->entityManager = $entityManager;
