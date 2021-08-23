@@ -6,8 +6,6 @@
 	use App\DTO\Transformer\RequestTransformer\RequestDTOTransformerInterface;
 	use App\Entity\EntityInterface;
 	use App\Entity\User;
-	use App\Exception\ValidationException;
-	use App\Repository\AbstractBaseRepository;
 	use App\Service\IGDBHelper;
 	use App\Service\ResponseHelper;
 	use App\Transformer\EntityTransformerInterface;
@@ -18,6 +16,7 @@
 	use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 	use Symfony\Component\Validator\Exception\InvalidArgumentException;
+	use Symfony\Component\Validator\Exception\ValidationFailedException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 	use Symfony\Component\HttpFoundation\Request;
 
@@ -53,26 +52,36 @@
 		 */
 		protected EntityManagerInterface $entityManager;
 
+		protected RequestDTOTransformerInterface $DTOTransformer;
+
+		protected EntityTransformerInterface $entityTransformer;
+
 		/**
 		 * AbstractBaseApiController constructor.
 		 *
-		 * @param IGDBHelper $IGDBHelper
-		 * @param ResponseHelper $responseHelper
-		 * @param RequestStack $request
-		 * @param EntityManagerInterface $entityManager
-		 * @param ValidatorInterface $validator
+		 * @param IGDBHelper                     $IGDBHelper
+		 * @param ResponseHelper                 $responseHelper
+		 * @param RequestStack                   $request
+		 * @param EntityManagerInterface         $entityManager
+		 * @param ValidatorInterface             $validator
+		 * @param EntityTransformerInterface     $entityTransformer
+		 * @param RequestDTOTransformerInterface $DTOTransformer
+		 * @param ServiceEntityRepository        $repository
 		 */
-		public function __construct (IGDBHelper $IGDBHelper,
-		                             ResponseHelper $responseHelper,
-		                             RequestStack $request,
-		                             EntityManagerInterface $entityManager,
-		                             ValidatorInterface $validator) {
+		public function __construct (IGDBHelper $IGDBHelper, ResponseHelper $responseHelper, RequestStack $request,
+									 EntityManagerInterface $entityManager, ValidatorInterface $validator,
+									 EntityTransformerInterface $entityTransformer,
+									 RequestDTOTransformerInterface $DTOTransformer, ServiceEntityRepository $repository
+								) {
 
 			$this->IGDBHelper = $IGDBHelper;
 			$this->responseHelper = $responseHelper;
 			$this->request = $request;
 			$this->validator = $validator;
 			$this->entityManager = $entityManager;
+			$this->DTOTransformer = $DTOTransformer;
+			$this->entityTransformer = $entityTransformer;
+			$this->repository = $repository;
 
 		}
 
@@ -88,15 +97,12 @@
 
 		/**
 		 * @param DTOInterface $dto
-		 * @throws ValidationException
+		 * @throws ValidationFailedException
 		 */
-		protected function validate(DTOInterface $dto): void {
+		protected function validateDTO(DTOInterface $dto): void {
 
 			$errors = $this->validator->validate($dto);
-			if (count($errors) > 0) {
-				$errorString = (string)$errors;
-				throw new ValidationException($errorString);
-			}
+			if (count($errors) > 0) throw new ValidationFailedException($errors->count(), $errors);
 
 		}
 
@@ -119,14 +125,13 @@
 		}
 
 		/**
-		 * @param AbstractBaseRepository $repository
-		 * @param int                    $id
+		 * @param int $id
 		 *
 		 * @return void
 		 */
-		private function doesEntityExist(AbstractBaseRepository $repository, int $id): void {
+		private function doesEntityExist(int $id): void {
 
-			$entity = $repository->find($id);
+			$entity = $this->repository->find($id);
 
 			if (!$entity) {
 				throw new NotFoundHttpException('resource does not exist');
@@ -136,57 +141,45 @@
 
 		/**
 		 * @param Request $request
-		 * @param RequestDTOTransformerInterface $dtoTransformer
-		 * @param string $type
-		 * @param EntityTransformerInterface $entityTransformer
 		 *
 		 * @return EntityInterface
-		 * @throws \Exception
 		 */
-		protected function createOne (Request $request, RequestDTOTransformerInterface $dtoTransformer, string $type,
-		                              EntityTransformerInterface $entityTransformer): EntityInterface {
+		protected function createOne (Request $request, $skipValidation = false): EntityInterface {
 
 			$user = $this->getUser();
 
-			$dto = $dtoTransformer->transformFromRequest($request);
+			$dto = $this->DTOTransformer->transformFromRequest($request);
 
-			Assert($dto instanceof $type);
+			if (!$skipValidation) $this->validateDTO($dto);
 
-			return $entityTransformer->create($dto, $user);
+			return $this->entityTransformer->create($dto, $user);
 
 		}
 
 		/**
-		 * @param Request                    $request
-		 * @param int                        $id
-		 * @param EntityTransformerInterface $entityTransformer
-		 * @param AbstractBaseRepository     $repository
+		 * @param Request $request
+		 * @param int     $id
 		 *
 		 * @return EntityInterface
 		 */
-		protected function updateOne (Request $request, int $id, EntityTransformerInterface $entityTransformer,
-									 AbstractBaseRepository $repository): EntityInterface {
+		protected function updateOne (Request $request, int $id): EntityInterface {
 
-			$this->doesEntityExist($repository, $id);
-			$this->confirmResourceOwner($repository->find($id));
+			$this->doesEntityExist($id);
+			$this->confirmResourceOwner($this->repository->find($id));
 
-			return $entityTransformer->update($id, $request);
+			return $this->entityTransformer->update($id, $request);
 
 		}
 
 		/**
-		 * @param int                        $id
-		 * @param EntityTransformerInterface $entityTransformer
-		 * @param AbstractBaseRepository     $repository
+		 * @param int $id
 		 */
-		protected function deleteOne (int $id,
-									 EntityTransformerInterface $entityTransformer,
-									 AbstractBaseRepository $repository): void {
+		protected function deleteOne (int $id): void {
 
-			$this->doesEntityExist($repository, $id);
-			$this->confirmResourceOwner($repository->find($id));
+			$this->doesEntityExist($id);
+			$this->confirmResourceOwner($this->repository->find($id));
 
-			$entityTransformer->delete($id);
+			$this->entityTransformer->delete($id);
 
 		}
 
