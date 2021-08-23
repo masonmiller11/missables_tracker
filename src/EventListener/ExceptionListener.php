@@ -24,12 +24,6 @@
 					'message' => 'duplicate resource'], Response::HTTP_CONFLICT);
 			}
 
-			if ($exception instanceof ValidationException) {
-				$response = new JsonResponse(['status' => 'error',
-					'message' => 'validation failed',
-					'description' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
-			}
-
 			if ($exception instanceof HttpExceptionInterface) {
 				$response =  new JsonResponse(['status' => 'error','code' => $exception->getCode(), 'type' => get_class($exception),
 					'message' => $exception->getMessage(), 'file' => $exception->getFile()], $exception->getStatusCode());
