@@ -4,22 +4,23 @@
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+	use Symfony\Component\Serializer\Encoder\JsonEncoder;
+	use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 	use Symfony\Component\Serializer\Serializer;
+	use Symfony\Component\Serializer\SerializerInterface;
 
 	class ResponseHelper {
 
 		/**
 		 * @param Object|iterable|null $object
-		 *
+		 * @param SerializerInterface $serializer
 		 * @return iterable|JsonResponse|Response
 		 */
-		public static function createReadResponse (Object|iterable|null $object): iterable|JsonResponse|Response {
+		public static function createReadResponse (Object|iterable|null $object, SerializerInterface $serializer): iterable|JsonResponse|Response {
 
 			if (!$object || $object === []) {
 				throw new NotFoundHttpException();
 			}
-
-			$serializer = new Serializer();
 
 			return new Response($serializer->serialize($object, 'json',[
 				'circular_reference_handler' => function ($object) {
