@@ -14,8 +14,8 @@
 			$data['id'] = $object->getId();
 			$data['visibility'] = $object->isVisible();
 			$data['owner'] = [
-				'owner' => $object->getOwner()->getUsername(),
-				'ownerID' => $object->getOwner()->getId()
+				'ownerID' => $object->getOwner()->getId(),
+				'owner' => $object->getOwner()->getUsername()
 			];
 
 			$data['game'] = [
