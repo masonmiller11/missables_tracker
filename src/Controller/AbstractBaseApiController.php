@@ -97,7 +97,7 @@
 		 */
 		private function confirmResourceOwner (Object $entity): void {
 
-			if (!(method_exists($entity, 'getOwner') && method_exists($entity, 'getLikedBy'))) {
+			if (!method_exists($entity, 'getOwner') && !method_exists($entity, 'getLikedBy')) {
 				throw new InvalidArgumentException();
 			}
 
