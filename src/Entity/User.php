@@ -139,6 +139,13 @@
 		}
 
 		/**
+		 * @return string
+		 */
+		public function getUsername() :string {
+			return $this->username;
+		}
+
+		/**
 		 * @return string|null
 		 */
 		public function getPassword(): ?string {
@@ -147,10 +154,6 @@
 
 		public function getRoles() :array {
 			return ['ROLE_USER'];
-		}
-
-		#[Pure] public function getUsername() :string {
-			return $this->getEmail();
 		}
 
 		#[Pure] public function getUserIdentifier() :string {
