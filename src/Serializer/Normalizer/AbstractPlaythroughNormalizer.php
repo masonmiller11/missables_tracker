@@ -14,12 +14,12 @@
 			$data['id'] = $object->getId();
 			$data['visibility'] = $object->isVisible();
 			$data['owner'] = [
-				$object->getOwner()->getUsername(),
-				$object->getOwner()->getId()
+				'owner' => $object->getOwner()->getUsername(),
+				'ownerID' => $object->getOwner()->getId()
 			];
 
 			$data['game'] = [
-				'gameId' => strval($object->getGame()->getId()),
+				'gameID' => strval($object->getGame()->getId()),
 				'gameTitle' => $object->getGame()->getTitle()
 			];
 
