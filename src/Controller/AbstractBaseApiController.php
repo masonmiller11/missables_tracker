@@ -13,8 +13,10 @@
 	use Doctrine\ORM\EntityManagerInterface;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\RequestStack;
+	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+	use Symfony\Component\Serializer\SerializerInterface;
 	use Symfony\Component\Validator\Exception\InvalidArgumentException;
 	use Symfony\Component\Validator\Exception\ValidationFailedException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -179,6 +181,6 @@
 
 		abstract protected function delete(int $id): Response;
 
-		abstract protected function read(int $id): Response;
+		abstract protected function read(int $id, SerializerInterface $serializer): Response;
 
 	}
