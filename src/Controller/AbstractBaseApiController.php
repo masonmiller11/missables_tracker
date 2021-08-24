@@ -127,12 +127,16 @@
 
 		/**
 		 * @param Request $request
-		 *
+		 * @param bool $skipValidation
+		 * @param bool $getUser
 		 * @return EntityInterface
+		 * @throws ValidationFailedException
 		 */
-		protected function createOne (Request $request, $skipValidation = false): EntityInterface {
+		protected function createOne (Request $request, bool $skipValidation = false, bool $getUser = true): EntityInterface {
 
-			$user = $this->getUser();
+			$user = null;
+
+			if ($getUser) $user = $this->getUser();
 
 			$dto = $this->DTOTransformer->transformFromRequest($request);
 
