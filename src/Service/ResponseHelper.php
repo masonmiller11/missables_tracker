@@ -100,7 +100,16 @@
 
 			return new JsonResponse([
 				'status' => 'validation error',
-				"errors" => $errors
+				"message" => $errors
+			], Response::HTTP_BAD_REQUEST);
+
+		}
+
+		public static function createDuplicateResourceErrorResponse (string $errorMessage): JsonResponse {
+
+			return new JsonResponse([
+				'status' => 'duplicate resource',
+				"message" => $errorMessage
 			], Response::HTTP_BAD_REQUEST);
 
 		}
