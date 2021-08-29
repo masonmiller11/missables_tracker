@@ -31,7 +31,7 @@
 		 */
 		public function doCreateWork(): User {
 
-			assert($this->dto instanceof UserDTO);
+			$user = $this->repository->find($id);
 
 			$user = new User ($this->dto->email, $this->dto->username);
 
@@ -45,8 +45,8 @@
 
 		public function updatePassword(int $id, string $password, bool $skipValidation = false): User {
 
-			$user = $this->repository->find($id);
-			Assert($user instanceof User);
+			if (!($this->dto instanceof UserDTO)) {
+				throw new \InvalidArgumentException('UserEntityTransformer\'s DTO not instance of UserDTO');
 
 			$this->dto = new UserDTO();
 			$this->dto->username = $user->getUsername();

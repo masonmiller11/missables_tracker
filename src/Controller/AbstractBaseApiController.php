@@ -91,7 +91,8 @@
 		protected function getUser(): User {
 
 			$user = parent::getUser();
-			assert($user instanceof User);
+
+			if (!($user instanceof User)) throw new \InvalidArgumentException(($user::class . ' not instance of User.'));
 
 			return $user;
 
