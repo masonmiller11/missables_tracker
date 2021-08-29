@@ -79,6 +79,7 @@
 			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
 			$tempDTO->templateId = $sectionTemplate->getPlaythrough()->getId();
 			$this->validate($tempDTO);
+			if (!$skipValidation) $this->validate($tempDTO);
 
 			$sectionTemplate = $this->checkData($sectionTemplate, json_decode($request->getContent(), true));
 

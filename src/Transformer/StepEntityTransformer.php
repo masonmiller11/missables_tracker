@@ -77,7 +77,7 @@
 
 			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
 			$tempDTO->sectionId = $step->getSection()->getId();
-			$this->validate($tempDTO);
+			if (!$skipValidation) $this->validate($tempDTO);
 
 			$step = $this->checkData($step,json_decode($request->getContent(), true));
 
