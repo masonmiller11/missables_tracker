@@ -51,7 +51,7 @@
 		 */
 		public function doCreateWork (): PlaythroughTemplate {
 
-			assert($this->dto instanceof  PlaythroughTemplateDTO);
+			if (!($this->dto instanceof PlaythroughTemplateDTO)) {
 
 			$game = $this->gameRepository->find($this->dto->gameID);
 
@@ -79,7 +79,7 @@
 
 			$playthroughTemplate = $this->checkAndSetData(json_decode($request->getContent(), true), $playthroughTemplate);
 
-			Assert($playthroughTemplate instanceof PlaythroughTemplate);
+			if (!($playthroughTemplate instanceof PlaythroughTemplate)) {
 
 			return $playthroughTemplate;
 

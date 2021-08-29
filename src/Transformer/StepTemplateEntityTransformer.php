@@ -50,7 +50,7 @@
 		 */
 		public function doCreateWork (): StepTemplate {
 
-			assert($this->dto instanceof StepTemplateDTO);
+			if (!($this->dto instanceof StepTemplateDTO)) {
 
 			$sectionTemplate = $this->sectionTemplateRepository->find($this->dto->sectionTemplateId);
 
@@ -78,7 +78,7 @@
 
 			$stepTemplate = $this->checkData($stepTemplate, json_decode($request->getContent(), true));
 
-			Assert ($stepTemplate instanceof StepTemplate);
+			if (!($stepTemplate instanceof StepTemplate)) {
 
 			return $stepTemplate;
 

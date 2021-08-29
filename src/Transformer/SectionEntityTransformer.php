@@ -52,7 +52,7 @@
 		 */
 		public function doCreateWork (): Section {
 
-			assert($this->dto instanceof SectionDTO);
+			if (!($this->dto instanceof SectionDTO)) {
 
 			$playthrough = $this->playthroughRepository->find($this->dto->playthroughId);
 
@@ -80,7 +80,7 @@
 
 			$section = $this->checkData($section, json_decode($request->getContent(), true));
 
-			Assert ($section instanceof Section);
+			if (!($section instanceof Section)) {
 
 			return $section;
 

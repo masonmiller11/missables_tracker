@@ -36,7 +36,7 @@
 		 */
 		protected function doCreateWork(): Game {
 
-			assert ($this->dto instanceof AbstractGameDTO);
+			if (!($this->dto instanceof AbstractGameDTO)) {
 
 			if (!($this->dto->releaseDate instanceof \DateTimeImmutable)) {
 

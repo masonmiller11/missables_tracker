@@ -52,7 +52,7 @@
 		 */
 		public function doCreateWork (): Step {
 
-			assert($this->dto instanceof StepDTO);
+			if (!($this->dto instanceof StepDTO)) {
 
 			$section = $this->sectionRepository->find($this->dto->sectionId);
 
@@ -81,7 +81,7 @@
 
 			$step = $this->checkData($step,json_decode($request->getContent(), true));
 
-			Assert ($step instanceof Step);
+			if (!($step instanceof Step)) {
 
 			return $step;
 

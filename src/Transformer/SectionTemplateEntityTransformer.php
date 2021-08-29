@@ -53,7 +53,7 @@
 		public function doCreateWork (): SectionTemplate {
 
 
-			assert($this->dto instanceof SectionTemplateDTO);
+			if (!($this->dto instanceof SectionTemplateDTO)) {
 
 			$playthroughTemplate = $this->playthroughTemplateRepository->find($this->dto->templateId);
 
@@ -83,7 +83,7 @@
 
 			$sectionTemplate = $this->checkData($sectionTemplate, json_decode($request->getContent(), true));
 
-			Assert($sectionTemplate instanceof SectionTemplate);
+			if (!($sectionTemplate instanceof SectionTemplate)) {
 
 			return $sectionTemplate;
 

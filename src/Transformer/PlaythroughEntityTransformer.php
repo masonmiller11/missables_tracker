@@ -59,7 +59,7 @@
 		 */
 		public function doCreateWork (): Playthrough {
 
-			assert($this->dto instanceof PlaythroughDTO);
+			if (!($this->dto instanceof PlaythroughDTO)) {
 
 			$game = $this->gameRepository->find($this->dto->gameID);
 
@@ -95,7 +95,7 @@
 
 			$playthrough = $this->checkAndSetData(json_decode($request->getContent(), true), $playthrough);
 
-			Assert($playthrough instanceof Playthrough);
+
 
 			return $playthrough;
 
