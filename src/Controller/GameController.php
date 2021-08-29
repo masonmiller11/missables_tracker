@@ -147,8 +147,7 @@
 		 * @return Response
 		 *
 		 * This controller action looks at the URL query, searches IGDB and returns whatever IGDB sends us.
-		 * So ?halo will return whatever IGDB finds after searching for halo
-		 * @See IGDBHelper::searchIGDB()
+		 * So ?halo will return whatever IGDB finds after searching for halo. See IGDBHelper::searchIGDB()
 		 *
 		 * @throws ClientExceptionInterface
 		 * @throws DecodingExceptionInterface
