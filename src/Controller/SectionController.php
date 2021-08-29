@@ -5,10 +5,8 @@
 	use App\Repository\SectionRepository;
 	use App\Service\ResponseHelper;
 	use App\Transformer\SectionEntityTransformer;
-	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
-	use Symfony\Component\HttpFoundation\RequestStack;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
@@ -44,12 +42,7 @@
 
 			} catch (ValidationFailedException $exception) {
 
-				$errors = [];
-				foreach ($exception->getViolations() as $error) {
-					$errors[] = $error->getMessage();
-				}
-
-				return ResponseHelper::createValidationErrorResponse($errors);
+				return ResponseHelper::createValidationErrorResponse($exception);
 
 			}
 

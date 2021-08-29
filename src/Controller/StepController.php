@@ -5,10 +5,8 @@
 	use App\Repository\StepRepository;
 	use App\Service\ResponseHelper;
 	use App\Transformer\StepEntityTransformer;
-	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
-	use Symfony\Component\HttpFoundation\RequestStack;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
@@ -40,16 +38,12 @@
 		public function create(Request $request): Response {
 
 			try {
+
 				$step = $this->createOne($request);
 
 			} catch (ValidationFailedException $exception) {
 
-				$errors = [];
-				foreach ($exception->getViolations() as $error) {
-					$errors[] = $error->getMessage();
-				}
-
-				return ResponseHelper::createValidationErrorResponse($errors);
+				return ResponseHelper::createValidationErrorResponse($exception);
 
 			}
 

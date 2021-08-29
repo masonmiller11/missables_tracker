@@ -10,9 +10,7 @@
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\HttpFoundation\Request;
-	use Symfony\Component\HttpFoundation\RequestStack;
 	use Symfony\Component\HttpFoundation\Response;
-	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
 	use Symfony\Component\Validator\Exception\ValidationFailedException;
@@ -61,8 +59,6 @@
 
 			} catch (ValidationFailedException $exception) {
 
-				//TODO move this logic into ResponseHelper. We repeat it constantly.
-				//TODO pass the ValidationFailedException into createValidationErrorResponse
 
 				return ResponseHelper::createValidationErrorResponse($exception);
 
@@ -153,7 +149,9 @@
 			$games = $this->IGDBHelper->searchIGDB($game);
 
 			if (!$games || $games === []) {
-				throw new NotFoundHttpException();
+				return new JsonResponse(['status' => 'error',
+					'message' => $game . 'returned no titles'
+				], Response::HTTP_NOT_FOUND);
 			}
 
 			return new JsonResponse($games);

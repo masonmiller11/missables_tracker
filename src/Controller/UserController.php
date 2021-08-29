@@ -48,18 +48,15 @@
 				$user = $this->createOne($request, false, false);
 
 			} catch (ValidationFailedException $exception) {
-				$errors = [];
 
-				foreach ($exception->getViolations() as $error) {
-					$errors[] = $error->getMessage();
-				}
-
-				return ResponseHelper::createValidationErrorResponse($errors);
+				return ResponseHelper::createValidationErrorResponse($exception);
 
 			} catch (UniqueConstraintViolationException $exception) {
+
 				return ResponseHelper::createDuplicateResourceErrorResponse(
 					'A user with that name or email already exists'
 				);
+
 			}
 
 			return ResponseHelper::createResourceCreatedResponse('users/read' . $user->getId());
@@ -79,15 +76,12 @@
 			$userId = $this->getUser()->getId();
 
 			try {
+
 				$this->entityTransformer->update($userId, $request);
+
 			} catch (ValidationFailedException $exception) {
 
-				$errors = [];
-				foreach ($exception->getViolations() as $error) {
-					$errors[] = $error->getMessage();
-				}
-
-				ResponseHelper::createValidationErrorResponse($errors);
+				ResponseHelper::createValidationErrorResponse($exception);
 			}
 
 			return ResponseHelper::createUserUpdatedResponse();
@@ -105,7 +99,9 @@
 			$data = json_decode($request->getContent(), true);
 
 			if (!isset($data['password'])) {
-				return ResponseHelper::createValidationErrorResponse(['json must include password']);
+
+				return ResponseHelper::createJsonErrorResponse('json must include password', 'validation error');
+
 			}
 
 			$password = $data['password'];
@@ -123,12 +119,7 @@
 
 			} catch (ValidationFailedException $exception) {
 
-				$errors = [];
-				foreach ($exception->getViolations() as $error) {
-					$errors[] = $error->getMessage();
-				}
-
-				ResponseHelper::createValidationErrorResponse($errors);
+				ResponseHelper::createValidationErrorResponse($exception);
 
 			}
 
