@@ -24,18 +24,20 @@
 	final class UserController extends AbstractBaseApiController {
 
 		#[Pure]
-		public function __construct(RequestStack $request, EntityManagerInterface $entityManager,
-		                                    ValidatorInterface $validator, UserEntityTransformer $entityTransformer,
-		                                    UserRequestDTOTransformer $DTOTransformer,
-		                                    UserRepository $repository) {
+		public function __construct(
+			ValidatorInterface $validator, UserEntityTransformer $entityTransformer,
+			UserRequestDTOTransformer $DTOTransformer,
+			UserRepository $repository
+		) {
 
-			parent::__construct($request, $entityManager, $validator, $entityTransformer, $DTOTransformer, $repository);
+			parent::__construct($validator, $entityTransformer, $DTOTransformer, $repository);
 		}
 
 		/**
 		 * @Route(path="/signup", methods={"POST"}, name="create")
 		 *
 		 * @param Request $request
+		 *
 		 * @return Response
 		 * @throws \Exception
 		 */
@@ -69,6 +71,7 @@
 		 *
 		 * @param Request $request
 		 * @param null $id
+		 *
 		 * @return Response
 		 */
 		public function update(Request $request, $id = null): Response {
@@ -77,8 +80,14 @@
 
 			try {
 				$this->entityTransformer->update($userId, $request);
-			} catch (ValidationException $exception) {
-				ResponseHelper::createValidationErrorResponse([$exception->getMessage()]);
+			} catch (ValidationFailedException $exception) {
+
+				$errors = [];
+				foreach ($exception->getViolations() as $error) {
+					$errors[] = $error->getMessage();
+				}
+
+				ResponseHelper::createValidationErrorResponse($errors);
 			}
 
 			return ResponseHelper::createUserUpdatedResponse();
@@ -88,11 +97,12 @@
 		 * @Route(path="user/update/password", methods={"PATCH"}, name="update_password")
 		 *
 		 * @param Request $request
+		 *
 		 * @return Response
 		 */
 		public function updatePassword(Request $request): Response {
 
-			$data = json_decode($request->getContent(),true);
+			$data = json_decode($request->getContent(), true);
 
 			if (!isset($data['password'])) {
 				return ResponseHelper::createValidationErrorResponse(['json must include password']);
@@ -102,14 +112,24 @@
 
 			$userId = $this->getUser()->getId();
 
-			if (!$this->entityTransformer instanceof UserEntityTransformer) throw new \InvalidArgumentException(
-				'entityTransformer is not have type UserEntityTransformer'
-			);
+			if (!$this->entityTransformer instanceof UserEntityTransformer)
+				throw new \InvalidArgumentException(
+					'entityTransformer is not have type UserEntityTransformer'
+				);
 
 			try {
+
 				$this->entityTransformer->updatePassword($userId, $password);
-			} catch (ValidationException $exception) {
-				ResponseHelper::createValidationErrorResponse([$exception->getMessage()]);
+
+			} catch (ValidationFailedException $exception) {
+
+				$errors = [];
+				foreach ($exception->getViolations() as $error) {
+					$errors[] = $error->getMessage();
+				}
+
+				ResponseHelper::createValidationErrorResponse($errors);
+
 			}
 
 			return ResponseHelper::createUserUpdatedResponse();

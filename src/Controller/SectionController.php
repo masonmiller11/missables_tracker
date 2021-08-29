@@ -22,16 +22,18 @@
 	final class SectionController extends AbstractBaseApiController {
 
 		#[Pure]
-		public function __construct(RequestStack $request, EntityManagerInterface $entityManager,
-		                                    ValidatorInterface $validator, SectionEntityTransformer $entityTransformer,
-		                                    SectionRequestTransformer $DTOTransformer, SectionRepository $repository) {
-			parent::__construct($request, $entityManager, $validator, $entityTransformer, $DTOTransformer, $repository);
+		public function __construct(
+			ValidatorInterface $validator, SectionEntityTransformer $entityTransformer,
+			SectionRequestTransformer $DTOTransformer, SectionRepository $repository
+		) {
+			parent::__construct($validator, $entityTransformer, $DTOTransformer, $repository);
 		}
 
 		/**
 		 * @Route(path="create", methods={"POST"}, name="create")
 		 *
 		 * @param Request $request
+		 *
 		 * @return Response
 		 */
 		public function create(Request $request): Response {
@@ -59,6 +61,7 @@
 		 * @Route(path="delete/{id<\d+>}", methods={"DELETE"}, name="delete")
 		 *
 		 * @param string|int $id
+		 *
 		 * @return Response
 		 */
 		public function delete(string|int $id): Response {
@@ -74,6 +77,7 @@
 		 *
 		 * @param Request $request
 		 * @param int $id
+		 *
 		 * @return Response
 		 */
 		public function update(Request $request, int $id): Response {
