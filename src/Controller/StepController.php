@@ -2,6 +2,7 @@
 	namespace App\Controller;
 
 	use App\DTO\Transformer\RequestTransformer\Step\StepRequestTransformer;
+	use App\Exception\ValidationException;
 	use App\Repository\StepRepository;
 	use App\Service\ResponseHelper;
 	use App\Transformer\StepEntityTransformer;
@@ -10,7 +11,6 @@
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Exception\ValidationFailedException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	/**
@@ -41,7 +41,7 @@
 
 				$step = $this->createOne($request);
 
-			} catch (ValidationFailedException $exception) {
+			} catch (ValidationException $exception) {
 
 				return ResponseHelper::createValidationErrorResponse($exception);
 

@@ -2,7 +2,6 @@
 	namespace App\DTO\Transformer\RequestTransformer\Playthrough;
 
 	use App\DTO\Playthrough\PlaythroughDTO;
-	use App\Exception\ValidationException;
 	use Symfony\Component\HttpFoundation\Request;
 
 	class PlaythroughRequestDTOTransformer extends AbstractPlaythroughRequestTransformer {
@@ -12,11 +11,11 @@
 			$data = json_decode($request->getContent(), true);
 
 			if (!isset($data['game'])) {
-				throw new ValidationException('playthroughs must include game key');
+				throw new \OutOfBoundsException('playthroughs must include game key');
 			}
 
 			if (!isset($data['template_id'])) {
-				throw new ValidationException('playthroughs must include template_id key');
+				throw new \OutOfBoundsException('playthroughs must include template_id key');
 			}
 
 			$dto = new PlaythroughDTO();

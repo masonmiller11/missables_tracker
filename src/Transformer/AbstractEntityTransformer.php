@@ -8,12 +8,11 @@
 	use App\Exception\ValidationException;
 	use App\Repository\AbstractBaseRepository;
 	use Doctrine\ORM\EntityManagerInterface;
-	use http\Exception\RuntimeException;
 	use Symfony\Component\HttpFoundation\Request;
-	use Symfony\Component\Validator\Exception\ValidationFailedException;
+	use Symfony\Component\Validator\Exception\InvalidArgumentException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-	Abstract class AbstractEntityTransformer implements EntityTransformerInterface {
+	abstract class AbstractEntityTransformer implements EntityTransformerInterface {
 
 		/**
 		 * @var EntityManagerInterface
@@ -50,33 +49,20 @@
 		 * @param EntityManagerInterface $entityManager
 		 * @param ValidatorInterface $validator
 		 */
-		public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator)  {
+		public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator) {
 
 			$this->entityManager = $entityManager;
 			$this->validator = $validator;
 
 		}
 
-		abstract protected function doCreateWork(): EntityInterface;
-
-		abstract protected function doUpdateWork(int $id, Request $request, bool $skipValidation): EntityInterface;
-
 		/**
-		 * @param DTOInterface $dto
-		 * @throws ValidationException
+		 * @param int $id
 		 */
-		protected function validate(DTOInterface $dto): void {
-
-			$errors = $this->validator->validate($dto);
-
-			if (count($errors) > 0) throw new ValidationFailedException($errors->count(), $errors);
-
-		}
-
-		public function delete(int $id): void{
+		public function delete(int $id): void {
 
 			if (!isset($this->repository)) {
-				throw new RuntimeException('repository is not set in ' . static::class);
+				throw new InvalidArgumentException('repository is not set in ' . static::class);
 			}
 
 			$entity = $this->repository->find($id);
@@ -86,6 +72,11 @@
 
 		}
 
+		/**
+		 * @param DTOInterface $dto
+		 * @param User|null $user
+		 * @return EntityInterface
+		 */
 		public function create(DTOInterface $dto, User $user = null): EntityInterface {
 
 			$this->dto = $dto;
@@ -100,6 +91,17 @@
 
 		}
 
+		/**
+		 * @return EntityInterface
+		 */
+		abstract protected function doCreateWork(): EntityInterface;
+
+		/**
+		 * @param int $id
+		 * @param Request $request
+		 * @param bool $skipValidation
+		 * @return EntityInterface
+		 */
 		public function update(int $id, Request $request, bool $skipValidation = false): EntityInterface {
 
 			$entity = $this->doUpdateWork($id, $request, $skipValidation);
@@ -108,6 +110,26 @@
 			$this->entityManager->flush();
 
 			return $entity;
+
+		}
+
+		/**
+		 * @param int $id
+		 * @param Request $request
+		 * @param bool $skipValidation
+		 * @return EntityInterface
+		 */
+		abstract protected function doUpdateWork(int $id, Request $request, bool $skipValidation): EntityInterface;
+
+		/**
+		 * @param DTOInterface $dto
+		 * @throws ValidationException
+		 */
+		protected function validate(DTOInterface $dto): void {
+
+			$errors = $this->validator->validate($dto);
+
+			if (count($errors) > 0) throw new ValidationException($errors);
 
 		}
 

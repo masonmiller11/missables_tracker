@@ -16,7 +16,7 @@
 		 */
 		protected function assembleStepDTO(AbstractStepDTO $dto, array $data): AbstractStepDTO {
 			if (!isset($data['position'])) {
-				throw new ValidationException('steps must include position');
+				throw new \OutOfBoundsException('steps must include position');
 			}
 
 			$dto->name = $data['name'] ?? 'untitled';

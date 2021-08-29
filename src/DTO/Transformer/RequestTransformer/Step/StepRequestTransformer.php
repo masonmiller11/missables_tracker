@@ -19,7 +19,7 @@
 			$data = json_decode($request->getContent(), true);
 
 			if (!isset($data['section_id'])) {
-				throw new ValidationException('step must have a section id');
+				throw new \OutOfBoundsException('step must have a section id');
 			}
 
 			$dto = new StepDTO();

@@ -2,18 +2,17 @@
 	namespace App\Controller;
 
 	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
+	use App\Exception\ValidationException;
 	use App\Repository\GameRepository;
 	use App\Service\IGDBHelper;
 	use App\Service\ResponseHelper;
 	use App\Transformer\GameEntityTransformer;
-	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Exception\ValidationFailedException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 	use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
@@ -29,11 +28,22 @@
 	 */
 	final class GameController extends AbstractBaseApiController {
 
+		/**
+		 * @var IGDBHelper
+		 */
 		private IGDBHelper $IGDBHelper;
 
+		/**
+		 * GameController constructor.
+		 * @param IGDBHelper $IGDBHelper
+		 * @param ValidatorInterface $validator
+		 * @param GameEntityTransformer $entityTransformer
+		 * @param GameRequestDTOTransformer $DTOTransformer
+		 * @param GameRepository $repository
+		 */
 		#[Pure]
 		public function __construct(
-			IGDBHelper $IGDBHelper, EntityManagerInterface $entityManager, ValidatorInterface $validator,
+			IGDBHelper $IGDBHelper, ValidatorInterface $validator,
 			GameEntityTransformer $entityTransformer, GameRequestDTOTransformer $DTOTransformer,
 			GameRepository $repository
 		) {
@@ -57,7 +67,7 @@
 
 				$game = $this->createOne($request);
 
-			} catch (ValidationFailedException $exception) {
+			} catch (ValidationException $exception) {
 
 
 				return ResponseHelper::createValidationErrorResponse($exception);
@@ -99,7 +109,7 @@
 
 			if (!$this->repository instanceof GameRepository)
 				throw new \InvalidArgumentException(
-					'repository not instance of type GameRepository'
+					'GameController\'s repository not instance of type GameRepository'
 				);
 
 			$games = $this->repository->findAllOrderByTemplates($page, $pageSize);
@@ -138,11 +148,14 @@
 		 *
 		 * This controller action looks at the URL query, searches IGDB and returns whatever IGDB sends us.
 		 * So ?halo will return whatever IGDB finds after searching for halo
+		 * @See IGDBHelper::searchIGDB()
+		 *
 		 * @throws ClientExceptionInterface
 		 * @throws DecodingExceptionInterface
 		 * @throws RedirectionExceptionInterface
 		 * @throws ServerExceptionInterface
 		 * @throws TransportExceptionInterface
+
 		 */
 		public function searchIGDB(string $game): Response {
 

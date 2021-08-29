@@ -18,7 +18,7 @@
 			$data = json_decode($request->getContent(), true);
 
 			if (!isset($data['playthrough_id'])) {
-				throw new ValidationException('sections must have a playthrough id');
+				throw new \OutOfBoundsException('sections must have a playthrough id');
 			}
 
 			$dto = new SectionDTO();

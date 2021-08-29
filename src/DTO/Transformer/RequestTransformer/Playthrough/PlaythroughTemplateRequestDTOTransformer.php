@@ -12,7 +12,7 @@
 			$data = json_decode($request->getContent(), true);
 
 			if (!isset($data['game'])) {
-				throw new ValidationException('playthrough templates must include game key');
+				throw new \OutOfBoundsException('playthrough templates must include game key');
 			}
 
 			$dto = new PlaythroughTemplateDTO();
