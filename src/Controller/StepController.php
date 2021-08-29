@@ -6,6 +6,7 @@
 	use App\Service\ResponseHelper;
 	use App\Transformer\StepEntityTransformer;
 	use Doctrine\ORM\EntityManagerInterface;
+	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\RequestStack;
 	use Symfony\Component\HttpFoundation\Response;
@@ -20,17 +21,20 @@
 	 */
 	final class StepController extends AbstractBaseApiController {
 
-		public function __construct(RequestStack $request, EntityManagerInterface $entityManager,
-		                            ValidatorInterface $validator, StepEntityTransformer $entityTransformer,
-		                            StepRequestTransformer $DTOTransformer,
-		                            StepRepository $repository) {
-			parent::__construct($request, $entityManager, $validator, $entityTransformer, $DTOTransformer, $repository);
+		#[Pure]
+		public function __construct(
+			ValidatorInterface $validator, StepEntityTransformer $entityTransformer,
+			StepRequestTransformer $DTOTransformer,
+			StepRepository $repository
+		) {
+			parent::__construct($validator, $entityTransformer, $DTOTransformer, $repository);
 		}
 
 		/**
 		 * @Route(path="create", methods={"POST"}, name="create")
 		 *
 		 * @param Request $request
+		 *
 		 * @return Response
 		 */
 		public function create(Request $request): Response {
@@ -57,6 +61,7 @@
 		 * @Route(path="delete/{id<\d+>}", methods={"DELETE"}, name="delete")
 		 *
 		 * @param string|int $id
+		 *
 		 * @return Response
 		 */
 		public function delete(string|int $id): Response {
@@ -72,6 +77,7 @@
 		 *
 		 * @param Request $request
 		 * @param int $id
+		 *
 		 * @return Response
 		 */
 		public function update(Request $request, int $id): Response {

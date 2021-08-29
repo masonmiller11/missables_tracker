@@ -35,24 +35,15 @@
 
 		#[Pure]
 		public function __construct(
-			IGDBHelper $IGDBHelper,
-			RequestStack $request,
-			EntityManagerInterface $entityManager,
-			ValidatorInterface $validator,
-			GameEntityTransformer $entityTransformer,
-			GameRequestDTOTransformer $DTOTransformer,
+			IGDBHelper $IGDBHelper, EntityManagerInterface $entityManager, ValidatorInterface $validator,
+			GameEntityTransformer $entityTransformer, GameRequestDTOTransformer $DTOTransformer,
 			GameRepository $repository
 		) {
-			parent::__construct(
-				$request,
-				$entityManager,
-				$validator,
-				$entityTransformer,
-				$DTOTransformer,
-				$repository
-			);
+
+			parent::__construct($validator, $entityTransformer, $DTOTransformer, $repository);
 
 			$this->IGDBHelper = $IGDBHelper;
+
 		}
 
 		/**
@@ -70,12 +61,10 @@
 
 			} catch (ValidationFailedException $exception) {
 
-				$errors = [];
-				foreach ($exception->getViolations() as $error) {
-					$errors[] = $error->getMessage();
-				}
+				//TODO move this logic into ResponseHelper. We repeat it constantly.
+				//TODO pass the ValidationFailedException into createValidationErrorResponse
 
-				return ResponseHelper::createValidationErrorResponse($errors);
+				return ResponseHelper::createValidationErrorResponse($exception);
 
 			}
 
@@ -87,6 +76,8 @@
 		 * @Route(path="read/{id<\d+>}", methods={"GET"}, name="read")
 		 *
 		 * @param int $id
+		 * @param SerializerInterface $serializer
+		 *
 		 * @return Response
 		 *
 		 * Reads a single game from our database based on its id.
@@ -104,14 +95,16 @@
 		 *
 		 * @param int $page
 		 * @param int $pageSize
-		 * @return Response
+		 * @param SerializerInterface $serializer
 		 *
+		 * @return Response
 		 */
 		public function listPopular(int $page, int $pageSize, SerializerInterface $serializer): Response {
 
-			if (!$this->repository instanceof GameRepository) throw new \InvalidArgumentException(
-				'repository not instance of type GameRepository'
-			);
+			if (!$this->repository instanceof GameRepository)
+				throw new \InvalidArgumentException(
+					'repository not instance of type GameRepository'
+				);
 
 			$games = $this->repository->findAllOrderByTemplates($page, $pageSize);
 
@@ -129,9 +122,11 @@
 		 */
 		public function search(string $game, SerializerInterface $serializer): Response {
 
-			if (!$this->repository instanceof GameRepository) throw new \InvalidArgumentException(
-				'repository is not of type GameRespository'
-			);
+			if (!$this->repository instanceof GameRepository)
+				throw new \InvalidArgumentException(
+					'repository is not of type GameRespository'
+				);
+
 			$games = $this->repository->searchByName($game);
 
 			return ResponseHelper::createReadResponse($games, $serializer);
@@ -142,6 +137,7 @@
 		 * @Route(path="search/igdb/{game}", methods={"GET"}, name="search_igdb")
 		 *
 		 * @param string $game
+		 *
 		 * @return Response
 		 *
 		 * This controller action looks at the URL query, searches IGDB and returns whatever IGDB sends us.

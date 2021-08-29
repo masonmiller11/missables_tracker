@@ -21,12 +21,13 @@
 	final class PlaythroughTemplateController extends AbstractBaseApiController {
 
 		#[Pure]
-		public function __construct(RequestStack $request, EntityManagerInterface $entityManager,
-		                                    ValidatorInterface $validator, PlaythroughTemplateEntityTransformer $entityTransformer,
-		                                    PlaythroughTemplateRequestDTOTransformer $DTOTransformer,
-		                                    PlaythroughTemplateRepository $repository) {
+		public function __construct(
+			ValidatorInterface $validator, PlaythroughTemplateEntityTransformer $entityTransformer,
+			PlaythroughTemplateRequestDTOTransformer $DTOTransformer,
+			PlaythroughTemplateRepository $repository
+		) {
 
-			parent::__construct($request, $entityManager, $validator, $entityTransformer, $DTOTransformer, $repository);
+			parent::__construct($validator, $entityTransformer, $DTOTransformer, $repository);
 
 		}
 
@@ -34,6 +35,7 @@
 		 * @Route(path="create", methods={"POST"}, name="create")
 		 *
 		 * @param Request $request
+		 *
 		 * @return Response
 		 */
 		public function create(Request $request): Response {
@@ -61,6 +63,7 @@
 		 * @Route(path="delete/{id<\d+>}", methods={"DELETE"}, name="delete")
 		 *
 		 * @param string|int $id
+		 *
 		 * @return Response
 		 */
 		public function delete(string|int $id): Response {
@@ -75,6 +78,8 @@
 		 * @Route(path="read/{id<\d+>}",methods={"GET"}, name="read")
 		 *
 		 * @param int $id
+		 * @param SerializerInterface $serializer
+		 *
 		 * @return Response
 		 */
 		public function read(int $id, SerializerInterface $serializer): Response {
@@ -90,6 +95,7 @@
 		 *
 		 * @param Request $request
 		 * @param int $id
+		 *
 		 * @return Response
 		 */
 		public function update(Request $request, int $id): Response {
@@ -105,6 +111,7 @@
 		 *
 		 * @param int $page
 		 * @param SerializerInterface $serializer
+		 *
 		 * @return Response
 		 */
 		public function listThisUsers(int $page, SerializerInterface $serializer): Response {
@@ -124,13 +131,16 @@
 		 * @param int $gameID
 		 * @param int $page
 		 * @param int $pageSize
+		 * @param SerializerInterface $serializer
+		 *
 		 * @return Response
 		 */
 		public function listByGame(int $gameID, int $page, int $pageSize, SerializerInterface $serializer): Response {
 
-			if (!$this->repository instanceof PlaythroughTemplateRepository) throw new \InvalidArgumentException(
-				'repository not instance of type PlaythroughTemplateRepository'
-			);
+			if (!$this->repository instanceof PlaythroughTemplateRepository)
+				throw new \InvalidArgumentException(
+					'repository not instance of type PlaythroughTemplateRepository'
+				);
 
 			$templates = $this->repository->findAllByGame($gameID, $page, $pageSize);
 
@@ -139,18 +149,23 @@
 		}
 
 		/**
-		 * @Route(path="byauthor/{authorID<\d+>}/{page<\d+>?1}/{pageSize<\d+>?20}", methods={"GET"}, name="list_by_author")
+		 * @Route(path="byauthor/{authorID<\d+>}/{page<\d+>?1}/{pageSize<\d+>?20}", methods={"GET"},
+		 *                                                                          name="list_by_author")
 		 *
 		 * @param int $authorID
 		 * @param int $page
 		 * @param int $pageSize
+		 * @param SerializerInterface $serializer
+		 *
 		 * @return Response
 		 */
-		public function listByAuthor(int $authorID, int $page, int $pageSize, SerializerInterface $serializer): Response {
+		public function listByAuthor(int $authorID, int $page, int $pageSize, SerializerInterface $serializer
+		): Response {
 
-			if (!$this->repository instanceof PlaythroughTemplateRepository) throw new \InvalidArgumentException(
-				'repository not instance of type PlaythroughTemplateRepository'
-			);
+			if (!$this->repository instanceof PlaythroughTemplateRepository)
+				throw new \InvalidArgumentException(
+					'repository not instance of type PlaythroughTemplateRepository'
+				);
 
 			$templates = $this->repository->findAllByAuthor($authorID, $page, $pageSize);
 
@@ -164,13 +179,15 @@
 		 * @param int $page
 		 * @param int $pageSize
 		 * @param SerializerInterface $serializer
+		 *
 		 * @return Response
 		 */
 		public function list(int $page, int $pageSize, SerializerInterface $serializer): Response {
 
-			if (!$this->repository instanceof PlaythroughTemplateRepository) throw new \InvalidArgumentException(
-				'repository not instance of type PlaythroughTemplateRepository'
-			);
+			if (!$this->repository instanceof PlaythroughTemplateRepository)
+				throw new \InvalidArgumentException(
+					'repository not instance of type PlaythroughTemplateRepository'
+				);
 			$templates = $this->repository->findAllOrderByLikes($page, $pageSize);
 
 			return ResponseHelper::createReadResponse($templates, $serializer);
