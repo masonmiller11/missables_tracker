@@ -91,6 +91,7 @@
 			$tempDTO->gameID = $playthrough->getGame()->getId();
 			$tempDTO->templateId = $playthrough->getTemplateId();
 			$this->validate($tempDTO);
+			if (!$skipValidation) $this->validate($tempDTO);
 
 			$playthrough = $this->checkAndSetData(json_decode($request->getContent(), true), $playthrough);
 

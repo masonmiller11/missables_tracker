@@ -96,7 +96,7 @@
 				$user->setEmail($tempDTO->email);
 			}
 
-			$this->validate($tempDTO);
+			if (!$skipValidation) $this->validate($tempDTO);
 
 			return $user;
 

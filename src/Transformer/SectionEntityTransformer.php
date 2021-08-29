@@ -76,7 +76,7 @@
 
 			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
 			$tempDTO->playthroughId = $section->getPlaythrough()->getId();
-			$this->validate($tempDTO);
+			if (!$skipValidation) $this->validate($tempDTO);
 
 			$section = $this->checkData($section, json_decode($request->getContent(), true));
 
