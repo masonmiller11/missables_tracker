@@ -6,7 +6,9 @@
 	use App\DTO\Transformer\RequestTransformer\RequestDTOTransformerInterface;
 	use App\Entity\EntityInterface;
 	use App\Entity\User;
+	use App\Exception\ValidationException;
 	use App\Transformer\EntityTransformerInterface;
+	use App\Transformer\UserEntityTransformer;
 	use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\Request;
@@ -14,8 +16,6 @@
 	use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Exception\InvalidArgumentException;
-	use Symfony\Component\Validator\Exception\ValidationFailedException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	abstract class AbstractBaseApiController extends AbstractController {
@@ -66,13 +66,14 @@
 		 * @param bool $getUser
 		 *
 		 * @return EntityInterface
-		 * @throws ValidationFailedException
+		 * @throws ValidationException
 		 */
 		protected function createOne(Request $request, bool $skipValidation = false, bool $getUser = true
 		): EntityInterface {
 
+			/**Set user to null if the resource does not require owner. Such as @See UserEntityTransformer
+			 */
 			$user = null;
-
 			if ($getUser)
 				$user = $this->getUser();
 
@@ -100,14 +101,13 @@
 
 		/**
 		 * @param DTOInterface $dto
-		 *
-		 * @throws ValidationFailedException
+		 * @throws ValidationException
 		 */
 		protected function validateDTO(DTOInterface $dto): void {
 
 			$errors = $this->validator->validate($dto);
 			if (count($errors) > 0)
-				throw new ValidationFailedException($errors->count(), $errors);
+				throw new ValidationException($errors);
 
 		}
 
@@ -150,7 +150,7 @@
 		private function confirmResourceOwner(object $entity): void {
 
 			if (!method_exists($entity, 'getOwner') && !method_exists($entity, 'getLikedBy')) {
-				throw new InvalidArgumentException();
+				throw new \BadMethodCallException($entity::class . ' does not have getOwner or getLiked methods');
 			}
 
 			$authenticatedUser = $this->getUser();

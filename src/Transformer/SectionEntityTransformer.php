@@ -53,6 +53,8 @@
 		public function doCreateWork (): Section {
 
 			if (!($this->dto instanceof SectionDTO)) {
+				throw new \InvalidArgumentException('SectionEntityTransformer\'s DTO not instance of SectionDTO');
+			}
 
 			$playthrough = $this->playthroughRepository->find($this->dto->playthroughId);
 
@@ -69,6 +71,7 @@
 		 * @param Request $request
 		 * @param bool $skipValidation
 		 * @return Section
+		 * @throws \App\Exception\ValidationException
 		 */
 		public function doUpdateWork(int $id, Request $request, bool $skipValidation = false): Section {
 
@@ -81,6 +84,9 @@
 			$section = $this->checkData($section, json_decode($request->getContent(), true));
 
 			if (!($section instanceof Section)) {
+				throw new \InvalidArgumentException(
+					$section::class . ' not instance of Playthrough. Does ' . $id . 'belong to a section?');
+			}
 
 			return $section;
 

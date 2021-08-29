@@ -7,14 +7,11 @@
 	use App\Service\ResponseHelper;
 	use App\Transformer\UserEntityTransformer;
 	use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
-	use Symfony\Component\HttpFoundation\RequestStack;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Exception\ValidationFailedException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	/**
@@ -23,6 +20,13 @@
 	 */
 	final class UserController extends AbstractBaseApiController {
 
+		/**
+		 * UserController constructor.
+		 * @param ValidatorInterface $validator
+		 * @param UserEntityTransformer $entityTransformer
+		 * @param UserRequestDTOTransformer $DTOTransformer
+		 * @param UserRepository $repository
+		 */
 		#[Pure]
 		public function __construct(
 			ValidatorInterface $validator, UserEntityTransformer $entityTransformer,
@@ -39,7 +43,6 @@
 		 * @param Request $request
 		 *
 		 * @return Response
-		 * @throws \Exception
 		 */
 		public function create(Request $request): Response {
 
@@ -47,7 +50,7 @@
 
 				$user = $this->createOne($request, false, false);
 
-			} catch (ValidationFailedException $exception) {
+			} catch (ValidationException $exception) {
 
 				return ResponseHelper::createValidationErrorResponse($exception);
 
@@ -79,7 +82,7 @@
 
 				$this->entityTransformer->update($userId, $request);
 
-			} catch (ValidationFailedException $exception) {
+			} catch (ValidationException $exception) {
 
 				ResponseHelper::createValidationErrorResponse($exception);
 			}
@@ -117,7 +120,7 @@
 
 				$this->entityTransformer->updatePassword($userId, $password);
 
-			} catch (ValidationFailedException $exception) {
+			} catch (ValidationException $exception) {
 
 				ResponseHelper::createValidationErrorResponse($exception);
 

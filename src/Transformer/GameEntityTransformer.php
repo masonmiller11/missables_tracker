@@ -37,6 +37,8 @@
 		protected function doCreateWork(): Game {
 
 			if (!($this->dto instanceof AbstractGameDTO)) {
+				throw new \InvalidArgumentException('GameEntityTransformer\'s DTO not instance of AbstractGameDTO');
+			}
 
 			if (!($this->dto->releaseDate instanceof \DateTimeImmutable)) {
 

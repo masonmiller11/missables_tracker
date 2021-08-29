@@ -2,13 +2,12 @@
 	namespace App\Controller;
 
 	use App\DTO\Transformer\RequestTransformer\LikeRequestDTOTransformer;
+	use App\Exception\ValidationException;
 	use App\Repository\LikeRepository;
 	use App\Service\ResponseHelper;
 	use App\Transformer\LikeEntityTransformer;
-	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
-	use Symfony\Component\HttpFoundation\RequestStack;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
@@ -39,7 +38,15 @@
 		 */
 		public function create(Request $request): Response {
 
-			$this->createOne($request);
+			try {
+
+				$this->createOne($request);
+
+			} catch (ValidationException $exception) {
+
+				return ResponseHelper::createValidationErrorResponse($exception);
+
+			}
 
 			return ResponseHelper::createLikeCreatedResponse();
 

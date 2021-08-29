@@ -16,6 +16,14 @@
 
 		private UserPasswordHasherInterface $encoder;
 
+		/**
+		 * UserEntityTransformer constructor.
+		 * @param EntityManagerInterface $entityManager
+		 * @param ValidatorInterface $validator
+		 * @param UserPasswordHasherInterface $encoder
+		 * @param UserRequestDTOTransformer $DTOTransformer
+		 * @param UserRepository $repository
+		 */
 		#[Pure]
 		public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator,
 		                            UserPasswordHasherInterface $encoder, UserRequestDTOTransformer $DTOTransformer,
@@ -27,33 +35,22 @@
 		}
 
 		/**
-		 * @return User
+		 * @throws ValidationException
 		 */
-		public function doCreateWork(): User {
+		public function updatePassword(int $id, string $password, bool $skipValidation = false): User {
 
 			$user = $this->repository->find($id);
 
-			$user = new User ($this->dto->email, $this->dto->username);
-
-			$password = $this->encoder->hashPassword($user, $this->dto->password);
-
-			$user->setPassword($password);
-
-			return $user;
-
-		}
-
-		public function updatePassword(int $id, string $password, bool $skipValidation = false): User {
-
-			if (!($this->dto instanceof UserDTO)) {
-				throw new \InvalidArgumentException('UserEntityTransformer\'s DTO not instance of UserDTO');
+			if (!($user instanceof User)) {
+				throw new \InvalidArgumentException($user::class . ' not instance of User');
+			}
 
 			$this->dto = new UserDTO();
 			$this->dto->username = $user->getUsername();
 			$this->dto->email = $user->getEmail();
 			$this->dto->password = $password;
 
-			$this->validate($this->dto);
+			if (!$skipValidation) $this->validate($this->dto);
 
 			$password = $this->encoder->hashPassword($user, $this->dto->password);
 
@@ -66,10 +63,35 @@
 
 		}
 
+		/**
+		 * @return User
+		 */
+		protected function doCreateWork(): User {
+
+			if (!($this->dto instanceof UserDTO)) {
+				throw new \InvalidArgumentException('UserEntityTransformer\'s DTO not instance of UserDTO');
+			}
+
+			$user = new User ($this->dto->email, $this->dto->username);
+
+			$password = $this->encoder->hashPassword($user, $this->dto->password);
+
+			$user->setPassword($password);
+
+			return $user;
+
+		}
+
+		/**
+		 * @throws ValidationException
+		 */
 		protected function doUpdateWork(int $id, Request $request, bool $skipValidation): User {
 
 			$user = $this->repository->find($id);
-			Assert($user instanceof User);
+
+			if (!($user instanceof User)) {
+				throw new \InvalidArgumentException($user::class . ' not instance of User. Does ' . $id . 'belong to a user?');
+			}
 
 			$data = json_decode($request->getContent(), true);
 
@@ -77,11 +99,13 @@
 			$tempDTO->password = $user->getPassword();
 
 			if (!isset($data['username']) && !isset($data['email'])) {
-				throw new ValidationException('request does not include username or email');
+				throw new \OutOfBoundsException('request must include include username or email');
 			}
 
-			//if it's not in the request, we'll set some temp data so it passed validation.
-			//TODO this shit is sort of jank. We need to rethink DTO validation to fix it...
+			/**If username is not present in the request data, then create a temporary username called 'fake username'
+			 * This is simply so that the $tempDTO will pass validation even if $data does not include username
+			 * After we do this for username, we do it for email as well.
+			 */
 			if (!isset($data['username'])) {
 				$tempDTO->username = 'fake username';
 			} else {

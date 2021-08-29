@@ -18,7 +18,7 @@
 			$data = json_decode($request->getContent(), true);
 
 			if (!isset($data['section_template_id'])) {
-				throw new ValidationException('step templates must have a section template id');
+				throw new \OutOfBoundsException('step templates must have a section template id');
 			}
 
 			$dto = new StepTemplateDTO();

@@ -14,7 +14,7 @@
 			$dto = new LikeDTO();
 
 			if (!isset($data['template_id'])) {
-				throw new ValidationException('likes must include template id');
+				throw new \OutOfBoundsException('likes must include template id');
 			}
 
 			$dto->templateID = $data['template_id'];

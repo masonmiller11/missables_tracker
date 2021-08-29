@@ -1,10 +1,10 @@
 <?php
 	namespace App\Service;
 
+	use App\Exception\ValidationException;
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Exception\ValidationFailedException;
 
 	class ResponseHelper {
 
@@ -96,7 +96,7 @@
 
 		}
 
-		public static function createValidationErrorResponse(ValidationFailedException $exception): JsonResponse {
+		public static function createValidationErrorResponse(ValidationException $exception): JsonResponse {
 
 			$errors = [];
 

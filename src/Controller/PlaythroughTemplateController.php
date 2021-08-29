@@ -2,6 +2,7 @@
 	namespace App\Controller;
 
 	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughTemplateRequestDTOTransformer;
+	use App\Exception\ValidationException;
 	use App\Repository\PlaythroughTemplateRepository;
 	use App\Service\ResponseHelper;
 	use App\Transformer\PlaythroughTemplateEntityTransformer;
@@ -10,7 +11,6 @@
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Exception\ValidationFailedException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	/**
@@ -42,7 +42,7 @@
 
 				$playthroughTemplate = $this->createOne($request);
 
-			} catch (ValidationFailedException $exception) {
+			} catch (ValidationException $exception) {
 
 				return ResponseHelper::createValidationErrorResponse($exception);
 
@@ -108,8 +108,6 @@
 		 * @return Response
 		 */
 		public function listThisUsers(int $page, SerializerInterface $serializer): Response {
-
-			//TODO use paginator for this in future.
 
 			$user = $this->getUser();
 			$templates = $user->getPlaythroughTemplates();

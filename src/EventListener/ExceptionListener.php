@@ -19,6 +19,12 @@
 			$response =  new JsonResponse(['status' => 'error','code' => $exception->getCode(), 'type' => get_class($exception),
 				'message' => $exception->getMessage(), 'file' => $exception->getFile()], Response::HTTP_INTERNAL_SERVER_ERROR);
 
+
+			if ($exception instanceof \OutOfBoundsException) {
+				$response =  new JsonResponse(['status' => 'error',
+					'message' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
+			}
+
 			if ($exception instanceof UniqueConstraintViolationException) {
 				$response =  new JsonResponse(['status' => 'error',
 					'message' => 'duplicate resource'], Response::HTTP_CONFLICT);

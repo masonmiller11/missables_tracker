@@ -4,6 +4,7 @@
 	use App\DTO\Step\StepDTO;
 	use App\DTO\Transformer\RequestTransformer\Step\StepRequestTransformer;
 	use App\Entity\Step\Step;
+	use App\Exception\ValidationException;
 	use App\Repository\SectionRepository;
 	use App\Repository\StepRepository;
 	use App\Transformer\Trait\StepSectionCheckDataTrait;
@@ -53,6 +54,8 @@
 		public function doCreateWork (): Step {
 
 			if (!($this->dto instanceof StepDTO)) {
+				throw new \InvalidArgumentException('StepEntityTransformer\'s DTO not instance of StepDTO');
+			}
 
 			$section = $this->sectionRepository->find($this->dto->sectionId);
 
@@ -69,6 +72,7 @@
 		 * @param Request $request
 		 * @param bool $skipValidation
 		 * @return Step
+		 * @throws ValidationException
 		 */
 		public function doUpdateWork(int $id, Request $request, bool $skipValidation = false): Step {
 
@@ -82,6 +86,9 @@
 			$step = $this->checkData($step,json_decode($request->getContent(), true));
 
 			if (!($step instanceof Step)) {
+				throw new \InvalidArgumentException(
+					$step::class . ' not instance of Step. Does ' . $id . 'belong to a step?');
+			}
 
 			return $step;
 

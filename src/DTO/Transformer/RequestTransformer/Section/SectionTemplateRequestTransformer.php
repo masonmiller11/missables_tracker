@@ -18,7 +18,7 @@
 			$data = json_decode($request->getContent(), true);
 
 			if (!isset($data['template_id'])) {
-				throw new ValidationException('section templates must have a template id');
+				throw new \OutOfBoundsException('section templates must have a template id');
 			}
 
 			$dto = new SectionTemplateDTO();

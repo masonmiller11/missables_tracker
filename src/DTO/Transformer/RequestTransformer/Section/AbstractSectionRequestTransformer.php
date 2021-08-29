@@ -17,7 +17,7 @@
 		protected function assembleSectionDTO(AbstractSectionDTO $dto, array $data): AbstractSectionDTO {
 
 			if (!isset($data['position'])) {
-				throw new ValidationException('sections must include position');
+				throw new \OutOfBoundsException('sections must include position');
 			}
 
 			$dto->name = $data['name'] ?? 'untitled';
