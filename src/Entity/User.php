@@ -140,9 +140,12 @@
 
 		/**
 		 * @return string
+		 * Security depends on this method returning email.
+		 * Create a second method for returning username if needed.
 		 */
+		#[Pure]
 		public function getUsername() :string {
-			return $this->username;
+			return $this->getEmail();
 		}
 
 		/**
