@@ -9,6 +9,7 @@
 	use App\Transformer\EntityTransformerInterface;
 	use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -16,7 +17,6 @@
 	use Symfony\Component\Validator\Exception\InvalidArgumentException;
 	use Symfony\Component\Validator\Exception\ValidationFailedException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
-	use Symfony\Component\HttpFoundation\Request;
 
 	abstract class AbstractBaseApiController extends AbstractController {
 
@@ -61,66 +61,6 @@
 		}
 
 		/**
-		 * @return User
-		 */
-		protected function getUser(): User {
-
-			$user = parent::getUser();
-			assert($user instanceof User);
-
-			return $user;
-
-		}
-
-		/**
-		 * @param DTOInterface $dto
-		 *
-		 * @throws ValidationFailedException
-		 */
-		protected function validateDTO(DTOInterface $dto): void {
-
-			$errors = $this->validator->validate($dto);
-			if (count($errors) > 0)
-				throw new ValidationFailedException($errors->count(), $errors);
-
-		}
-
-		/**
-		 * @param Object $entity
-		 */
-		private function confirmResourceOwner(object $entity): void {
-
-			if (!method_exists($entity, 'getOwner') && !method_exists($entity, 'getLikedBy')) {
-				throw new InvalidArgumentException();
-			}
-
-			$authenticatedUser = $this->getUser();
-			$owner = $entity->getOwner() ?? $entity->getLikedBy();
-
-			if ($owner !== $authenticatedUser) {
-				throw new AccessDeniedHttpException();
-			}
-
-		}
-
-		/**
-		 * @param int $id
-		 *
-		 * @return bool
-		 */
-		private function doesEntityExist(int $id): bool {
-
-			$entity = $this->repository->find($id);
-
-			if (!$entity) {
-				return false;
-			}
-
-			return true;
-
-		}
-
-		/**
 		 * @param Request $request
 		 * @param bool $skipValidation
 		 * @param bool $getUser
@@ -146,6 +86,31 @@
 		}
 
 		/**
+		 * @return User
+		 */
+		protected function getUser(): User {
+
+			$user = parent::getUser();
+			assert($user instanceof User);
+
+			return $user;
+
+		}
+
+		/**
+		 * @param DTOInterface $dto
+		 *
+		 * @throws ValidationFailedException
+		 */
+		protected function validateDTO(DTOInterface $dto): void {
+
+			$errors = $this->validator->validate($dto);
+			if (count($errors) > 0)
+				throw new ValidationFailedException($errors->count(), $errors);
+
+		}
+
+		/**
 		 * @param Request $request
 		 * @param int $id
 		 *
@@ -163,10 +128,46 @@
 
 		/**
 		 * @param int $id
+		 *
+		 * @return bool
+		 */
+		private function doesEntityExist(int $id): bool {
+
+			$entity = $this->repository->find($id);
+
+			if (!$entity) {
+				return false;
+			}
+
+			return true;
+
+		}
+
+		/**
+		 * @param Object $entity
+		 */
+		private function confirmResourceOwner(object $entity): void {
+
+			if (!method_exists($entity, 'getOwner') && !method_exists($entity, 'getLikedBy')) {
+				throw new InvalidArgumentException();
+			}
+
+			$authenticatedUser = $this->getUser();
+			$owner = $entity->getOwner() ?? $entity->getLikedBy();
+
+			if ($owner !== $authenticatedUser) {
+				throw new AccessDeniedHttpException();
+			}
+
+		}
+
+		/**
+		 * @param int $id
 		 */
 		protected function deleteOne(int $id): void {
 
 			if (!$this->doesEntityExist($id)) throw new NotFoundHttpException('resource does not exist');
+
 			$this->confirmResourceOwner($this->repository->find($id));
 
 			$this->entityTransformer->delete($id);
