@@ -8,6 +8,8 @@
 	use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 	use Symfony\Component\Serializer\Serializer;
 	use Symfony\Component\Serializer\SerializerInterface;
+	use Symfony\Component\Validator\Constraints\Valid;
+	use Symfony\Component\Validator\Exception\ValidationFailedException;
 
 	class ResponseHelper {
 
@@ -97,7 +99,13 @@
 
 		}
 
-		public static function createValidationErrorResponse (array $errors): JsonResponse {
+		public static function createValidationErrorResponse (ValidationFailedException $exception): JsonResponse {
+
+			$errors = [];
+			
+			foreach ($exception->getViolations() as $error) {
+				$errors[] = $error->getMessage();
+			}
 
 			return new JsonResponse([
 				'status' => 'validation error',
