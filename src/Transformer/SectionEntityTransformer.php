@@ -4,6 +4,7 @@
 	use App\DTO\Section\SectionDTO;
 	use App\DTO\Transformer\RequestTransformer\Section\SectionRequestTransformer;
 	use App\Entity\Section\Section;
+	use App\Exception\ValidationException;
 	use App\Repository\PlaythroughRepository;
 	use App\Repository\SectionRepository;
 	use App\Transformer\Trait\StepSectionCheckDataTrait;
@@ -71,7 +72,7 @@
 		 * @param Request $request
 		 * @param bool $skipValidation
 		 * @return Section
-		 * @throws \App\Exception\ValidationException
+		 * @throws ValidationException
 		 */
 		public function doUpdateWork(int $id, Request $request, bool $skipValidation = false): Section {
 
