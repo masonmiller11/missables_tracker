@@ -4,11 +4,9 @@
 	use App\DTO\Like\LikeDTO;
 	use App\Entity\EntityInterface;
 	use App\Entity\Playthrough\PlaythroughTemplateLike;
+	use App\Exception\DuplicateLikeException;
 	use App\Repository\LikeRepository;
 	use App\Repository\PlaythroughTemplateRepository;
-	use App\Repository\UserRepository;
-	use Doctrine\DBAL\Exception;
-	use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
@@ -30,7 +28,7 @@
 		}
 
 		/**
-		 * @throws Exception
+		 * @throws DuplicateLikeException
 		 */
 		public function doCreateWork(): PlaythroughTemplateLike {
 
@@ -39,7 +37,7 @@
 			$getLikeIfExists = $this->repository->getLikeByUserAndTemplate($this->user->getId(), $this->dto->templateID);
 
 			if ($getLikeIfExists) {
-				throw new Exception('a user cannot like one template more than once');
+				throw new DuplicateLikeException();
 			}
 
 			$template = $this->playthroughTemplateRepository->find($this->dto->templateID);

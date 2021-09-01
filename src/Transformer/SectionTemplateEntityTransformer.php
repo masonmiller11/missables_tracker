@@ -4,6 +4,7 @@
 	use App\DTO\Section\SectionTemplateDTO;
 	use App\DTO\Transformer\RequestTransformer\Section\SectionTemplateRequestTransformer;
 	use App\Entity\Section\SectionTemplate;
+	use App\Exception\ValidationException;
 	use App\Repository\PlaythroughTemplateRepository;
 	use App\Repository\SectionTemplateRepository;
 	use App\Transformer\Trait\StepSectionCheckDataTrait;
@@ -25,24 +26,24 @@
 		/**
 		 * PlaythroughTemplateEntityTransformer constructor.
 		 *
-		 * @param EntityManagerInterface            $entityManager
-		 * @param ValidatorInterface                $validator
+		 * @param EntityManagerInterface $entityManager
+		 * @param ValidatorInterface $validator
 		 * @param SectionTemplateRequestTransformer $DTOTransformer
-		 * @param PlaythroughTemplateRepository     $playthroughTemplateRepository
-		 * @param SectionTemplateRepository         $sectionTemplateRepository
+		 * @param PlaythroughTemplateRepository $playthroughTemplateRepository
+		 * @param SectionTemplateRepository $sectionTemplateRepository
 		 */
 		#[Pure]
 		public function __construct(EntityManagerInterface $entityManager,
 		                            ValidatorInterface $validator,
-									SectionTemplateRequestTransformer $DTOTransformer,
+		                            SectionTemplateRequestTransformer $DTOTransformer,
 		                            PlaythroughTemplateRepository $playthroughTemplateRepository,
-									SectionTemplateRepository $sectionTemplateRepository) {
+		                            SectionTemplateRepository $sectionTemplateRepository) {
 
 			parent::__construct($entityManager, $validator);
 
 			$this->DTOTransformer = $DTOTransformer;
 			$this->playthroughTemplateRepository = $playthroughTemplateRepository;
-			$this->repository =$sectionTemplateRepository;
+			$this->repository = $sectionTemplateRepository;
 
 		}
 
@@ -50,10 +51,11 @@
 		 *
 		 * @return SectionTemplate
 		 */
-		public function doCreateWork (): SectionTemplate {
+		public function doCreateWork(): SectionTemplate {
 
-
-			assert($this->dto instanceof SectionTemplateDTO);
+			if (!($this->dto instanceof SectionTemplateDTO)) {
+				throw new \InvalidArgumentException('SectionEntityTransformer\'s DTO not instance of SectionTemplateDTO');
+			}
 
 			$playthroughTemplate = $this->playthroughTemplateRepository->find($this->dto->templateId);
 
@@ -70,19 +72,23 @@
 		 * @param Request $request
 		 * @param bool $skipValidation
 		 * @return SectionTemplate
+		 * @throws ValidationException
 		 */
 		public function doUpdateWork(int $id, Request $request, bool $skipValidation = false): SectionTemplate {
 
 			$sectionTemplate = $this->repository->find($id);
 
-
 			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
 			$tempDTO->templateId = $sectionTemplate->getPlaythrough()->getId();
-			$this->validate($tempDTO);
+
+			if (!$skipValidation) $this->validate($tempDTO);
 
 			$sectionTemplate = $this->checkData($sectionTemplate, json_decode($request->getContent(), true));
 
-			Assert($sectionTemplate instanceof SectionTemplate);
+			if (!($sectionTemplate instanceof SectionTemplate)) {
+				throw new \InvalidArgumentException(
+					$sectionTemplate::class . ' not instance of Section Template. Does ' . $id . 'belong to a section template?');
+			}
 
 			return $sectionTemplate;
 

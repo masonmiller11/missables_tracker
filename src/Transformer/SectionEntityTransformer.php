@@ -4,6 +4,7 @@
 	use App\DTO\Section\SectionDTO;
 	use App\DTO\Transformer\RequestTransformer\Section\SectionRequestTransformer;
 	use App\Entity\Section\Section;
+	use App\Exception\ValidationException;
 	use App\Repository\PlaythroughRepository;
 	use App\Repository\SectionRepository;
 	use App\Transformer\Trait\StepSectionCheckDataTrait;
@@ -52,7 +53,9 @@
 		 */
 		public function doCreateWork (): Section {
 
-			assert($this->dto instanceof SectionDTO);
+			if (!($this->dto instanceof SectionDTO)) {
+				throw new \InvalidArgumentException('SectionEntityTransformer\'s DTO not instance of SectionDTO');
+			}
 
 			$playthrough = $this->playthroughRepository->find($this->dto->playthroughId);
 
@@ -69,6 +72,7 @@
 		 * @param Request $request
 		 * @param bool $skipValidation
 		 * @return Section
+		 * @throws ValidationException
 		 */
 		public function doUpdateWork(int $id, Request $request, bool $skipValidation = false): Section {
 
@@ -76,11 +80,14 @@
 
 			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
 			$tempDTO->playthroughId = $section->getPlaythrough()->getId();
-			$this->validate($tempDTO);
+			if (!$skipValidation) $this->validate($tempDTO);
 
 			$section = $this->checkData($section, json_decode($request->getContent(), true));
 
-			Assert ($section instanceof Section);
+			if (!($section instanceof Section)) {
+				throw new \InvalidArgumentException(
+					$section::class . ' not instance of Playthrough. Does ' . $id . 'belong to a section?');
+			}
 
 			return $section;
 

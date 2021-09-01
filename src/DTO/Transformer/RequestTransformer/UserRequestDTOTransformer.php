@@ -14,15 +14,15 @@
 			$dto = new UserDTO();
 
 			if (!isset($data['username'])) {
-				throw new ValidationException('users must include username');
+				throw new \OutOfBoundsException('users must include username');
 			}
 
 			if (!isset($data['email'])) {
-				throw new ValidationException('users must include email');
+				throw new \OutOfBoundsException('users must include email');
 			}
 
 			if (!isset($data['password'])) {
-				throw new ValidationException('users must include password');
+				throw new \OutOfBoundsException('users must include password');
 			}
 
 			$dto->username = $data['username'];

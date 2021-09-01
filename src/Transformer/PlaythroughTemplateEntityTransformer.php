@@ -4,6 +4,7 @@
 	use App\DTO\Playthrough\PlaythroughTemplateDTO;
 	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughTemplateRequestDTOTransformer;
 	use App\Entity\Playthrough\PlaythroughTemplate;
+	use App\Exception\ValidationException;
 	use App\Repository\GameRepository;
 	use App\Repository\PlaythroughTemplateRepository;
 	use App\Transformer\Trait\PlaythroughCheckDataTrait;
@@ -49,9 +50,13 @@
 		 *
 		 * @return PlaythroughTemplate
 		 */
-		public function doCreateWork (): PlaythroughTemplate {
+		public function doCreateWork(): PlaythroughTemplate {
 
-			assert($this->dto instanceof  PlaythroughTemplateDTO);
+			if (!($this->dto instanceof PlaythroughTemplateDTO)) {
+				throw new \InvalidArgumentException(
+					'PlaythroughTemplateEntityTransformer\'s DTO not instance of PlaythroughTemplateDTO'
+				);
+			}
 
 			$game = $this->gameRepository->find($this->dto->gameID);
 
@@ -68,6 +73,7 @@
 		 * @param Request $request
 		 * @param bool $skipValidation
 		 * @return PlaythroughTemplate
+		 * @throws ValidationException
 		 */
 		public function doUpdateWork(int $id, Request $request, bool $skipValidation = false): PlaythroughTemplate {
 
@@ -77,9 +83,15 @@
 			$tempDTO->gameID = $playthroughTemplate->getGame()->getId();
 			$this->validate($tempDTO);
 
-			$playthroughTemplate = $this->checkAndSetData(json_decode($request->getContent(), true), $playthroughTemplate);
+			$playthroughTemplate = $this->checkAndSetData(json_decode($request->getContent(), true),
+				$playthroughTemplate);
 
-			Assert($playthroughTemplate instanceof PlaythroughTemplate);
+			if (!($playthroughTemplate instanceof PlaythroughTemplate)) {
+				throw new \InvalidArgumentException(
+					$playthroughTemplate::class . ' not instance of PlaythroughTemplate. Does ' . $id .
+					'belong to a playthrough template?'
+				);
+			}
 
 			return $playthroughTemplate;
 

@@ -139,6 +139,16 @@
 		}
 
 		/**
+		 * @return string
+		 * Security depends on this method returning email.
+		 * Create a second method for returning username if needed.
+		 */
+		#[Pure]
+		public function getUsername() :string {
+			return $this->getEmail();
+		}
+
+		/**
 		 * @return string|null
 		 */
 		public function getPassword(): ?string {
@@ -147,10 +157,6 @@
 
 		public function getRoles() :array {
 			return ['ROLE_USER'];
-		}
-
-		#[Pure] public function getUsername() :string {
-			return $this->getEmail();
 		}
 
 		#[Pure] public function getUserIdentifier() :string {
