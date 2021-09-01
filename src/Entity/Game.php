@@ -3,12 +3,12 @@
 
 	use App\Entity\Playthrough\Playthrough;
 	use App\Entity\Playthrough\PlaythroughTemplate;
+	use App\Genre;
 	use Doctrine\Common\Collections\ArrayCollection;
 	use Doctrine\Common\Collections\Collection;
 	use Doctrine\Common\Collections\Selectable;
 	use Doctrine\ORM\Mapping as ORM;
 	use JetBrains\PhpStorm\Pure;
-	use App\Genre;
 
 	/**
 	 * @ORM\Entity(repositoryClass="App\Repository\GameRepository")
@@ -118,6 +118,13 @@
 		private Collection|Selectable|array $playthroughs;
 
 		/**
+		 * @ORM\OneToMany(targetEntity="App\Entity\GameCoverArt", mappedBy="game")
+		 *
+		 * @var Collection|GameCoverArt[]|Selectable
+		 */
+		private Collection|Selectable|array $coverArt;
+
+		/**
 		 * Game constructor.
 		 * @param string $genre
 		 * @param string $title
@@ -132,28 +139,29 @@
 		 * @param string $storyline
 		 * @param \DateTimeImmutable $releaseDate
 		 */
-		#[Pure] public function __construct (string $genre,
-		                                     string $title,
-		                                     int $internetGameDatabaseID,
-		                                     array $screenshots,
-		                                     array $artworks,
-		                                     string $cover,
-		                                     array $platforms,
-		                                     string $slug,
-		                                     float $rating,
-		                                     string $summary,
-		                                     string $storyline,
-		                                     \DateTimeImmutable $releaseDate) {
+		#[Pure] public function __construct(string $genre,
+		                                    string $title,
+		                                    int $internetGameDatabaseID,
+		                                    array $screenshots,
+		                                    array $artworks,
+		                                    string $cover,
+		                                    array $platforms,
+		                                    string $slug,
+		                                    float $rating,
+		                                    string $summary,
+		                                    string $storyline,
+		                                    \DateTimeImmutable $releaseDate) {
 
 			$this->playthroughTemplates = new ArrayCollection();
 			$this->playthroughs = new ArrayCollection();
+			$this->coverArt = new ArrayCollection();
 
 			$this->screenshots = $screenshots;
 			$this->artworks = $artworks;
 			$this->cover = $cover;
 			$this->platforms = $platforms;
 			$this->slug = $slug;
-			$this->rating =$rating;
+			$this->rating = $rating;
 			$this->summary = $summary;
 			$this->genre = $genre;
 			$this->title = $title;
@@ -161,6 +169,13 @@
 			$this->releaseDate = $releaseDate;
 			$this->internetGameDatabaseID = $internetGameDatabaseID;
 
+		}
+
+		/**
+		 * @return string
+		 */
+		public function getTitle(): string {
+			return $this->title;
 		}
 
 		/**
@@ -173,6 +188,13 @@
 		}
 
 		/**
+		 * @return \DateTimeImmutable
+		 */
+		public function getReleaseDate(): \DateTimeImmutable {
+			return $this->releaseDate;
+		}
+
+		/**
 		 * @param \DateTimeImmutable $releaseDate
 		 * @return static
 		 */
@@ -182,12 +204,10 @@
 		}
 
 		/**
-		 * @param int $internetGameDatabaseID
-		 * @return static
+		 * @return string
 		 */
-		public function setInternetGameDatabaseID(int $internetGameDatabaseID): static {
-			$this->internetGameDatabaseID = $internetGameDatabaseID;
-			return $this;
+		public function getGenre(): string {
+			return $this->genre;
 		}
 
 		/**
@@ -200,27 +220,6 @@
 		}
 
 		/**
-		 * @return string
-		 */
-		public function getTitle(): string {
-			return $this->title;
-		}
-
-		/**
-		 * @return \DateTimeImmutable
-		 */
-		public function getReleaseDate(): \DateTimeImmutable {
-			return $this->releaseDate;
-		}
-
-		/**
-		 * @return string
-		 */
-		public function getGenre(): string {
-			return $this->genre;
-		}
-
-		/**
 		 * @return PlaythroughTemplate[]|Collection|Selectable
 		 */
 		public function getTemplates(): Collection|array|Selectable {
@@ -228,10 +227,26 @@
 		}
 
 		/**
+		 * @return GameCoverArt[]|Collection|Selectable
+		 */
+		public function getCoverArt(): Collection|array|Selectable {
+			return $this->coverArt;
+		}
+
+		/**
 		 * @return int
 		 */
 		public function getInternetGameDatabaseID(): int {
 			return $this->internetGameDatabaseID;
+		}
+
+		/**
+		 * @param int $internetGameDatabaseID
+		 * @return static
+		 */
+		public function setInternetGameDatabaseID(int $internetGameDatabaseID): static {
+			$this->internetGameDatabaseID = $internetGameDatabaseID;
+			return $this;
 		}
 
 		/**
