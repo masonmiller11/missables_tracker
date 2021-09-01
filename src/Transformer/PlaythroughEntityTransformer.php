@@ -4,6 +4,7 @@
 	use App\DTO\Playthrough\PlaythroughDTO;
 	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughRequestDTOTransformer;
 	use App\Entity\Playthrough\Playthrough;
+	use App\Exception\ValidationException;
 	use App\Repository\GameRepository;
 	use App\Repository\PlaythroughRepository;
 	use App\Repository\PlaythroughTemplateRepository;
@@ -31,12 +32,12 @@
 		/**
 		 * PlaythroughTemplateEntityTransformer constructor.
 		 *
-		 * @param EntityManagerInterface           $entityManager
-		 * @param ValidatorInterface               $validator
-		 * @param GameRepository                   $gameRepository
+		 * @param EntityManagerInterface $entityManager
+		 * @param ValidatorInterface $validator
+		 * @param GameRepository $gameRepository
 		 * @param PlaythroughRequestDTOTransformer $DTOTransformer
-		 * @param PlaythroughRepository            $playthroughRepository
-		 * @param PlaythroughTemplateRepository    $playthroughTemplateRepository
+		 * @param PlaythroughRepository $playthroughRepository
+		 * @param PlaythroughTemplateRepository $playthroughTemplateRepository
 		 */
 		#[Pure]
 		public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator,
@@ -57,9 +58,11 @@
 		 *
 		 * @return Playthrough
 		 */
-		public function doCreateWork (): Playthrough {
+		public function doCreateWork(): Playthrough {
 
-			assert($this->dto instanceof PlaythroughDTO);
+			if (!($this->dto instanceof PlaythroughDTO)) {
+				throw new \InvalidArgumentException('PlaythroughEntityTransformer\'s DTO not instance of UserDTO');
+			}
 
 			$game = $this->gameRepository->find($this->dto->gameID);
 
@@ -82,6 +85,7 @@
 		 * @param Request $request
 		 * @param bool $skipValidation
 		 * @return Playthrough
+		 * @throws ValidationException
 		 */
 		public function doUpdateWork(int $id, Request $request, bool $skipValidation = false): Playthrough {
 
@@ -90,11 +94,16 @@
 			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
 			$tempDTO->gameID = $playthrough->getGame()->getId();
 			$tempDTO->templateId = $playthrough->getTemplateId();
-			$this->validate($tempDTO);
+
+			if (!$skipValidation) $this->validate($tempDTO);
 
 			$playthrough = $this->checkAndSetData(json_decode($request->getContent(), true), $playthrough);
 
-			Assert($playthrough instanceof Playthrough);
+
+			if (!($playthrough instanceof Playthrough)) {
+				throw new \InvalidArgumentException(
+					$playthrough::class . ' not instance of Playthrough. Does ' . $id . 'belong to a playthrough?');
+			}
 
 			return $playthrough;
 
