@@ -5,6 +5,7 @@
 	use JetBrains\PhpStorm\Pure;
 
 	/**
+	 * @ORM\Entity()
 	 * @ORM\Table(name="game_cover_art")
 	 */
 	class GameCoverArt implements EntityInterface {
