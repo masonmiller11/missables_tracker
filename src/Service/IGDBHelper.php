@@ -19,6 +19,7 @@
 	use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 	use Symfony\Contracts\HttpClient\HttpClientInterface;
+	use Symfony\Contracts\HttpClient\ResponseInterface;
 
 	class IGDBHelper {
 
@@ -231,6 +232,7 @@
 		/**
 		 * @throws TransportExceptionInterface
 		 * @throws \Exception
+		 * @throws DecodingExceptionInterface
 		 *
 		 * This gets a game based on IGDB id. First it tries to get it from our database.
 		 * If the game isn't already in our database, it will get it from IGDB and add it.
@@ -262,8 +264,7 @@
 
 				$game = $this->entityTransformer->assemble($dto);
 
-				$this->entityManager->persist($game);
-				$this->entityManager->flush();
+				$artwork = new GameCoverArt($this->getCoverArtWorkURIFromIGDB($game->getId()), $game);
 
 				return $game;
 			}
@@ -291,6 +292,31 @@
 			]);
 
 			return $this->IGDBGameResponseDTOTransformer->transformFromObject($response);
+
+		}
+
+		/**
+		 * @param int $ID
+		 *
+		 * @return string
+		 * @throws ClientExceptionInterface
+		 * @throws DecodingExceptionInterface
+		 * @throws RedirectionExceptionInterface
+		 * @throws ServerExceptionInterface
+		 * @throws TransportExceptionInterface
+		 */
+		public function getCoverArtWorkURIFromIGDB(string $ID): string {
+
+			$response = $this->client->request('POST', InternetGameDatabaseEndpoints::COVER, [
+				'headers' => $this->headers,
+				'body' => 'fields *; where id = ' . $ID . ';'
+			]);
+
+			$response = $response->toArray()[0];
+
+			$imageId = $response['image_id'];
+
+			return $uri = 'https://images.igdb.com/igdb/image/upload/t_cover_big/' . $imageId .    '.jpg';
 
 		}
 
