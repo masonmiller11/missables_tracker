@@ -56,7 +56,7 @@ security:
             roles: IS_AUTHENTICATED_ANONYMOUSLY
 
         -
-            path: ^/games/popular$
+            path: ^/games/popular
             roles: IS_AUTHENTICATED_ANONYMOUSLY
 
         -

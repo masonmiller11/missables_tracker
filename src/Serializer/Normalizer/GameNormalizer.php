@@ -42,14 +42,14 @@
 			}
 			$data['templateCount'] = $object->getPlaythroughTemplateCount();
 			$data['playthroughCount'] = $object->getPlaythroughCount();
-			$data['playthroughTemplate'] = $object->getTemplates()->map(
-				fn(PlaythroughTemplate $playthroughTemplate) => [
-					'id'=>$playthroughTemplate->getId(),
-					'visibility'=>$playthroughTemplate->isVisible(),
-					'votes'=>$playthroughTemplate->getLikes(),
-					'owner'=>$playthroughTemplate->getOwner()->getId(),
-				]
-			)->toArray();
+//			$data['playthroughTemplate'] = $object->getTemplates()->map(
+//				fn(PlaythroughTemplate $playthroughTemplate) => [
+//					'id'=>$playthroughTemplate->getId(),
+//					'visibility'=>$playthroughTemplate->isVisible(),
+//					'votes'=>$playthroughTemplate->countLikes(),
+//					'owner'=>$playthroughTemplate->getOwner()->getId(),
+//				]
+//			)->toArray();
 			$data['id'] = $object->getId();
 			$data['summary'] = $object->getSummary();
 			$data['storyline'] = $object->getStoryline();
