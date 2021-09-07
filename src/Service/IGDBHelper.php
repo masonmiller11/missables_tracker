@@ -4,14 +4,19 @@
 	use App\DTO\Game\IGDBGameResponseDTO;
 	use App\DTO\Transformer\ResponseTransformer\IGDBGameResponseDTOTransformer;
 	use App\Entity\Game;
+	use App\Entity\GameCoverArt;
 	use App\Entity\IGDBConfig;
 	use App\Exception\ValidationException;
 	use App\Repository\GameRepository;
 	use App\Repository\IGDBConfigRepository;
 	use App\Transformer\GameEntityTransformer;
 	use App\Utility\InternetGameDatabaseEndpoints;
+	use DateInterval;
+	use DateTimeImmutable;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Doctrine\ORM\NonUniqueResultException;
+	use Exception;
+	use RuntimeException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 	use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
@@ -19,7 +24,6 @@
 	use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 	use Symfony\Contracts\HttpClient\HttpClientInterface;
-	use Symfony\Contracts\HttpClient\ResponseInterface;
 
 	class IGDBHelper {
 
@@ -126,7 +130,7 @@
 			}
 
 			// $diff is time until expiration.
-			$diff = (new \DateTimeImmutable('now'))->diff($this->IGDBConfig->getExpiration());
+			$diff = (new DateTimeImmutable('now'))->diff($this->IGDBConfig->getExpiration());
 
 			//If the token expires sometime within the next day, let's refresh it.
 			if (!$diff->days > 1) {
@@ -148,7 +152,7 @@
 		 * @throws RedirectionExceptionInterface
 		 * @throws ServerExceptionInterface
 		 * @throws TransportExceptionInterface
-		 * @throws \Exception
+		 * @throws Exception
 		 */
 		public function refreshTokenInDatabase(): IGDBConfig {
 
@@ -156,8 +160,8 @@
 			$tokenResponse = $this->getToken();
 
 			$timeToExpirationInSeconds = $tokenResponse["expires_in"];
-			$now = new \DateTimeImmutable();
-			$expiration = $now->add(new \DateInterval('PT' . $timeToExpirationInSeconds . 'S'));
+			$now = new DateTimeImmutable();
+			$expiration = $now->add(new DateInterval('PT' . $timeToExpirationInSeconds . 'S'));
 
 			$currentConfig = $this->IGDBConfigRepository->find(1);
 
@@ -225,13 +229,47 @@
 				]
 			);
 
-			return $response->toArray();
+			$games = $response->toArray();
+
+			$getArtworkURI = function ($game) {
+
+				if (isset($game['cover'])) $game['cover'] = $this->getCoverArtWorkURIFromIGDB($game['cover']);
+
+				return $game;
+			};
+
+			return array_map($getArtworkURI, $games);
+
+		}
+
+		/**
+		 * @param string $ID
+		 *
+		 * @return string
+		 * @throws ClientExceptionInterface
+		 * @throws DecodingExceptionInterface
+		 * @throws RedirectionExceptionInterface
+		 * @throws ServerExceptionInterface
+		 * @throws TransportExceptionInterface
+		 */
+		public function getCoverArtWorkURIFromIGDB(string $ID): string {
+
+			$response = $this->client->request('POST', InternetGameDatabaseEndpoints::COVER, [
+				'headers' => $this->headers,
+				'body' => 'fields *; where id = ' . $ID . ';'
+			]);
+
+			$response = $response->toArray()[0];
+
+			$imageId = $response['image_id'];
+
+			return $uri = 'https://images.igdb.com/igdb/image/upload/t_cover_big/' . $imageId . '.jpg';
 
 		}
 
 		/**
 		 * @throws TransportExceptionInterface
-		 * @throws \Exception
+		 * @throws Exception
 		 * @throws DecodingExceptionInterface
 		 *
 		 * This gets a game based on IGDB id. First it tries to get it from our database.
@@ -279,11 +317,11 @@
 		/**
 		 * @param int $ID
 		 *
-		 * @return IGDBGameResponseDTO|\RuntimeException
+		 * @return IGDBGameResponseDTO|RuntimeException
 		 * @throws TransportExceptionInterface
-		 * @throws \Exception
+		 * @throws Exception
 		 */
-		private function getGameFromIGDB(int $ID): IGDBGameResponseDTO|\RuntimeException {
+		private function getGameFromIGDB(int $ID): IGDBGameResponseDTO|RuntimeException {
 
 			$response = $this->client->request('POST', InternetGameDatabaseEndpoints::GAMES, [
 				'headers' => $this->headers,
@@ -292,31 +330,6 @@
 			]);
 
 			return $this->IGDBGameResponseDTOTransformer->transformFromObject($response);
-
-		}
-
-		/**
-		 * @param int $ID
-		 *
-		 * @return string
-		 * @throws ClientExceptionInterface
-		 * @throws DecodingExceptionInterface
-		 * @throws RedirectionExceptionInterface
-		 * @throws ServerExceptionInterface
-		 * @throws TransportExceptionInterface
-		 */
-		public function getCoverArtWorkURIFromIGDB(string $ID): string {
-
-			$response = $this->client->request('POST', InternetGameDatabaseEndpoints::COVER, [
-				'headers' => $this->headers,
-				'body' => 'fields *; where id = ' . $ID . ';'
-			]);
-
-			$response = $response->toArray()[0];
-
-			$imageId = $response['image_id'];
-
-			return $uri = 'https://images.igdb.com/igdb/image/upload/t_cover_big/' . $imageId .    '.jpg';
 
 		}
 
