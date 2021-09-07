@@ -28,7 +28,7 @@ security:
             stateless: true
             anonymous: true
         games:
-            pattern: ^/games/popular
+            pattern: ^/games
             stateless: true
             anonymous: true
         main:
@@ -55,9 +55,8 @@ security:
             path: ^/signup$
             roles: IS_AUTHENTICATED_ANONYMOUSLY
 
-        -
-            path: ^/games/popular
-            roles: IS_AUTHENTICATED_ANONYMOUSLY
+        - path: ^/games
+          roles: IS_AUTHENTICATED_ANONYMOUSLY
 
         -
             path: ^/
