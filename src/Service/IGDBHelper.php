@@ -259,9 +259,9 @@
 				'body' => 'fields *; where id = ' . $ID . ';'
 			]);
 
-			$response = $response->toArray()[0];
+			$response = $response->toArray()[0] ?? 'unavailable';
 
-			$imageId = $response['image_id'];
+			$imageId = $response['image_id'] ?? 'unavailable';
 
 			return $uri = 'https://images.igdb.com/igdb/image/upload/t_cover_big/' . $imageId . '.jpg';
 
