@@ -23,7 +23,7 @@
 		public mixed $rating;
 
 		/**
-		 * @Assert\NotBlank()
+		 * @Assert\Type("string")
 		 */
 		public mixed $summary;
 
