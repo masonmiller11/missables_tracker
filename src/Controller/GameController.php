@@ -19,6 +19,7 @@
 	use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+	use App\Request\Payloads\GamePayload;
 
 	/**
 	 * Class GameController
