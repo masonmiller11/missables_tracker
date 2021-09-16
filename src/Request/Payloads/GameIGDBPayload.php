@@ -1,19 +1,18 @@
 <?php
 	namespace App\Request\Payloads;
 
-	use Symfony\Component\Validator\Constraints as Assert;
-
-	class GamePayload {
+	class GameIGDBPayload {
 
 		use PayloadTrait;
 
 		/**
+		 * @Assert\NotBlank()
 		 * @Assert\Type("string")
 		 */
 		public mixed $title;
 
 		/**
-		 * @Assert\NotNull(groups={"create"})
+		 * @Assert\NotNull()
 		 * @Assert\Type("integer")
 		 */
 		public mixed $internetGameDatabaseID;
@@ -24,7 +23,7 @@
 		public mixed $rating;
 
 		/**
-		 * @Assert\Type("string")
+		 * @Assert\NotBlank()
 		 */
 		public mixed $summary;
 
@@ -49,6 +48,7 @@
 		public mixed $platforms;
 
 		/**
+		 * @Assert\NotBlank()
 		 * @Assert\Type("string")
 		 */
 		public mixed $cover;
