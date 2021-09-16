@@ -22,6 +22,8 @@
 		/**
 		 * @ORM\Column(type="string", nullable=false, length=128)
 		 *
+		 * @Assert\NotBlank()
+		 *
 		 * @var string
 		 */
 		private string $title;
@@ -36,7 +38,7 @@
 		/**
 		 * @var string|null
 		 * @see Genre
-		 *
+		 **
 		 * @ORM\Column(type="string", length=64)
 		 */
 		private ?string $genre;
@@ -85,6 +87,8 @@
 
 		/**
 		 * @var string
+		 *
+		 * @Assert\NotBlank()
 		 *
 		 * @ORM\Column(type="string", length=64, nullable=false)
 		 */
