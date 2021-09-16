@@ -6,13 +6,13 @@
 		use PayloadTrait;
 
 		/**
-		 * @Assert\NotBlank()
+		 * @Assert\NotBlank(groups={"create"})
 		 * @Assert\Type("string")
 		 */
 		public mixed $title;
 
 		/**
-		 * @Assert\NotNull()
+		 * @Assert\NotNull(groups={"create"})
 		 * @Assert\Type("integer")
 		 */
 		public mixed $internetGameDatabaseID;
@@ -48,7 +48,7 @@
 		public mixed $platforms;
 
 		/**
-		 * @Assert\NotBlank()
+		 * @Assert\NotBlank(groups={"create"})
 		 * @Assert\Type("string")
 		 */
 		public mixed $cover;
@@ -57,5 +57,10 @@
 		 * @Assert\Type("array")
 		 */
 		public mixed $artworks;
+
+		/**
+		 * @Assert\NotBlank(groups={"create"})
+		 */
+		public mixed $releaseDate;
 
 	}
