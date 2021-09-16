@@ -120,9 +120,8 @@
 		/**
 		 * @ORM\OneToMany(targetEntity="App\Entity\GameCoverArt", mappedBy="game")
 		 *
-		 * @var Collection|GameCoverArt[]|Selectable
+		 * @param ?string $genre
 		 */
-		private Collection|Selectable|array $coverArt;
 
 		/**
 		 * Game constructor.
@@ -224,13 +223,6 @@
 		 */
 		public function getTemplates(): Collection|array|Selectable {
 			return $this->playthroughTemplates;
-		}
-
-		/**
-		 * @return GameCoverArt[]|Collection|Selectable
-		 */
-		public function getCoverArt(): Collection|array|Selectable {
-			return $this->coverArt;
 		}
 
 		/**
