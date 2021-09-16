@@ -9,6 +9,7 @@
 	use Doctrine\Common\Collections\Selectable;
 	use Doctrine\ORM\Mapping as ORM;
 	use JetBrains\PhpStorm\Pure;
+	use Symfony\Component\Validator\Constraints as Assert;
 
 	/**
 	 * @ORM\Entity(repositoryClass="App\Repository\GameRepository")
@@ -19,87 +20,87 @@
 		use EntityTrait;
 
 		/**
-		 * @ORM\Column(type="string", length=128)
+		 * @ORM\Column(type="string", nullable=false, length=128)
 		 *
 		 * @var string
 		 */
 		private string $title;
 
 		/**
-		 * @ORM\Column(type="datetime_immutable")
+		 * @ORM\Column(type="datetime_immutable", nullable=false)
 		 *
 		 * @var \DateTimeImmutable
 		 */
 		private \DateTimeImmutable $releaseDate;
 
 		/**
-		 * @var string
+		 * @var string|null
 		 * @see Genre
 		 *
 		 * @ORM\Column(type="string", length=64)
 		 */
-		private string $genre;
+		private ?string $genre;
 
 		/**
-		 * @var float
+		 * @var float|null
 		 *
 		 * @ORM\Column(type="float", nullable=true)
 		 */
-		private float $rating;
+		private ?float $rating;
 
 		/**
-		 * @var string
+		 * @var string|null
 		 *
 		 * @ORM\Column(type="text", nullable=true)
 		 */
-		private string $summary;
+		private ?string $summary;
 
 		/**
-		 * @var string
+		 * @var string|null
 		 *
 		 * @ORM\Column(type="text", nullable=true)
 		 */
-		private string $storyline;
+		private ?string $storyline;
 
 		/**
-		 * @var string
+		 * @var string|null
 		 *
 		 * @ORM\Column(type="string", length=64)
 		 */
-		private string $slug;
+		private ?string $slug;
 
 		/**
-		 * @var array
+		 * @var array|null
 		 *
 		 * @ORM\Column(type="simple_array", nullable=true)
 		 */
-		private array $screenshots;
+		private ?array $screenshots;
 
 		/**
-		 * @var array
+		 * @var array|null
 		 *
 		 * @ORM\Column(type="simple_array", nullable=true)
 		 */
-		private array $platforms;
+		private ?array $platforms;
 
 		/**
 		 * @var string
 		 *
-		 * @ORM\Column(type="string", length=64, nullable=true)
+		 * @ORM\Column(type="string", length=64, nullable=false)
 		 */
 		private string $cover;
 
 		/**
-		 * @var array
+		 * @var array|null
 		 *
 		 * @ORM\Column(type="simple_array", nullable=true)
 		 */
-		private array $artworks;
+		private ?array $artworks;
 
 		/**
 		 * @var int
 		 *
-		 * @ORM\Column(type="integer", unique=true, options={"unsigned":true})
+		 * @ORM\Column(type="integer", unique=true, options={"unsigned":true}, nullable=false)
 		 */
 		private int $internetGameDatabaseID;
 
@@ -118,42 +119,36 @@
 		private Collection|Selectable|array $playthroughs;
 
 		/**
-		 * @ORM\OneToMany(targetEntity="App\Entity\GameCoverArt", mappedBy="game")
+		 * Game constructor.
 		 *
 		 * @param ?string $genre
-		 */
-
-		/**
-		 * Game constructor.
-		 * @param string $genre
 		 * @param string $title
 		 * @param int $internetGameDatabaseID
-		 * @param array $screenshots
-		 * @param array $artworks
+		 * @param array|null $screenshots
+		 * @param array|null $artworks
 		 * @param string $cover
-		 * @param array $platforms
-		 * @param string $slug
-		 * @param float $rating
-		 * @param string $summary
-		 * @param string $storyline
+		 * @param array|null $platforms
+		 * @param string|null $slug
+		 * @param float|null $rating
+		 * @param string|null $summary
+		 * @param string|null $storyline
 		 * @param \DateTimeImmutable $releaseDate
 		 */
-		#[Pure] public function __construct(string $genre,
+		#[Pure] public function __construct(?string $genre,
 		                                    string $title,
 		                                    int $internetGameDatabaseID,
-		                                    array $screenshots,
-		                                    array $artworks,
+		                                    ?array $screenshots,
+		                                    ?array $artworks,
 		                                    string $cover,
-		                                    array $platforms,
-		                                    string $slug,
-		                                    float $rating,
-		                                    string $summary,
-		                                    string $storyline,
+		                                    ?array $platforms,
+		                                    ?string $slug,
+		                                    ?float $rating,
+		                                    ?string $summary,
+		                                    ?string $storyline,
 		                                    \DateTimeImmutable $releaseDate) {
 
 			$this->playthroughTemplates = new ArrayCollection();
 			$this->playthroughs = new ArrayCollection();
-			$this->coverArt = new ArrayCollection();
 
 			$this->screenshots = $screenshots;
 			$this->artworks = $artworks;
