@@ -1,0 +1,11 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\Payload\Decoders\SymfonyDeserializeDecoder:
+        bind:
+            $defaultFormat: 'json'
+
+    App\Payload\Decoders\PayloadDecoderInterface:
+        '@App\Payload\Decoders\SymfonyDeserializeDecoder'
