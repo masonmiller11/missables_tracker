@@ -12,7 +12,7 @@
 	 */
 	interface EntityTransformerInterface {
 
-		public function create(DTOInterface $dto, User $user = null): EntityInterface;
+		public function create(Object $dto, User $user = null): EntityInterface;
 
 		public function update(int $id, Request $request, bool $skipValidation = false): EntityInterface;
 
