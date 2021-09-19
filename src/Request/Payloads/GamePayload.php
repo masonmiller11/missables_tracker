@@ -3,7 +3,7 @@
 
 	use Symfony\Component\Validator\Constraints as Assert;
 
-	class GamePayload {
+	class GamePayload implements PayloadInterface {
 
 		use PayloadTrait;
 

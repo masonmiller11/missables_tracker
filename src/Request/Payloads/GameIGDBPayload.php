@@ -1,7 +1,9 @@
 <?php
 	namespace App\Request\Payloads;
 
-	class GameIGDBPayload {
+	use Symfony\Component\Validator\Constraints as Assert;
+
+	class GameIGDBPayload implements PayloadInterface {
 
 		use PayloadTrait;
 

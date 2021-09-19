@@ -3,7 +3,7 @@
 
 	use Symfony\Component\Validator\Constraints as Assert;
 
-	class SectionPayload {
+	class SectionPayload implements PayloadInterface {
 
 		use PayloadTrait;
 
