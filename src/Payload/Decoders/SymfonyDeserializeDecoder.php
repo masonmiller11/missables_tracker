@@ -47,7 +47,6 @@
 		protected array $deserializeContext = [];
 
 		/**
-		 * $defaultFormat is bound in payload-decoder.yaml as 'json'.
 		 *
 		 * SymfonyDeserializeDecoder constructor.
 		 * @param SerializerInterface $serializer
@@ -174,7 +173,7 @@
 
 			return $this;
 		}
-		
+
 		public function getCreateGroups(): array {
 			return $this->getValidatorGroups(DecoderIntent::CREATE);
 		}
