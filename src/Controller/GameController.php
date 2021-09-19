@@ -3,6 +3,7 @@
 
 	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
 	use App\Exception\ValidationException;
+	use App\Payload\Registry\PayloadDecoderRegistryInterface;
 	use App\Repository\GameRepository;
 	use App\Service\IGDBHelper;
 	use App\Service\ResponseHelper;
@@ -41,18 +42,25 @@
 		 * @param GameEntityTransformer $entityTransformer
 		 * @param GameRequestDTOTransformer $DTOTransformer
 		 * @param GameRepository $repository
+		 * @param PayloadDecoderRegistryInterface $decoderRegistry
 		 */
 		#[Pure]
 		public function __construct(
-			IGDBHelper $IGDBHelper, ValidatorInterface $validator,
-			GameEntityTransformer $entityTransformer, GameRequestDTOTransformer $DTOTransformer,
-			GameRepository $repository
+			IGDBHelper $IGDBHelper,
+			ValidatorInterface $validator,
+			GameEntityTransformer $entityTransformer,
+			GameRequestDTOTransformer $DTOTransformer,
+			GameRepository $repository,
+			PayloadDecoderRegistryInterface $decoderRegistry
 		) {
-
-			parent::__construct($validator, $entityTransformer, $DTOTransformer, $repository);
+			parent::__construct($validator,
+				$entityTransformer,
+				$DTOTransformer,
+				$repository,
+				$decoderRegistry->getDecoder(GamePayload::class)
+			);
 
 			$this->IGDBHelper = $IGDBHelper;
-
 		}
 
 		/**
