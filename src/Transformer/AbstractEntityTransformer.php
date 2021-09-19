@@ -40,9 +40,9 @@
 		protected ?User $user;
 
 		/**
-		 * @var DTOInterface
+		 * @var Object
 		 */
-		protected DTOInterface $dto;
+		protected Object $dto;
 
 		/**
 		 * AbstractEntityTransformer constructor.
@@ -73,11 +73,11 @@
 		}
 
 		/**
-		 * @param DTOInterface $dto
+		 * @param Object $dto
 		 * @param User|null $user
 		 * @return EntityInterface
 		 */
-		public function create(DTOInterface $dto, User $user = null): EntityInterface {
+		public function create(Object $dto, User $user = null): EntityInterface {
 
 			$this->dto = $dto;
 			$this->user = $user;

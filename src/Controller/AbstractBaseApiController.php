@@ -6,7 +6,11 @@
 	use App\DTO\Transformer\RequestTransformer\RequestDTOTransformerInterface;
 	use App\Entity\EntityInterface;
 	use App\Entity\User;
+	use App\Exception\PayloadDecoderException;
 	use App\Exception\ValidationException;
+	use App\Payload\DecoderIntent;
+	use App\Payload\Decoders\PayloadDecoderInterface;
+	use App\Service\ResponseHelper;
 	use App\Transformer\EntityTransformerInterface;
 	use App\Transformer\UserEntityTransformer;
 	use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -41,26 +45,37 @@
 		protected EntityTransformerInterface $entityTransformer;
 
 		/**
+		 * @var PayloadDecoderInterface|null
+		 */
+		private ?PayloadDecoderInterface $payloadDecoder;
+
+		/**
 		 * AbstractBaseApiController constructor.
 		 *
 		 * @param ValidatorInterface $validator
 		 * @param EntityTransformerInterface $entityTransformer
 		 * @param RequestDTOTransformerInterface $DTOTransformer
 		 * @param ServiceEntityRepository $repository
+		 * @param PayloadDecoderInterface|null $payloadDecoder
 		 */
 		public function __construct(
-			ValidatorInterface $validator, EntityTransformerInterface $entityTransformer,
-			RequestDTOTransformerInterface $DTOTransformer, ServiceEntityRepository $repository
+			ValidatorInterface $validator,
+			EntityTransformerInterface $entityTransformer,
+			RequestDTOTransformerInterface $DTOTransformer,
+			ServiceEntityRepository $repository,
+			?PayloadDecoderInterface $payloadDecoder = null
 		) {
-
 			$this->validator = $validator;
 			$this->DTOTransformer = $DTOTransformer;
 			$this->entityTransformer = $entityTransformer;
 			$this->repository = $repository;
-
+			$this->payloadDecoder = $payloadDecoder ?? null;
 		}
 
 		/**
+		 * createOne is the legacy method. I've started refactoring how a lot of these methods work.
+		 * The new method is doCreate.
+		 *
 		 * @param Request $request
 		 * @param bool $skipValidation
 		 * @param bool $getUser
@@ -83,6 +98,21 @@
 				$this->validateDTO($dto);
 
 			return $this->entityTransformer->create($dto, $user);
+
+		}
+
+		protected function doCreate(EntityTransformerInterface $transformer, Request $request): Response {
+			try {
+				$payload = $this->payloadDecoder->parse(DecoderIntent::CREATE, $request->getContent());
+			} catch (PayloadDecoderException | ValidationException $exception) {
+				return $this->handleApiException($request, $exception);
+			}
+
+			//TODO wrap this in a try-catch block
+			$entity = $transformer->create($payload);
+
+			//TODO this is for testing. Check out how https://github.com/LartTyler/php-api-common responds
+			return ResponseHelper::createResourceCreatedResponse('games/read/' . $entity->getId());
 
 		}
 
@@ -172,6 +202,25 @@
 			$this->confirmResourceOwner($this->repository->find($id));
 
 			$this->entityTransformer->delete($id);
+
+		}
+
+		//TODO handle API exceptions better... Look at https://github.com/LartTyler/php-api-common for ideas.
+		/**
+		 * @param Request $request
+		 * @param \Exception $exception
+		 * @return Response
+		 */
+		protected function handleApiException(Request $request, \Exception $exception): Response {
+
+			if ($exception instanceof ValidationException)
+				return ResponseHelper::createValidationErrorResponse($exception);
+
+			else if ($exception instanceof PayloadDecoderException)
+				return ResponseHelper::createJsonErrorResponse($exception->getMessage(), 'error');
+
+			else
+				return ResponseHelper::createJsonErrorResponse('unknown api error', 'error');
 
 		}
 
