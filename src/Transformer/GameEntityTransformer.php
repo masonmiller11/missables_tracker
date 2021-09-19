@@ -36,6 +36,8 @@
 		 */
 		protected function doCreateWork(): Game {
 
+			//TODO-- with this new setup, $this->dto will will be a copy of GamePayload. It will only have an ID for IGDB; we need to create the rest.
+
 			if (!($this->dto instanceof AbstractGameDTO)) {
 				throw new \InvalidArgumentException('GameEntityTransformer\'s DTO not instance of AbstractGameDTO');
 			}
