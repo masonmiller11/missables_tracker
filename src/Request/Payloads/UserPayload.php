@@ -4,7 +4,7 @@
 	use App\Validator as CustomAssert;
 	use Symfony\Component\Validator\Constraints as Assert;
 
-	class UserPayload {
+	class UserPayload implements PayloadInterface {
 
 		use PayloadTrait;
 

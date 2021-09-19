@@ -3,7 +3,7 @@
 
 	use Symfony\Component\Validator\Constraints as Assert;
 
-	class PlaythroughTemplatePayload {
+	class PlaythroughTemplatePayload implements PayloadInterface {
 
 		use PayloadTrait;
 

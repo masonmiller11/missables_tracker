@@ -1,7 +1,9 @@
 <?php
 	namespace App\Request\Payloads;
 
-	class LikePayload {
+	use Symfony\Component\Validator\Constraints as Assert;
+
+	class LikePayload implements PayloadInterface {
 
 		use PayloadTrait;
 
