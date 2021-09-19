@@ -2,6 +2,8 @@
 
 	namespace App\Request\Payloads;
 
+	use Symfony\Component\Validator\Constraints as Assert;
+
 	class PlaythroughPayload extends PlaythroughTemplatePayload {
 
 		use PayloadTrait;
