@@ -42,7 +42,7 @@
 		/**
 		 * @param string $property
 		 */
-		public function unset(string $property) {
+		public function unset(string $property): void {
 			unset($this->propertyCache[$property]);
 			unset($this->{$property});
 		}
