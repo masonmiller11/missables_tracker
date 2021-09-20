@@ -1,58 +1,92 @@
 <?php
 	namespace App\Transformer;
 
-	use App\DTO\Game\AbstractGameDTO;
 	use App\DTO\Game\GameDTO;
 	use App\DTO\Game\IGDBGameResponseDTO;
 	use App\Entity\EntityInterface;
 	use App\Entity\Game;
+	use App\Exception\DuplicateResourceException;
+	use App\Repository\GameRepository;
+	use App\Request\Payloads\GamePayload;
+	use App\Service\IGDBHelper;
+	use Doctrine\ORM\EntityManagerInterface;
+	use Doctrine\ORM\NonUniqueResultException;
+	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
+	use Symfony\Component\Validator\Validator\ValidatorInterface;
+	use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 	final class GameEntityTransformer extends AbstractEntityTransformer {
 
-		private \DateTimeImmutable $releaseDateTimeImmutable;
+		private IGDBHelper $IGDBHelper;
 
 		/**
-		 * @param IGDBGameResponseDTO|GameDTO $dto
+		 * GameEntityTransformer constructor.
+		 * @param EntityManagerInterface $entityManager
+		 * @param ValidatorInterface $validator
+		 * @param GameRepository $repository
+		 * @param IGDBHelper $IGDBHelper
+		 */
+		#[Pure] public function __construct(EntityManagerInterface $entityManager,
+		                                    ValidatorInterface $validator,
+		                                    GameRepository $repository,
+		                                    IGDBHelper $IGDBHelper) {
+
+			parent::__construct($entityManager, $validator);
+			$this->repository = $repository;
+			$this->IGDBHelper = $IGDBHelper;
+
+		}
+
+		/**
+		 * @param IGDBGameResponseDTO $igdbGameDto
 		 * @return Game
 		 * @throws \Exception
 		 */
-		public function assemble (IGDBGameResponseDTO|GameDTO $dto): Game {
+		public function assemble(IGDBGameResponseDTO $igdbGameDto): Game {
 
-			$this->dto = $dto;
-
-			$game = $this->doCreateWork();
-
-			$this->entityManager->persist($game);
-			$this->entityManager->flush();
-
-			return $game;
+			return new Game(
+				$igdbGameDto->genres, $igdbGameDto->title, $igdbGameDto->internetGameDatabaseID,
+				$igdbGameDto->screenshots, $igdbGameDto->artworks, $igdbGameDto->cover,
+				$igdbGameDto->platforms, $igdbGameDto->slug, $igdbGameDto->rating, $igdbGameDto->summary, $igdbGameDto->storyline,
+				new \DateTimeImmutable(date('Y-m-d', ((int)$igdbGameDto->releaseDate)))
+			);
 
 		}
 
 		/**
 		 * @return Game
 		 * @throws \Exception
+		 * @throws TransportExceptionInterface
 		 */
 		protected function doCreateWork(): Game {
 
-			//TODO-- with this new setup, $this->dto will will be a copy of GamePayload. It will only have an ID for IGDB; we need to create the rest.
-
-			if (!($this->dto instanceof AbstractGameDTO)) {
+			if (!($this->dto instanceof GamePayload)) {
 				throw new \InvalidArgumentException('GameEntityTransformer\'s DTO not instance of AbstractGameDTO');
 			}
 
-			if (!($this->dto->releaseDate instanceof \DateTimeImmutable)) {
+			$this->checkIfGameIsAdded();
 
-				$this->releaseDateTimeImmutable = new \DateTimeImmutable(date('Y-m-d', ((int)$this->dto->releaseDate)));
+			$igdbGameDto = $this->IGDBHelper->getGameFromIGDB($this->dto->internetGameDatabaseID);
 
-			}
+			return $this->assemble($igdbGameDto);
 
-			return new Game(
-				$this->dto->genre, $this->dto->title, $this->dto->internetGameDatabaseID, $this->dto->screenshots, $this->dto->artworks, $this->dto->cover,
-				$this->dto->platforms, $this->dto->slug, $this->dto->rating, $this->dto->summary, $this->dto->storyline,
-				$this->releaseDateTimeImmutable ?? $this->dto->releaseDate
-			);
+		}
+
+		/**
+		 * @throws NonUniqueResultException
+		 */
+		private function getIGDBGameIfInDatabase(int $id): Game|NonUniqueResultException|null {
+			return $this->repository->findGameByInternetGameDatabaseID($id);
+		}
+
+		/**
+		 * @throws DuplicateResourceException
+		 * @throws NonUniqueResultException
+		 */
+		private function checkIfGameIsAdded(): void {
+			if ($this->getIGDBGameIfInDatabase($this->dto->internetGameDatabaseID))
+				throw new DuplicateResourceException('A game with this IGDB id has already been added');
 
 		}
 
