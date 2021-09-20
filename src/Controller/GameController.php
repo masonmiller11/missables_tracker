@@ -72,16 +72,18 @@
 		 */
 		public function create(Request $request): Response {
 
-			try {
-
-				$game = $this->createOne($request);
-
-			} catch (ValidationException $exception) {
-
-
-				return ResponseHelper::createValidationErrorResponse($exception);
-
-			}
+//			try {
+//
+//				$game = $this->createOne($request);
+//
+//			} catch (ValidationException $exception) {
+//
+//
+//				return ResponseHelper::createValidationErrorResponse($exception);
+//
+//			}
+//
+			$game = $this->doCreate($request);
 
 			return ResponseHelper::createResourceCreatedResponse('games/read/' . $game->getId());
 
