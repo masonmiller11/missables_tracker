@@ -78,11 +78,6 @@
 		private ValidatorInterface $validator;
 
 		/**
-		 * @var GameEntityTransformer
-		 */
-		private GameEntityTransformer $entityTransformer;
-
-		/**
 		 * @param HttpClientInterface $client
 		 * @param string $apiID
 		 * @param string $apiSecret
@@ -91,7 +86,6 @@
 		 * @param GameRepository $gameRepository
 		 * @param ValidatorInterface $validator
 		 * @param IGDBGameResponseDTOTransformer $IGDBGameResponseDTOTransformer
-		 * @param GameEntityTransformer $entityTransformer
 		 * @throws ClientExceptionInterface
 		 * @throws DecodingExceptionInterface
 		 * @throws RedirectionExceptionInterface
@@ -106,10 +100,9 @@
 		                            GameRepository $gameRepository,
 		                            ValidatorInterface $validator,
 		                            IGDBGameResponseDTOTransformer $IGDBGameResponseDTOTransformer,
-		                            GameEntityTransformer $entityTransformer) {
+		                            ) {
 
 			$this->client = $client;
-			$this->entityTransformer = $entityTransformer;
 			$this->IGDBGameResponseDTOTransformer = $IGDBGameResponseDTOTransformer;
 			$this->gameRepository = $gameRepository;
 			$this->entityManager = $entityManager;
@@ -268,78 +261,36 @@
 		}
 
 		/**
-		 * @throws TransportExceptionInterface
-		 * @throws Exception
-		 * @throws DecodingExceptionInterface
-		 *
-		 * This gets a game based on IGDB id. First it tries to get it from our database.
-		 * If the game isn't already in our database, it will get it from IGDB and add it.
-		 */
-		public function getGameAndSave(string|int $internetGameDatabaseID): Game {
-
-			/**
-			 * returns an IGDBResponseDTO with data from IGDB, does not touch our database
-			 * @see IGDBGameResponseDTO
-			 */
-			$dto = $this->getGameFromIGDB($internetGameDatabaseID);
-
-
-			$errors = $this->validator->validate($dto);
-			if (count($errors) > 0)
-				throw new ValidationException($errors);
-
-			/**
-			 * Returns a Game entity if it's in database. Throws NonUniqueResultException if there's more than one entry.
-			 * Returns null if it does not find Game.
-			 * @see Game
-			 */
-			$gameIfInDatabase = $this->getIGDBGameIfInDatabase($dto);
-
-			/**
-			 * If $gameIfInDatabase is not present, then create a new Game entity and return it in response.
-			 */
-			if (!$gameIfInDatabase) {
-
-				$game = $this->entityTransformer->assemble($dto);
-
-				$artwork = new GameCoverArt($this->getCoverArtWorkURIFromIGDB($game->getId()), $game);
-
-				return $game;
-			}
-
-			/**
-			 * Otherwise, return the Game entity in response.
-			 */
-			return $gameIfInDatabase;
-
-		}
-
-		/**
 		 * @param int $ID
 		 *
 		 * @return IGDBGameResponseDTO|RuntimeException
 		 * @throws TransportExceptionInterface
 		 * @throws Exception
 		 */
-		private function getGameFromIGDB(int $ID): IGDBGameResponseDTO|RuntimeException {
+		public function getGameFromIGDB(int $ID): IGDBGameResponseDTO|RuntimeException {
 
 			$response = $this->client->request('POST', InternetGameDatabaseEndpoints::GAMES, [
 				'headers' => $this->headers,
-				'body' => 'fields name, id, rating, summary, storyline, slug, screenshots, platforms, first_release_date,
-				 cover, artworks; where id = ' . $ID . ';'
+				'body' => 'fields name, id, rating, summary, storyline, slug, screenshots, platforms, genres, 
+				first_release_date, cover, artworks; where id = ' . $ID . ';'
 			]);
 
-			return $this->IGDBGameResponseDTOTransformer->transformFromObject($response);
+			//TODO eventually we want to save the cover's URL so we aren't constantly pinging IGDB
+			$dto= $this->IGDBGameResponseDTOTransformer->transformFromObject($response);
+
+			$this->validateDTO($dto);
+
+			return $dto;
 
 		}
 
 		/**
-		 * @throws NonUniqueResultException
+		 * @throws ValidationException
 		 */
-		private function getIGDBGameIfInDatabase(IGDBGameResponseDTO $internetGameDatabaseDTO): Game|NonUniqueResultException|null {
-
-			return $this->gameRepository->findGameByInternetGameDatabaseID($internetGameDatabaseDTO->internetGameDatabaseID);
-
+		private function validateDTO(IGDBGameResponseDTO $dto):void {
+			$errors = $this->validator->validate($dto);
+			if (count($errors) > 0)
+				throw new ValidationException($errors);
 		}
 
 	}
