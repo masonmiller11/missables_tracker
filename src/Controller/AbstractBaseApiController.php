@@ -102,27 +102,6 @@
 		}
 
 		/**
-		 * @param EntityTransformerInterface $transformer
-		 * @param Request $request
-		 *
-		 * @return Response
-		 */
-		protected function doCreate(EntityTransformerInterface $transformer, Request $request): Response {
-			try {
-				$payload = $this->payloadDecoder->parse(DecoderIntent::CREATE, $request->getContent());
-			} catch (PayloadDecoderException | ValidationException $exception) {
-				return $this->handleApiException($request, $exception);
-			}
-
-			//TODO wrap this in a try-catch block
-			$entity = $transformer->create($payload);
-
-			//TODO this is for testing. Check out how https://github.com/LartTyler/php-api-common responds
-			return ResponseHelper::createResourceCreatedResponse('games/read/' . $entity->getId());
-
-		}
-
-		/**
 		 * @return User
 		 */
 		protected function getUser(): User {
@@ -144,6 +123,44 @@
 			$errors = $this->validator->validate($dto);
 			if (count($errors) > 0)
 				throw new ValidationException($errors);
+
+		}
+
+		/**
+		 * @param Request $request
+		 *
+		 * @return EntityInterface
+		 */
+		protected function doCreate(Request $request): EntityInterface {
+//			try {
+				$payload = $this->payloadDecoder->parse(DecoderIntent::CREATE, $request->getContent());
+//			} catch (PayloadDecoderException | ValidationException $exception) {
+//				return $this->handleApiException($request, $exception);
+//			}
+
+			//TODO wrap this in a try-catch block
+			return $this->entityTransformer->create($payload);
+
+			//TODO this is for testing. Check out how https://github.com/LartTyler/php-api-common responds
+//			return ResponseHelper::createResourceCreatedResponse('games/read/' . $entity->getId());
+
+		}
+
+		/**
+		 * @param Request $request
+		 * @param \Exception $exception
+		 * @return Response
+		 */
+		protected function handleApiException(Request $request, \Exception $exception): Response {
+
+			if ($exception instanceof ValidationException)
+				return ResponseHelper::createValidationErrorResponse($exception);
+
+			else if ($exception instanceof PayloadDecoderException)
+				return ResponseHelper::createJsonErrorResponse($exception->getMessage(), 'error');
+
+			else
+				return ResponseHelper::createJsonErrorResponse('unknown api error', 'error');
 
 		}
 
@@ -198,6 +215,8 @@
 
 		}
 
+		//TODO handle API exceptions better... Look at https://github.com/LartTyler/php-api-common for ideas.
+
 		/**
 		 * @param int $id
 		 */
@@ -208,25 +227,6 @@
 			$this->confirmResourceOwner($this->repository->find($id));
 
 			$this->entityTransformer->delete($id);
-
-		}
-
-		//TODO handle API exceptions better... Look at https://github.com/LartTyler/php-api-common for ideas.
-		/**
-		 * @param Request $request
-		 * @param \Exception $exception
-		 * @return Response
-		 */
-		protected function handleApiException(Request $request, \Exception $exception): Response {
-
-			if ($exception instanceof ValidationException)
-				return ResponseHelper::createValidationErrorResponse($exception);
-
-			else if ($exception instanceof PayloadDecoderException)
-				return ResponseHelper::createJsonErrorResponse($exception->getMessage(), 'error');
-
-			else
-				return ResponseHelper::createJsonErrorResponse('unknown api error', 'error');
 
 		}
 
