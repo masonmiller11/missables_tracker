@@ -28,7 +28,7 @@
 			$dto->screenshots = $object["screenshots"] ?? [];
 			$dto->platforms = $object["platforms"] ?? [];
 			$dto->internetGameDatabaseID = $object["id"];
-			$dto->genre = $object["genre"] ?? 'No genre available'; //TODO let's fix these at some point
+			$dto->genres = $object["genres"] ?? []; //TODO let's fix these at some point
 
 			return $dto;
 
