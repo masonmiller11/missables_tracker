@@ -133,7 +133,7 @@
 		 */
 		protected function doCreate(Request $request): EntityInterface {
 //			try {
-				$payload = $this->payloadDecoder->parse(DecoderIntent::CREATE, $request->getContent());
+			$payload = $this->payloadDecoder->parse(DecoderIntent::CREATE, $request->getContent());
 //			} catch (PayloadDecoderException | ValidationException $exception) {
 //				return $this->handleApiException($request, $exception);
 //			}
