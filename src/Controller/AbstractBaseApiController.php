@@ -101,6 +101,12 @@
 
 		}
 
+		/**
+		 * @param EntityTransformerInterface $transformer
+		 * @param Request $request
+		 *
+		 * @return Response
+		 */
 		protected function doCreate(EntityTransformerInterface $transformer, Request $request): Response {
 			try {
 				$payload = $this->payloadDecoder->parse(DecoderIntent::CREATE, $request->getContent());
