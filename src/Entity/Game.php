@@ -3,7 +3,6 @@
 
 	use App\Entity\Playthrough\Playthrough;
 	use App\Entity\Playthrough\PlaythroughTemplate;
-	use App\Genre;
 	use Doctrine\Common\Collections\ArrayCollection;
 	use Doctrine\Common\Collections\Collection;
 	use Doctrine\Common\Collections\Selectable;
@@ -36,12 +35,11 @@
 		private \DateTimeImmutable $releaseDate;
 
 		/**
-		 * @var string|null
-		 * @see Genre
-		 **
-		 * @ORM\Column(type="string", length=64)
+		 * @var array|null
+		 *
+		 * @ORM\Column(type="simple_array", nullable=true)
 		 */
-		private ?string $genre;
+		private ?array $genres;
 
 		/**
 		 * @var float|null
@@ -85,6 +83,7 @@
 		 */
 		private ?array $platforms;
 
+		//TODO eventually we want to save the cover's URL so we aren't constantly pinging IGDB
 		/**
 		 * @var string
 		 *
@@ -125,7 +124,7 @@
 		/**
 		 * Game constructor.
 		 *
-		 * @param ?string $genre
+		 * @param array|null $genres
 		 * @param string $title
 		 * @param int $internetGameDatabaseID
 		 * @param array|null $screenshots
@@ -138,7 +137,7 @@
 		 * @param string|null $storyline
 		 * @param \DateTimeImmutable $releaseDate
 		 */
-		#[Pure] public function __construct(?string $genre,
+		#[Pure] public function __construct(?array $genres,
 		                                    string $title,
 		                                    int $internetGameDatabaseID,
 		                                    ?array $screenshots,
@@ -154,6 +153,7 @@
 			$this->playthroughTemplates = new ArrayCollection();
 			$this->playthroughs = new ArrayCollection();
 
+			$this->genres = $genres;
 			$this->screenshots = $screenshots;
 			$this->artworks = $artworks;
 			$this->cover = $cover;
@@ -161,7 +161,6 @@
 			$this->slug = $slug;
 			$this->rating = $rating;
 			$this->summary = $summary;
-			$this->genre = $genre;
 			$this->title = $title;
 			$this->storyline = $storyline;
 			$this->releaseDate = $releaseDate;
