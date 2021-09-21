@@ -10,6 +10,7 @@
 	use App\Exception\ValidationException;
 	use App\Payload\DecoderIntent;
 	use App\Payload\Decoders\PayloadDecoderInterface;
+	use App\Payload\Decoders\SymfonyDeserializeDecoder;
 	use App\Service\ResponseHelper;
 	use App\Transformer\EntityTransformerInterface;
 	use App\Transformer\UserEntityTransformer;
@@ -51,6 +52,7 @@
 
 		/**
 		 * AbstractBaseApiController constructor.
+		 * PayloadDecoderInterface will usually be @see SymfonyDeserializeDecoder
 		 *
 		 * @param ValidatorInterface $validator
 		 * @param EntityTransformerInterface $entityTransformer
@@ -127,24 +129,28 @@
 		}
 
 		/**
+		 * The doCreate method is meant to replace createOne.
+		 * Eventually there will be a doUpdate as well which will replace updateOne
+		 *
+		 *
 		 * @param Request $request
 		 *
 		 * @return EntityInterface
 		 */
 		protected function doCreate(Request $request): EntityInterface {
-//			try {
-			$payload = $this->payloadDecoder->parse(DecoderIntent::CREATE, $request->getContent());
-//			} catch (PayloadDecoderException | ValidationException $exception) {
-//				return $this->handleApiException($request, $exception);
-//			}
 
-			//TODO wrap this in a try-catch block
+			$payload = $this->payloadDecoder->parse(DecoderIntent::CREATE, $request->getContent());
+
 			return $this->entityTransformer->create($payload);
 
-			//TODO this is for testing. Check out how https://github.com/LartTyler/php-api-common responds
-//			return ResponseHelper::createResourceCreatedResponse('games/read/' . $entity->getId());
-
 		}
+
+//		protected function doUpdate(Request $request): EntityInterface {
+//
+//			$payload = $this->payloadDecoder->parse(DecoderIntent::UPDATE, $request->getContent());
+//
+//			return $this->entityTransformer->update($payload);
+//		}
 
 		/**
 		 * @param Request $request
