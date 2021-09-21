@@ -2,8 +2,11 @@
 	namespace App\Controller;
 
 	use App\DTO\Transformer\RequestTransformer\LikeRequestDTOTransformer;
+	use App\Exception\PayloadDecoderException;
 	use App\Exception\ValidationException;
+	use App\Payload\Registry\PayloadDecoderRegistryInterface;
 	use App\Repository\LikeRepository;
+	use App\Request\Payloads\LikePayload;
 	use App\Service\ResponseHelper;
 	use App\Transformer\LikeEntityTransformer;
 	use JetBrains\PhpStorm\Pure;
@@ -18,14 +21,28 @@
 	 */
 	class LikeController extends AbstractBaseApiController {
 
-		#[Pure]
+		/**
+		 * LikeController constructor.
+		 * @param ValidatorInterface $validator
+		 * @param LikeEntityTransformer $entityTransformer
+		 * @param LikeRequestDTOTransformer $DTOTransformer
+		 * @param LikeRepository $repository
+		 * @param PayloadDecoderRegistryInterface $decoderRegistry
+		 */
 		public function __construct(
-			ValidatorInterface $validator, LikeEntityTransformer $entityTransformer,
+			ValidatorInterface $validator,
+			LikeEntityTransformer $entityTransformer,
 			LikeRequestDTOTransformer $DTOTransformer,
-			LikeRepository $repository
+			LikeRepository $repository,
+			PayloadDecoderRegistryInterface $decoderRegistry
 		) {
 
-			parent::__construct($validator, $entityTransformer, $DTOTransformer, $repository);
+			parent::__construct($validator,
+				$entityTransformer,
+				$DTOTransformer,
+				$repository,
+				$decoderRegistry->getDecoder(LikePayload::class)
+			);
 
 		}
 
@@ -40,11 +57,11 @@
 
 			try {
 
-				$this->createOne($request);
+				$this->doCreate($request, $this->getUser());
 
-			} catch (ValidationException $exception) {
+			} catch (PayloadDecoderException | ValidationException $exception) {
 
-				return ResponseHelper::createValidationErrorResponse($exception);
+				return $this->handleApiException($request, $exception);
 
 			}
 
