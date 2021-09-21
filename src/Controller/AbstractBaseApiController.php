@@ -132,16 +132,16 @@
 		 * The doCreate method is meant to replace createOne.
 		 * Eventually there will be a doUpdate as well which will replace updateOne
 		 *
-		 *
 		 * @param Request $request
-		 *
+		 * @param User|null $user
 		 * @return EntityInterface
+		 * @throws ValidationException
 		 */
-		protected function doCreate(Request $request): EntityInterface {
+		protected function doCreate(Request $request, User $user = null): EntityInterface {
 
 			$payload = $this->payloadDecoder->parse(DecoderIntent::CREATE, $request->getContent());
 
-			return $this->entityTransformer->create($payload);
+			return $this->entityTransformer->create($payload, $user);
 
 		}
 
