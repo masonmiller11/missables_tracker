@@ -39,7 +39,6 @@
 
 		/**
 		 * PayloadDecoderRegistryInterface's alias is set to PayloadDecoderRegistry in payload-decoder.yaml
-		 * @See PayloadDecoderRegistry
 		 *
 		 * GameController constructor.
 		 * @param IGDBHelper $IGDBHelper
