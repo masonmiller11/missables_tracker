@@ -4,6 +4,7 @@
 	use App\Exception\PayloadDecoderException;
 	use App\Exception\ValidationException;
 	use App\Payload\DecoderIntent;
+	use App\Request\Payloads\PayloadInterface;
 	use Symfony\Component\Serializer\SerializerInterface;
 	use Symfony\Component\Validator\Constraint;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -95,7 +96,7 @@
 		/**
 		 * @throws ValidationException
 		 */
-		public function parse(string $intent, string $input, ?string $format = null): object {
+		public function parse(string $intent, string $input, ?string $format = null): PayloadInterface {
 			$payload = $this->serializer->deserialize(
 				$input,
 				$this->getPayloadClass(),
