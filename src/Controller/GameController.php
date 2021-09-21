@@ -48,7 +48,6 @@
 		 * @param GameRepository $repository
 		 * @param PayloadDecoderRegistryInterface $decoderRegistry
 		 */
-		#[Pure]
 		public function __construct(
 			IGDBHelper $IGDBHelper,
 			ValidatorInterface $validator,
@@ -57,11 +56,13 @@
 			GameRepository $repository,
 			PayloadDecoderRegistryInterface $decoderRegistry
 		) {
+
 			parent::__construct($validator,
 				$entityTransformer,
 				$DTOTransformer,
 				$repository,
 				$decoderRegistry->getDecoder(GamePayload::class)
+
 			);
 
 			$this->IGDBHelper = $IGDBHelper;
