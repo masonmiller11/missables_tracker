@@ -12,6 +12,9 @@
 	 */
 	interface EntityTransformerInterface {
 
+		/**
+		 * Eventually the type-hinted Object for $dto should be replaced by PayloadInterface
+		 */
 		public function create(Object $dto, User $user = null): EntityInterface;
 
 		public function update(int $id, Request $request, bool $skipValidation = false): EntityInterface;
