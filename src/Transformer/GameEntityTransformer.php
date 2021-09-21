@@ -49,7 +49,7 @@
 				$igdbGameDto->genres, $igdbGameDto->title, $igdbGameDto->internetGameDatabaseID,
 				$igdbGameDto->screenshots, $igdbGameDto->artworks, $igdbGameDto->cover,
 				$igdbGameDto->platforms, $igdbGameDto->slug, $igdbGameDto->rating, $igdbGameDto->summary, $igdbGameDto->storyline,
-				new \DateTimeImmutable(date('Y-m-d', ((int)$igdbGameDto->releaseDate)))
+				$igdbGameDto->releaseDate
 			);
 
 		}
@@ -67,6 +67,7 @@
 
 			$this->checkIfGameIsAdded();
 
+			//This method builds, validates, and then returns an IGDBGameResponseDTO
 			$igdbGameDto = $this->IGDBHelper->getGameFromIGDB($this->dto->internetGameDatabaseID);
 
 			return $this->assemble($igdbGameDto);
