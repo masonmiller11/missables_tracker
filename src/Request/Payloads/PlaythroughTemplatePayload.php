@@ -17,10 +17,9 @@
 		 * @Assert\NotNull(groups={"create"})
 		 * @Assert\Type("integer")
 		 */
-		public mixed $gameID;
+		public mixed $gameId;
 
 		/**
-		 * @Assert\NotNull(groups={"create"})
 		 * @Assert\All({
 		 *     @Assert\Type("integer")
 		 * })
@@ -28,7 +27,6 @@
 		public mixed $sections;
 
 		/**
-		 * @Assert\NotNull(groups={"create"})
 		 * @Assert\All({
 		 *     @Assert\Type("integer")
 		 * })
@@ -37,7 +35,6 @@
 		public mixed $stepPositions;
 
 		/**
-		 * @Assert\NotNull(groups={"create"})
 		 * @Assert\All({
 		 *     @Assert\Type("integer")
 		 * })
