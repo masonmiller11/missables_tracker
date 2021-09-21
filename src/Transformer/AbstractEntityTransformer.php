@@ -77,7 +77,7 @@
 		 * @param User|null $user
 		 * @return EntityInterface
 		 */
-		public function create(Object $dto, User $user = null): EntityInterface {
+		public function create(Object $dto, User|null $user = null): EntityInterface {
 
 			$this->dto = $dto;
 			$this->user = $user;
