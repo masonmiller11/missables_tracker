@@ -11,6 +11,6 @@
 		 * @Assert\NotNull
 		 * @Assert\Type("integer")
 		 */
-		public mixed $templateID;
+		public mixed $templateId;
 
 	}

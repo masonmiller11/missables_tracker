@@ -43,7 +43,7 @@
 		 * @return Game
 		 * @throws \Exception
 		 */
-		public function assemble(IGDBGameResponseDTO $igdbGameDto): Game {
+		#[Pure] public function assemble(IGDBGameResponseDTO $igdbGameDto): Game {
 
 			return new Game(
 				$igdbGameDto->genres, $igdbGameDto->title, $igdbGameDto->internetGameDatabaseID,
