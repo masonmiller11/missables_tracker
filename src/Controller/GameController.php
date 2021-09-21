@@ -2,9 +2,12 @@
 	namespace App\Controller;
 
 	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
+	use App\Exception\PayloadDecoderException;
 	use App\Exception\ValidationException;
+	use App\Payload\Registry\PayloadDecoderRegistry;
 	use App\Payload\Registry\PayloadDecoderRegistryInterface;
 	use App\Repository\GameRepository;
+	use App\Request\Payloads\GamePayload;
 	use App\Service\IGDBHelper;
 	use App\Service\ResponseHelper;
 	use App\Transformer\GameEntityTransformer;
@@ -20,7 +23,6 @@
 	use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-	use App\Request\Payloads\GamePayload;
 
 	/**
 	 * Class GameController
@@ -36,6 +38,9 @@
 		private IGDBHelper $IGDBHelper;
 
 		/**
+		 * PayloadDecoderRegistryInterface's alias is set to PayloadDecoderRegistry in payload-decoder.yaml
+		 * @See PayloadDecoderRegistry
+		 *
 		 * GameController constructor.
 		 * @param IGDBHelper $IGDBHelper
 		 * @param ValidatorInterface $validator
@@ -72,18 +77,15 @@
 		 */
 		public function create(Request $request): Response {
 
-//			try {
-//
-//				$game = $this->createOne($request);
-//
-//			} catch (ValidationException $exception) {
-//
-//
-//				return ResponseHelper::createValidationErrorResponse($exception);
-//
-//			}
-//
-			$game = $this->doCreate($request);
+			try {
+
+				$game = $this->doCreate($request);
+
+			} catch (PayloadDecoderException | ValidationException $exception) {
+
+				return $this->handleApiException($request, $exception);
+
+			}
 
 			return ResponseHelper::createResourceCreatedResponse('games/read/' . $game->getId());
 
@@ -165,7 +167,6 @@
 		 * @throws RedirectionExceptionInterface
 		 * @throws ServerExceptionInterface
 		 * @throws TransportExceptionInterface
-
 		 */
 		public function searchIGDB(string $game): Response {
 
