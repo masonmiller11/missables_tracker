@@ -1,7 +1,6 @@
 <?php
 	namespace App\Transformer;
 
-	use App\DTO\Like\LikeDTO;
 	use App\Entity\EntityInterface;
 	use App\Entity\Playthrough\PlaythroughTemplate;
 	use App\Entity\Playthrough\PlaythroughTemplateLike;
@@ -40,8 +39,7 @@
 
 			$this->doesLikeAlreadyExist();
 
-			$template = $this->getTemplate() ??
-				throw new \InvalidArgumentException('A template with this id could not be found');
+			$template = $this->getTemplate();
 
 			return new PlaythroughTemplateLike($this->user, $template);
 
@@ -51,12 +49,17 @@
 		 * @throws DuplicateLikeException
 		 */
 		private function doesLikeAlreadyExist(): void {
-			if( $this->repository->getLikeByUserAndTemplate($this->user->getId(), $this->dto->templateId))
+			if ($this->repository->getLikeByUserAndTemplate($this->user->getId(), $this->dto->templateId))
 				throw new DuplicateLikeException();
 		}
 
 		private function getTemplate(): PlaythroughTemplate {
-			return $this->playthroughTemplateRepository->find($this->dto->templateId);
+			$template = $this->playthroughTemplateRepository->find($this->dto->templateId);
+
+			if (!$template)
+				throw new \InvalidArgumentException('A template with this id could not be found');
+
+			return $template;
 		}
 
 		public function doUpdateWork(int $id, Request $request, bool $skipValidation): EntityInterface {

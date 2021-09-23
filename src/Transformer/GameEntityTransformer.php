@@ -48,8 +48,8 @@
 			return new Game(
 				$igdbGameDto->genres, $igdbGameDto->title, $igdbGameDto->internetGameDatabaseID,
 				$igdbGameDto->screenshots, $igdbGameDto->artworks, $igdbGameDto->cover,
-				$igdbGameDto->platforms, $igdbGameDto->slug, $igdbGameDto->rating, $igdbGameDto->summary, $igdbGameDto->storyline,
-				$igdbGameDto->releaseDate
+				$igdbGameDto->platforms, $igdbGameDto->slug, $igdbGameDto->rating, $igdbGameDto->summary,
+				$igdbGameDto->storyline, $igdbGameDto->releaseDate
 			);
 
 		}
