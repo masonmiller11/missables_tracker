@@ -48,7 +48,7 @@
 
 			try {
 
-				$playthrough = $this->doCreate($request);
+				$playthrough = $this->doCreate($request, $this->getUser());
 
 			} catch (PayloadDecoderException | ValidationException $exception) {
 
