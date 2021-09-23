@@ -2,8 +2,11 @@
 	namespace App\Controller;
 
 	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughRequestDTOTransformer;
+	use App\Exception\PayloadDecoderException;
 	use App\Exception\ValidationException;
+	use App\Payload\Registry\PayloadDecoderRegistryInterface;
 	use App\Repository\PlaythroughRepository;
+	use App\Request\Payloads\PlaythroughPayload;
 	use App\Service\ResponseHelper;
 	use App\Transformer\PlaythroughEntityTransformer;
 	use JetBrains\PhpStorm\Pure;
@@ -18,13 +21,19 @@
 	 */
 	final class PlaythroughController extends AbstractBaseApiController {
 
-		#[Pure]
-		public function __construct(
-			ValidatorInterface $validator, PlaythroughEntityTransformer $entityTransformer,
-			PlaythroughRequestDTOTransformer $DTOTransformer, PlaythroughRepository $repository
+		#[Pure] public function __construct(
+			ValidatorInterface $validator,
+			PlaythroughEntityTransformer $entityTransformer,
+			PlaythroughRequestDTOTransformer $DTOTransformer,
+			PlaythroughRepository $repository,
+			PayloadDecoderRegistryInterface $decoderRegistry
 		) {
 
-			parent::__construct($validator, $entityTransformer, $DTOTransformer, $repository);
+			parent::__construct($validator,
+				$entityTransformer,
+				$DTOTransformer,
+				$repository,
+				$decoderRegistry->getDecoder(PlaythroughPayload::class));
 
 		}
 
@@ -39,11 +48,11 @@
 
 			try {
 
-				$playthrough = $this->createOne($request);
+				$playthrough = $this->doCreate($request);
 
-			} catch (ValidationException $exception) {
+			} catch (PayloadDecoderException | ValidationException $exception) {
 
-				return ResponseHelper::createValidationErrorResponse($exception);
+				return $this->handleApiException($request, $exception);
 
 			}
 
