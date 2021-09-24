@@ -17,7 +17,7 @@
 		 */
 		public function create(Object $dto, User|null $user = null): EntityInterface;
 
-		public function update(int $id, Request $request, bool $skipValidation = false): EntityInterface;
+		public function update(Object $dto, int $id): EntityInterface;
 
 		public function delete(int $id): void;
 
