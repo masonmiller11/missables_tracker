@@ -97,14 +97,13 @@
 		abstract protected function doCreateWork(): EntityInterface;
 
 		/**
+		 * @param Object $dto
 		 * @param int $id
-		 * @param Request $request
-		 * @param bool $skipValidation
 		 * @return EntityInterface
 		 */
-		public function update(int $id, Request $request, bool $skipValidation = false): EntityInterface {
+		public function update(Object $dto, int $id): EntityInterface {
 
-			$entity = $this->doUpdateWork($id, $request, $skipValidation);
+			$entity = $this->doUpdateWork($dto, $id);
 
 			$this->entityManager->persist($entity);
 			$this->entityManager->flush();
@@ -114,12 +113,11 @@
 		}
 
 		/**
+		 * @param Object $dto
 		 * @param int $id
-		 * @param Request $request
-		 * @param bool $skipValidation
 		 * @return EntityInterface
 		 */
-		abstract protected function doUpdateWork(int $id, Request $request, bool $skipValidation): EntityInterface;
+		abstract protected function doUpdateWork(Object $dto, int $id): EntityInterface;
 
 		/**
 		 * @param DTOInterface $dto
