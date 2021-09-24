@@ -6,6 +6,7 @@
 	use App\Entity\User;
 	use App\Exception\ValidationException;
 	use App\Repository\UserRepository;
+	use App\Request\Payloads\UserPayload;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
@@ -68,7 +69,7 @@
 		 */
 		protected function doCreateWork(): User {
 
-			if (!($this->dto instanceof UserDTO)) {
+			if (!($this->dto instanceof UserPayload)) {
 				throw new \InvalidArgumentException('UserEntityTransformer\'s DTO not instance of UserDTO');
 			}
 
