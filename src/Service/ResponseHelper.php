@@ -101,7 +101,10 @@
 			$errors = [];
 
 			foreach ($exception->getViolations() as $error) {
-				$errors[] = $error->getMessage();
+				$errors[] = [
+					'property' => $error->getPropertyPath(),
+					'message' => $error->getMessage(),
+				];
 			}
 
 			return self::createJsonErrorResponse($errors, 'validation error');
@@ -117,7 +120,7 @@
 		public static function createJsonErrorResponse (string|array $errorMessage, string $status): JsonResponse {
 			return new JsonResponse([
 				'status' => $status,
-				"message" => $errorMessage
+				'message' => $errorMessage
 			], Response::HTTP_BAD_REQUEST);
 		}
 
