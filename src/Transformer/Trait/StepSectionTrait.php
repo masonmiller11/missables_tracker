@@ -4,7 +4,7 @@
 	use App\Entity\Section\SectionInterface;
 	use App\Entity\Step\StepInterface;
 
-	trait StepSectionCheckDataTrait {
+	trait StepSectionTrait {
 
 		/**
 		 * @see SectionTemplateEntityTransformer

@@ -1,9 +1,11 @@
 <?php
 	namespace App\Transformer\Trait;
 
+	use App\Entity\Game;
 	use App\Entity\Playthrough\PlaythroughInterface;
+	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-	trait PlaythroughCheckDataTrait {
+	trait PlaythroughTrait {
 
 		/**
 		 * @see PlaythroughTemplateEntityTransformer
@@ -28,5 +30,20 @@
 			return $playthrough;
 
 		}
+
+		/**
+		 *
+		 */
+		private function getGame(): Game {
+			$game = $this->gameRepository->find($this->dto->gameId);
+
+			if (!$game) {
+				throw new NotFoundHttpException('game not found');
+			}
+
+			return $game;
+		}
+
+
 
 	}
