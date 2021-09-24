@@ -7,7 +7,8 @@
 	use App\Exception\ValidationException;
 	use App\Repository\GameRepository;
 	use App\Repository\PlaythroughTemplateRepository;
-	use App\Transformer\Trait\PlaythroughCheckDataTrait;
+	use App\Request\Payloads\PlaythroughTemplatePayload;
+	use App\Transformer\Trait\PlaythroughTrait;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +17,7 @@
 
 	final class PlaythroughTemplateEntityTransformer extends AbstractEntityTransformer {
 
-		use PlaythroughCheckDataTrait;
+		use PlaythroughTrait;
 
 		/**
 		 * @var GameRepository
@@ -52,17 +53,13 @@
 		 */
 		public function doCreateWork(): PlaythroughTemplate {
 
-			if (!($this->dto instanceof PlaythroughTemplateDTO)) {
+			if (!($this->dto instanceof PlaythroughTemplatePayload)) {
 				throw new \InvalidArgumentException(
-					'PlaythroughTemplateEntityTransformer\'s DTO not instance of PlaythroughTemplateDTO'
+					'PlaythroughTemplateEntityTransformer\'s Payload not instance of PlaythroughTemplatePayload'
 				);
 			}
 
-			$game = $this->gameRepository->find($this->dto->gameID);
-
-			if (!$game) {
-				throw new NotFoundHttpException('game not found');
-			}
+			$game = $this->getGame();
 
 			return new PlaythroughTemplate($this->dto->name, $this->dto->description, $this->user, $game, $this->dto->visibility);
 
