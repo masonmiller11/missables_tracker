@@ -187,6 +187,10 @@
 
 		}
 
+		protected function create(Request $request): Response {
+			// TODO: Implement update() method.
+		}
+
 		protected function update(Request $request, int $id): Response {
 			// TODO: Implement update() method.
 		}
