@@ -3,6 +3,8 @@
 
 	use App\Entity\Game;
 	use App\Entity\Playthrough\PlaythroughInterface;
+	use App\Request\Payloads\GamePayload;
+	use App\Transformer\GameEntityTransformer;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 	trait PlaythroughTrait {
@@ -34,11 +36,25 @@
 		/**
 		 *
 		 */
-		private function getGame(): Game {
+		private function getGame(GameEntityTransformer $gameEntityTransformer = null): Game {
 			$game = $this->gameRepository->find($this->dto->gameId);
 
+			//If game is not in database, let's try fetching it from igdb and creating it.
+			//We only do this if gameEntityTransformer was included in the function call.
 			if (!$game) {
+
+				if ($gameEntityTransformer) {
+
+					$gameDto = new GamePayload($this->dto->gameId);
+					$game = $gameEntityTransformer->create($gameDto);
+
+					Assert ($game instanceof Game);
+					return $game;
+
+				}
+
 				throw new NotFoundHttpException('game not found');
+
 			}
 
 			return $game;

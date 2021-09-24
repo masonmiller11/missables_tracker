@@ -25,26 +25,33 @@
 		private GameRepository $gameRepository;
 
 		/**
+		 * @var GameEntityTransformer
+		 */
+		private GameEntityTransformer $gameEntityTransformer;
+
+		/**
 		 * PlaythroughTemplateEntityTransformer constructor.
 		 * @param EntityManagerInterface $entityManager
 		 * @param ValidatorInterface $validator
 		 * @param GameRepository $gameRepository
 		 * @param PlaythroughTemplateRequestDTOTransformer $DTOTransformer
 		 * @param PlaythroughTemplateRepository $playthroughTemplateRepository
+		 * @param GameEntityTransformer $gameEntityTransformer
 		 */
 		#[Pure]
 		public function __construct(EntityManagerInterface $entityManager,
 		                            ValidatorInterface $validator,
 		                            GameRepository $gameRepository,
 		                            PlaythroughTemplateRequestDTOTransformer $DTOTransformer,
-		                            PlaythroughTemplateRepository $playthroughTemplateRepository) {
+		                            PlaythroughTemplateRepository $playthroughTemplateRepository,
+									GameEntityTransformer $gameEntityTransformer) {
 
 			parent::__construct($entityManager, $validator);
 
 			$this->gameRepository = $gameRepository;
 			$this->DTOTransformer = $DTOTransformer;
 			$this->repository = $playthroughTemplateRepository;
-
+			$this->gameEntityTransformer = $gameEntityTransformer;
 		}
 
 		/**
@@ -59,7 +66,8 @@
 				);
 			}
 
-			$game = $this->getGame();
+			//Get game from database; if it is not in database, get the information from igdb and create it.
+			$game = $this->getGame($this->gameEntityTransformer);
 
 			return new PlaythroughTemplate($this->dto->name, $this->dto->description, $this->user, $game, $this->dto->visibility);
 

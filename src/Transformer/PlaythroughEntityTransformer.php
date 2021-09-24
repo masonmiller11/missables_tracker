@@ -70,6 +70,7 @@
 			}
 
 			$game = $this->getGame();
+
 			$this->doesTemplateExist();
 
 			return new Playthrough(
