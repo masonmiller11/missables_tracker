@@ -2,9 +2,7 @@
 	namespace App\Transformer;
 
 	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughRequestDTOTransformer;
-	use App\Entity\Game;
 	use App\Entity\Playthrough\Playthrough;
-	use App\Exception\ValidationException;
 	use App\Repository\GameRepository;
 	use App\Repository\PlaythroughRepository;
 	use App\Repository\PlaythroughTemplateRepository;
@@ -12,7 +10,6 @@
 	use App\Transformer\Trait\PlaythroughTrait;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
-	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -63,11 +60,10 @@
 		 */
 		public function doCreateWork(): Playthrough {
 
-			if (!($this->dto instanceof PlaythroughPayload)) {
+			if (!($this->dto instanceof PlaythroughPayload))
 				throw new \InvalidArgumentException(
 					'PlaythroughEntityTransformer\'s Payload not instance of PlaythroughPayload'
 				);
-			}
 
 			$game = $this->getGame();
 
@@ -84,8 +80,6 @@
 
 		}
 
-
-
 		private function doesTemplateExist(): void {
 			$template = $this->playthroughTemplateRepository->find($this->dto->templateId);
 
@@ -95,28 +89,17 @@
 		}
 
 		/**
-		 * @param int $id
-		 * @param Request $request
-		 * @param bool $skipValidation
 		 * @return Playthrough
-		 * @throws ValidationException
 		 */
-		public function doUpdateWork(int $id, Request $request, bool $skipValidation = false): Playthrough {
+		public function doUpdateWork(): Playthrough {
 
-			$playthrough = $this->repository->find($id);
+			$playthrough = $this->repository->find($this->id);
 
-			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
-			$tempDTO->gameID = $playthrough->getGame()->getId();
-			$tempDTO->templateId = $playthrough->getTemplateId();
-
-			if (!$skipValidation) $this->validate($tempDTO);
-
-			$playthrough = $this->checkAndSetData(json_decode($request->getContent(), true), $playthrough);
-
+			$playthrough = $this->checkAndSetData($playthrough);
 
 			if (!($playthrough instanceof Playthrough)) {
 				throw new \InvalidArgumentException(
-					$playthrough::class . ' not instance of Playthrough. Does ' . $id . 'belong to a playthrough?');
+					$playthrough::class . ' not instance of Playthrough. Does ' . $this->id . 'belong to a playthrough?');
 			}
 
 			return $playthrough;
