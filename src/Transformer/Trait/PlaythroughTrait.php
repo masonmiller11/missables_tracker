@@ -4,30 +4,32 @@
 	use App\Entity\Game;
 	use App\Entity\Playthrough\PlaythroughInterface;
 	use App\Request\Payloads\GamePayload;
+	use App\Request\Payloads\PlaythroughPayload;
+	use App\Request\Payloads\PlaythroughTemplatePayload;
 	use App\Transformer\GameEntityTransformer;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 	trait PlaythroughTrait {
 
 		/**
-		 * @see PlaythroughTemplateEntityTransformer
-		 * @see PlaythroughEntityTransformer
-		 * @param array                $data
 		 * @param PlaythroughInterface $playthrough
 		 *
 		 * @return PlaythroughInterface
+		 * @see PlaythroughEntityTransformer
+		 * @see PlaythroughTemplateEntityTransformer
 		 */
-		private function checkAndSetData (array $data, PlaythroughInterface $playthrough): PlaythroughInterface {
+		private function checkAndSetData(PlaythroughInterface $playthrough): PlaythroughInterface {
 
-			if (isset($data['visibility'])) {
-				$playthrough->setVisibility($data['visibility']);
-			}
-			if (isset($data['name'])) {
-				$playthrough->setName($data['name']);
-			}
-			if (isset($data['description'])) {
-				$playthrough->setDescription($data['description']);
-			}
+			if (!(($this->dto instanceof PlaythroughTemplatePayload) || ($this->dto instanceof PlaythroughPayload)))
+				throw new \InvalidArgumentException(
+					'In ' . static::class . '. Payload not instance of PlaythroughPayload or PlaythroughTemplatePayload'
+				);
+
+			$this->dto->visibility ?? $playthrough->setVisibility($this->dto->visibility);
+
+			$this->dto->name ?? $playthrough->setName($this->dto->name);
+
+			$this->dto->description ?? $playthrough->setDescription($this->dto->description);
 
 			return $playthrough;
 
@@ -48,7 +50,7 @@
 					$gameDto = new GamePayload($this->dto->gameId);
 					$game = $gameEntityTransformer->create($gameDto);
 
-					Assert ($game instanceof Game);
+					Assert($game instanceof Game);
 					return $game;
 
 				}
@@ -59,7 +61,6 @@
 
 			return $game;
 		}
-
 
 
 	}
