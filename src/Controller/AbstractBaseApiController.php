@@ -13,7 +13,6 @@
 	use App\Payload\Decoders\SymfonyDeserializeDecoder;
 	use App\Service\ResponseHelper;
 	use App\Transformer\EntityTransformerInterface;
-	use App\Transformer\UserEntityTransformer;
 	use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\Request;
@@ -52,13 +51,13 @@
 
 		/**
 		 * AbstractBaseApiController constructor.
-		 * PayloadDecoderInterface will usually be @see SymfonyDeserializeDecoder
-		 *
-		 * @param ValidatorInterface $validator
+		 * PayloadDecoderInterface will usually be @param ValidatorInterface $validator
 		 * @param EntityTransformerInterface $entityTransformer
 		 * @param RequestDTOTransformerInterface $DTOTransformer
 		 * @param ServiceEntityRepository $repository
 		 * @param PayloadDecoderInterface|null $payloadDecoder
+		 * @see SymfonyDeserializeDecoder
+		 *
 		 */
 		public function __construct(
 			ValidatorInterface $validator,
@@ -72,48 +71,6 @@
 			$this->entityTransformer = $entityTransformer;
 			$this->repository = $repository;
 			$this->payloadDecoder = $payloadDecoder ?? null;
-		}
-
-		/**
-		 * createOne is the legacy method. I've started refactoring how a lot of these methods work.
-		 * The new method is doCreate.
-		 *
-		 * @param Request $request
-		 * @param bool $skipValidation
-		 * @param bool $getUser
-		 *
-		 * @return EntityInterface
-		 * @throws ValidationException
-		 */
-		protected function createOne(Request $request, bool $skipValidation = false, bool $getUser = true
-		): EntityInterface {
-
-			/**Set user to null if the resource does not require owner. Such as @See UserEntityTransformer
-			 */
-			$user = null;
-			if ($getUser)
-				$user = $this->getUser();
-
-			$dto = $this->DTOTransformer->transformFromRequest($request);
-
-			if (!$skipValidation)
-				$this->validateDTO($dto);
-
-			return $this->entityTransformer->create($dto, $user);
-
-		}
-
-		/**
-		 * @return User
-		 */
-		protected function getUser(): User {
-
-			$user = parent::getUser();
-
-			if (!($user instanceof User)) throw new \InvalidArgumentException(($user::class . ' not instance of User.'));
-
-			return $user;
-
 		}
 
 		/**
@@ -145,13 +102,6 @@
 
 		}
 
-//		protected function doUpdate(Request $request): EntityInterface {
-//
-//			$payload = $this->payloadDecoder->parse(DecoderIntent::UPDATE, $request->getContent());
-//
-//			return $this->entityTransformer->update($payload);
-//		}
-
 		/**
 		 * @param Request $request
 		 * @param \Exception $exception
@@ -169,6 +119,13 @@
 				return ResponseHelper::createJsonErrorResponse('unknown api error', 'error');
 
 		}
+
+//		protected function doUpdate(Request $request, User $user = null): EntityInterface {
+//
+//			$payload = $this->payloadDecoder->parse(DecoderIntent::UPDATE, $request->getContent());
+//
+//			return $this->entityTransformer->update($payload);
+//		}
 
 		/**
 		 * @param Request $request
@@ -218,6 +175,19 @@
 			if ($owner !== $authenticatedUser) {
 				throw new AccessDeniedHttpException();
 			}
+
+		}
+
+		/**
+		 * @return User
+		 */
+		protected function getUser(): User {
+
+			$user = parent::getUser();
+
+			if (!($user instanceof User)) throw new \InvalidArgumentException(($user::class . ' not instance of User.'));
+
+			return $user;
 
 		}
 
