@@ -120,28 +120,42 @@
 
 		}
 
-//		protected function doUpdate(Request $request, User $user = null): EntityInterface {
-//
-//			$payload = $this->payloadDecoder->parse(DecoderIntent::UPDATE, $request->getContent());
-//
-//			return $this->entityTransformer->update($payload);
-//		}
 
 		/**
 		 * @param Request $request
 		 * @param int $id
-		 *
+		 * @param User|null $user
 		 * @return EntityInterface
+		 * @throws ValidationException
 		 */
-		protected function updateOne(Request $request, int $id): EntityInterface {
+		protected function doUpdate(Request $request, int $id, User $user = null): EntityInterface {
 
-			if (!$this->doesEntityExist($id)) throw new NotFoundHttpException('resource does not exist');
+			if (!$this->doesEntityExist($id))
+				throw new NotFoundHttpException('resource does not exist');
 
 			$this->confirmResourceOwner($this->repository->find($id));
 
-			return $this->entityTransformer->update($id, $request);
+			$payload = $this->payloadDecoder->parse(DecoderIntent::UPDATE, $request->getContent());
 
+			return $this->entityTransformer->update($payload, $id);
 		}
+
+//		/**
+//		 * @param Request $request
+//		 * @param int $id
+//		 *
+//		 * @return EntityInterface
+//		 */
+//		protected function updateOne(Request $request, int $id): EntityInterface {
+//
+//			if (!$this->doesEntityExist($id))
+//				throw new NotFoundHttpException('resource does not exist');
+//
+//			$this->confirmResourceOwner($this->repository->find($id));
+//
+//			return $this->entityTransformer->update($id, $request);
+//
+//		}
 
 		/**
 		 * @param int $id
