@@ -3,11 +3,13 @@
 
 	use App\DTO\Step\StepDTO;
 	use App\DTO\Transformer\RequestTransformer\Step\StepRequestTransformer;
+	use App\Entity\Section\Section;
 	use App\Entity\Step\Step;
 	use App\Exception\ValidationException;
 	use App\Repository\SectionRepository;
 	use App\Repository\StepRepository;
-	use App\Transformer\Trait\StepSectionCheckDataTrait;
+	use App\Request\Payloads\StepPayload;
+	use App\Transformer\Trait\StepSectionTrait;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +18,7 @@
 
 	final class StepEntityTransformer extends AbstractEntityTransformer {
 
-		use StepSectionCheckDataTrait;
+		use StepSectionTrait;
 
 		/**
 		 * @var SectionRepository
@@ -53,15 +55,11 @@
 		 */
 		public function doCreateWork (): Step {
 
-			if (!($this->dto instanceof StepDTO)) {
+			if (!($this->dto instanceof StepPayload)) {
 				throw new \InvalidArgumentException('StepEntityTransformer\'s DTO not instance of StepDTO');
 			}
 
-			$section = $this->sectionRepository->find($this->dto->sectionId);
-
-			if (!$section) {
-				throw new NotFoundHttpException('section not found');
-			}
+			$section = $this->getSection();
 
 			return new Step($this->dto->name, $this->dto->description, $section, $this->dto->position);
 
@@ -92,6 +90,16 @@
 
 			return $step;
 
+		}
+
+		private function getSection():Section {
+			$section = $this->sectionRepository->find($this->dto->sectionId);
+
+			if (!$section) {
+				throw new NotFoundHttpException('section not found');
+			}
+
+			return $section;
 		}
 
 	}

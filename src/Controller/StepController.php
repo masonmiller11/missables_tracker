@@ -2,8 +2,11 @@
 	namespace App\Controller;
 
 	use App\DTO\Transformer\RequestTransformer\Step\StepRequestTransformer;
+	use App\Exception\PayloadDecoderException;
 	use App\Exception\ValidationException;
+	use App\Payload\Registry\PayloadDecoderRegistryInterface;
 	use App\Repository\StepRepository;
+	use App\Request\Payloads\StepPayload;
 	use App\Service\ResponseHelper;
 	use App\Transformer\StepEntityTransformer;
 	use JetBrains\PhpStorm\Pure;
@@ -21,11 +24,19 @@
 
 		#[Pure]
 		public function __construct(
-			ValidatorInterface $validator, StepEntityTransformer $entityTransformer,
+			ValidatorInterface $validator,
+			StepEntityTransformer $entityTransformer,
 			StepRequestTransformer $DTOTransformer,
-			StepRepository $repository
+			StepRepository $repository,
+			PayloadDecoderRegistryInterface $decoderRegistry
 		) {
-			parent::__construct($validator, $entityTransformer, $DTOTransformer, $repository);
+			parent::__construct(
+				$validator,
+				$entityTransformer,
+				$DTOTransformer,
+				$repository,
+				$decoderRegistry->getDecoder(StepPayload::class)
+			);
 		}
 
 		/**
@@ -39,11 +50,11 @@
 
 			try {
 
-				$step = $this->createOne($request);
+				$step = $this->doCreate($request, $this->getUser());
 
-			} catch (ValidationException $exception) {
+			} catch (PayloadDecoderException | ValidationException $exception) {
 
-				return ResponseHelper::createValidationErrorResponse($exception);
+				return $this->handleApiException($request, $exception);
 
 			}
 
