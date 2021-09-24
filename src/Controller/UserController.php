@@ -2,8 +2,11 @@
 	namespace App\Controller;
 
 	use App\DTO\Transformer\RequestTransformer\UserRequestDTOTransformer;
+	use App\Exception\PayloadDecoderException;
 	use App\Exception\ValidationException;
+	use App\Payload\Registry\PayloadDecoderRegistryInterface;
 	use App\Repository\UserRepository;
+	use App\Request\Payloads\UserPayload;
 	use App\Service\ResponseHelper;
 	use App\Transformer\UserEntityTransformer;
 	use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -26,15 +29,22 @@
 		 * @param UserEntityTransformer $entityTransformer
 		 * @param UserRequestDTOTransformer $DTOTransformer
 		 * @param UserRepository $repository
+		 * @param PayloadDecoderRegistryInterface $decoderRegistry
 		 */
-		#[Pure]
 		public function __construct(
 			ValidatorInterface $validator, UserEntityTransformer $entityTransformer,
 			UserRequestDTOTransformer $DTOTransformer,
-			UserRepository $repository
+			UserRepository $repository,
+			PayloadDecoderRegistryInterface $decoderRegistry
 		) {
 
-			parent::__construct($validator, $entityTransformer, $DTOTransformer, $repository);
+			parent::__construct($validator,
+				$entityTransformer,
+				$DTOTransformer,
+				$repository,
+				$decoderRegistry->getDecoder(UserPayload::class)
+			);
+
 		}
 
 		/**
@@ -48,11 +58,11 @@
 
 			try {
 
-				$user = $this->createOne($request, false, false);
+				$user = $this->doCreate($request);
 
-			} catch (ValidationException $exception) {
+			} catch (PayloadDecoderException | ValidationException $exception) {
 
-				return ResponseHelper::createValidationErrorResponse($exception);
+				return $this->handleApiException($request, $exception);
 
 			} catch (UniqueConstraintViolationException $exception) {
 
