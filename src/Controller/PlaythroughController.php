@@ -29,11 +29,13 @@
 			PayloadDecoderRegistryInterface $decoderRegistry
 		) {
 
-			parent::__construct($validator,
+			parent::__construct(
+				$validator,
 				$entityTransformer,
 				$DTOTransformer,
 				$repository,
-				$decoderRegistry->getDecoder(PlaythroughPayload::class));
+				$decoderRegistry->getDecoder(PlaythroughPayload::class)
+			);
 
 		}
 
