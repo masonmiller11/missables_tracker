@@ -8,6 +8,7 @@
 	use App\Repository\LikeRepository;
 	use App\Repository\PlaythroughTemplateRepository;
 	use App\Request\Payloads\LikePayload;
+	use App\Request\Payloads\PayloadInterface;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
@@ -62,7 +63,7 @@
 			return $template;
 		}
 
-		public function doUpdateWork(int $id, Request $request, bool $skipValidation): EntityInterface {
+		public function doUpdateWork(PayloadInterface $payload, int $id): EntityInterface {
 			// no op
 		}
 

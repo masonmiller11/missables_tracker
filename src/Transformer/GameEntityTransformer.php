@@ -7,6 +7,7 @@
 	use App\Exception\DuplicateResourceException;
 	use App\Repository\GameRepository;
 	use App\Request\Payloads\GamePayload;
+	use App\Request\Payloads\PayloadInterface;
 	use App\Service\IGDBHelper;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Doctrine\ORM\NonUniqueResultException;
@@ -90,7 +91,7 @@
 
 		}
 
-		protected function doUpdateWork(int $id, Request $request, bool $skipValidation): EntityInterface {
+		protected function doUpdateWork(PayloadInterface $payload, int $id): EntityInterface {
 			// no op
 		}
 	}
