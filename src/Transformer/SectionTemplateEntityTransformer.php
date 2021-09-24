@@ -3,11 +3,13 @@
 
 	use App\DTO\Section\SectionTemplateDTO;
 	use App\DTO\Transformer\RequestTransformer\Section\SectionTemplateRequestTransformer;
+	use App\Entity\Playthrough\PlaythroughTemplate;
 	use App\Entity\Section\SectionTemplate;
 	use App\Exception\ValidationException;
 	use App\Repository\PlaythroughTemplateRepository;
 	use App\Repository\SectionTemplateRepository;
-	use App\Transformer\Trait\StepSectionCheckDataTrait;
+	use App\Request\Payloads\SectionTemplatePayload;
+	use App\Transformer\Trait\StepSectionTrait;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +18,7 @@
 
 	final class SectionTemplateEntityTransformer extends AbstractEntityTransformer {
 
-		use StepSectionCheckDataTrait;
+		use StepSectionTrait;
 
 		/**
 		 * @var PlaythroughTemplateRepository
@@ -53,15 +55,11 @@
 		 */
 		public function doCreateWork(): SectionTemplate {
 
-			if (!($this->dto instanceof SectionTemplateDTO)) {
+			if (!($this->dto instanceof SectionTemplatePayload)) {
 				throw new \InvalidArgumentException('SectionEntityTransformer\'s DTO not instance of SectionTemplateDTO');
 			}
 
-			$playthroughTemplate = $this->playthroughTemplateRepository->find($this->dto->templateId);
-
-			if (!$playthroughTemplate) {
-				throw new NotFoundHttpException('template not found');
-			}
+			$playthroughTemplate = $this->getTemplate();
 
 			return new SectionTemplate($this->dto->name, $this->dto->description, $playthroughTemplate, $this->dto->position);
 
@@ -91,6 +89,18 @@
 			}
 
 			return $sectionTemplate;
+
+		}
+
+		private function getTemplate(): PlaythroughTemplate{
+
+			$playthroughTemplate = $this->playthroughTemplateRepository->find($this->dto->templateId);
+
+			if (!$playthroughTemplate) {
+				throw new NotFoundHttpException('template not found');
+			}
+
+			return $playthroughTemplate;
 
 		}
 

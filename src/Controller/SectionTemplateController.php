@@ -2,8 +2,12 @@
 	namespace App\Controller;
 
 	use App\DTO\Transformer\RequestTransformer\Section\SectionTemplateRequestTransformer;
+	use App\Exception\PayloadDecoderException;
 	use App\Exception\ValidationException;
+	use App\Payload\Registry\PayloadDecoderRegistryInterface;
 	use App\Repository\SectionTemplateRepository;
+	use App\Request\Payloads\SectionPayload;
+	use App\Request\Payloads\SectionTemplatePayload;
 	use App\Service\ResponseHelper;
 	use App\Transformer\SectionTemplateEntityTransformer;
 	use JetBrains\PhpStorm\Pure;
@@ -21,12 +25,20 @@
 
 		#[Pure]
 		public function __construct(
-			ValidatorInterface $validator, SectionTemplateEntityTransformer $entityTransformer,
+			ValidatorInterface $validator,
+			SectionTemplateEntityTransformer $entityTransformer,
 			SectionTemplateRequestTransformer $DTOTransformer,
-			SectionTemplateRepository $repository
+			SectionTemplateRepository $repository,
+			PayloadDecoderRegistryInterface $decoderRegistry
 		) {
 
-			parent::__construct($validator, $entityTransformer, $DTOTransformer, $repository);
+			parent::__construct(
+				$validator,
+				$entityTransformer,
+				$DTOTransformer,
+				$repository,
+				$decoderRegistry->getDecoder(SectionTemplatePayload::class)
+			);
 
 		}
 
@@ -41,11 +53,11 @@
 
 			try {
 
-				$sectionTemplate = $this->createOne($request);
+				$sectionTemplate = $this->doCreate($request, $this->getUser());
 
-			} catch (ValidationException $exception) {
+			} catch (PayloadDecoderException | ValidationException $exception) {
 
-				return ResponseHelper::createValidationErrorResponse($exception);
+				return $this->handleApiException($request, $exception);
 
 			}
 
