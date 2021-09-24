@@ -7,6 +7,7 @@
 	use App\Entity\User;
 	use App\Exception\ValidationException;
 	use App\Repository\AbstractBaseRepository;
+	use App\Request\Payloads\PayloadInterface;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\Validator\Exception\InvalidArgumentException;
@@ -40,9 +41,14 @@
 		protected ?User $user;
 
 		/**
-		 * @var Object
+		 * @var Object|null
 		 */
-		protected Object $dto;
+		protected ?Object $dto;
+
+		/**
+		 * @var int|null
+		 */
+		protected ?int $id;
 
 		/**
 		 * AbstractEntityTransformer constructor.
@@ -73,13 +79,13 @@
 		}
 
 		/**
-		 * @param Object $dto
+		 * @param PayloadInterface $payload
 		 * @param User|null $user
 		 * @return EntityInterface
 		 */
-		public function create(Object $dto, User|null $user = null): EntityInterface {
+		public function create(PayloadInterface $payload, User|null $user = null): EntityInterface {
 
-			$this->dto = $dto;
+			$this->dto = $payload;
 			$this->user = $user;
 
 			$entity = $this->doCreateWork();
@@ -97,13 +103,16 @@
 		abstract protected function doCreateWork(): EntityInterface;
 
 		/**
-		 * @param Object $dto
+		 * @param PayloadInterface $payload
 		 * @param int $id
 		 * @return EntityInterface
 		 */
-		public function update(Object $dto, int $id): EntityInterface {
+		public function update(PayloadInterface $payload, int $id): EntityInterface {
 
-			$entity = $this->doUpdateWork($dto, $id);
+			$this->dto = $payload;
+			$this->id = $id;
+
+			$entity = $this->doUpdateWork();
 
 			$this->entityManager->persist($entity);
 			$this->entityManager->flush();
@@ -113,11 +122,9 @@
 		}
 
 		/**
-		 * @param Object $dto
-		 * @param int $id
 		 * @return EntityInterface
 		 */
-		abstract protected function doUpdateWork(Object $dto, int $id): EntityInterface;
+		abstract protected function doUpdateWork(): EntityInterface;
 
 		/**
 		 * @param DTOInterface $dto
