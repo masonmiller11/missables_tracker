@@ -3,11 +3,13 @@
 
 	use App\DTO\Step\StepTemplateDTO;
 	use App\DTO\Transformer\RequestTransformer\Step\StepTemplateRequestTransformer;
+	use App\Entity\Section\SectionTemplate;
 	use App\Entity\Step\StepTemplate;
 	use App\Exception\ValidationException;
 	use App\Repository\SectionTemplateRepository;
 	use App\Repository\StepTemplateRepository;
-	use App\Transformer\Trait\StepSectionCheckDataTrait;
+	use App\Request\Payloads\StepTemplatePayload;
+	use App\Transformer\Trait\StepSectionTrait;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +18,7 @@
 
 	final class StepTemplateEntityTransformer extends AbstractEntityTransformer {
 
-		use StepSectionCheckDataTrait;
+		use StepSectionTrait;
 
 		private SectionTemplateRepository $sectionTemplateRepository;
 
@@ -50,7 +52,7 @@
 		 */
 		public function doCreateWork(): StepTemplate {
 
-			if (!($this->dto instanceof StepTemplateDTO)) {
+			if (!($this->dto instanceof StepTemplatePayload)) {
 				throw new \InvalidArgumentException(
 					'StepTemplateEntityTransformer\'s DTO not instance of StepTemplateDTO'
 				);
@@ -89,6 +91,18 @@
 			}
 
 			return $stepTemplate;
+
+		}
+
+		private function getSectionTemplate(): SectionTemplate {
+
+			$sectionTemplate = $this->sectionTemplateRepository->find($this->dto->sectionTemplateId);
+
+			if (!$sectionTemplate) {
+				throw new NotFoundHttpException('section template not found');
+			}
+
+			return $sectionTemplate;
 
 		}
 
