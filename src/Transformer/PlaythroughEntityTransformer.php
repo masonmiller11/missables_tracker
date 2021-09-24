@@ -9,7 +9,7 @@
 	use App\Repository\PlaythroughRepository;
 	use App\Repository\PlaythroughTemplateRepository;
 	use App\Request\Payloads\PlaythroughPayload;
-	use App\Transformer\Trait\PlaythroughCheckDataTrait;
+	use App\Transformer\Trait\PlaythroughTrait;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +18,7 @@
 
 	final class PlaythroughEntityTransformer extends AbstractEntityTransformer {
 
-		use PlaythroughCheckDataTrait;
+		use PlaythroughTrait;
 
 		/**
 		 * @var GameRepository
@@ -64,28 +64,26 @@
 		public function doCreateWork(): Playthrough {
 
 			if (!($this->dto instanceof PlaythroughPayload)) {
-				throw new \InvalidArgumentException('PlaythroughEntityTransformer\'s DTO not instance of UserDTO');
+				throw new \InvalidArgumentException(
+					'PlaythroughEntityTransformer\'s Payload not instance of PlaythroughPayload'
+				);
 			}
 
 			$game = $this->getGame();
 			$this->doesTemplateExist();
 
-			return new Playthrough($this->dto->name, $this->dto->description, $game, $this->dto->templateId, $this->user, $this->dto->visibility);
+			return new Playthrough(
+				$this->dto->name,
+				$this->dto->description,
+				$game,
+				$this->dto->templateId,
+				$this->user,
+				$this->dto->visibility
+			);
 
 		}
 
-		/**
-		 *
-		 */
-		private function getGame(): Game {
-			$game = $this->gameRepository->find($this->dto->gameId);
 
-			if (!$game) {
-				throw new NotFoundHttpException('game not found');
-			}
-
-			return $game;
-		}
 
 		private function doesTemplateExist(): void {
 			$template = $this->playthroughTemplateRepository->find($this->dto->templateId);
