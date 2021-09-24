@@ -58,4 +58,8 @@
 		 */
 		public mixed $artworks;
 
+		public function __construct(int $id){
+			$this->internetGameDatabaseID = $id;
+		}
+
 	}
