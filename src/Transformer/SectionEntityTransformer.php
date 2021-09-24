@@ -3,11 +3,13 @@
 
 	use App\DTO\Section\SectionDTO;
 	use App\DTO\Transformer\RequestTransformer\Section\SectionRequestTransformer;
+	use App\Entity\Playthrough\Playthrough;
 	use App\Entity\Section\Section;
 	use App\Exception\ValidationException;
 	use App\Repository\PlaythroughRepository;
 	use App\Repository\SectionRepository;
-	use App\Transformer\Trait\StepSectionCheckDataTrait;
+	use App\Request\Payloads\SectionPayload;
+	use App\Transformer\Trait\StepSectionTrait;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +18,7 @@
 
 	final class SectionEntityTransformer extends AbstractEntityTransformer {
 
-		use StepSectionCheckDataTrait;
+		use StepSectionTrait;
 
 		/**
 		 * @var PlaythroughRepository
@@ -53,17 +55,13 @@
 		 */
 		public function doCreateWork (): Section {
 
-			if (!($this->dto instanceof SectionDTO)) {
+			if (!($this->dto instanceof SectionPayload)) {
 				throw new \InvalidArgumentException('SectionEntityTransformer\'s DTO not instance of SectionDTO');
 			}
 
-			$playthrough = $this->playthroughRepository->find($this->dto->playthroughId);
+			$playthrough = $this->getPlaythrough();
 
-			if (!$playthrough) {
-				throw new NotFoundHttpException('playthrough not found');
-			}
-
-			return new Section($this->dto->name, $this->dto->name, $playthrough, $this->dto->name);
+			return new Section($this->dto->name, $this->dto->name, $playthrough, $this->dto->position);
 
 		}
 
@@ -91,6 +89,19 @@
 
 			return $section;
 
+		}
+
+		/**
+		 * @return Playthrough
+		 */
+		private function getPlaythrough(): Playthrough {
+			$playthrough = $this->playthroughRepository->find($this->dto->playthroughId);
+
+			if (!$playthrough) {
+				throw new NotFoundHttpException('playthrough not found');
+			}
+
+			return $playthrough;
 		}
 
 	}
