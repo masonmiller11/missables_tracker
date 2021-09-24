@@ -69,27 +69,32 @@
 		}
 
 		/**
-		 * @Route(path="create", methods={"POST"}, name="create")
+		 * The current flow is that we do not create games directly and instead create them when creating templates.
+		 * If the template is using the IGDB id of a game that we don't have in the database, we create it at that time.
+		 * You can see this in PlaythroughTemplateEntityTransformer.
 		 *
-		 * @param Request $request
-		 *
-		 * @return Response
 		 */
-		public function create(Request $request): Response {
-
-			try {
-
-				$game = $this->doCreate($request);
-
-			} catch (PayloadDecoderException | ValidationException $exception) {
-
-				return $this->handleApiException($request, $exception);
-
-			}
-
-			return ResponseHelper::createResourceCreatedResponse('games/read/' . $game->getId());
-
-		}
+//		 * @Route(path="create", methods={"POST"}, name="create")
+//		 *
+//		 * @param Request $request
+//		 *
+//		 * @return Response
+//
+//		public function create(Request $request): Response {
+//
+//			try {
+//
+//				$game = $this->doCreate($request);
+//
+//			} catch (PayloadDecoderException | ValidationException $exception) {
+//
+//				return $this->handleApiException($request, $exception);
+//
+//			}
+//
+//			return ResponseHelper::createResourceCreatedResponse('games/read/' . $game->getId());
+//
+//		}
 
 		/**
 		 * @Route(path="read/{id<\d+>}", methods={"GET"}, name="read")
