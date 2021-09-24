@@ -1,7 +1,6 @@
 <?php
 	namespace App\Transformer;
 
-	use App\DTO\Game\GameDTO;
 	use App\DTO\Game\IGDBGameResponseDTO;
 	use App\Entity\EntityInterface;
 	use App\Entity\Game;
@@ -39,22 +38,6 @@
 		}
 
 		/**
-		 * @param IGDBGameResponseDTO $igdbGameDto
-		 * @return Game
-		 * @throws \Exception
-		 */
-		#[Pure] public function assemble(IGDBGameResponseDTO $igdbGameDto): Game {
-
-			return new Game(
-				$igdbGameDto->genres, $igdbGameDto->title, $igdbGameDto->internetGameDatabaseID,
-				$igdbGameDto->screenshots, $igdbGameDto->artworks, $igdbGameDto->cover,
-				$igdbGameDto->platforms, $igdbGameDto->slug, $igdbGameDto->rating, $igdbGameDto->summary,
-				$igdbGameDto->storyline, $igdbGameDto->releaseDate
-			);
-
-		}
-
-		/**
 		 * @return Game
 		 * @throws \Exception
 		 * @throws TransportExceptionInterface
@@ -75,6 +58,16 @@
 		}
 
 		/**
+		 * @throws DuplicateResourceException
+		 * @throws NonUniqueResultException
+		 */
+		private function checkIfGameIsAdded(): void {
+			if ($this->getIGDBGameIfInDatabase($this->dto->internetGameDatabaseID))
+				throw new DuplicateResourceException('A game with this IGDB id has already been added');
+
+		}
+
+		/**
 		 * @throws NonUniqueResultException
 		 */
 		private function getIGDBGameIfInDatabase(int $id): Game|NonUniqueResultException|null {
@@ -82,12 +75,18 @@
 		}
 
 		/**
-		 * @throws DuplicateResourceException
-		 * @throws NonUniqueResultException
+		 * @param IGDBGameResponseDTO $igdbGameDto
+		 * @return Game
+		 * @throws \Exception
 		 */
-		private function checkIfGameIsAdded(): void {
-			if ($this->getIGDBGameIfInDatabase($this->dto->internetGameDatabaseID))
-				throw new DuplicateResourceException('A game with this IGDB id has already been added');
+		#[Pure] public function assemble(IGDBGameResponseDTO $igdbGameDto): Game {
+
+			return new Game(
+				$igdbGameDto->genres, $igdbGameDto->title, $igdbGameDto->internetGameDatabaseID,
+				$igdbGameDto->screenshots, $igdbGameDto->artworks, $igdbGameDto->cover,
+				$igdbGameDto->platforms, $igdbGameDto->slug, $igdbGameDto->rating, $igdbGameDto->summary,
+				$igdbGameDto->storyline, $igdbGameDto->releaseDate
+			);
 
 		}
 
