@@ -19,7 +19,7 @@
 	/**
 	 * @Route(path="/playthroughs/", name="playthroughs.")
 	 */
-	final class PlaythroughController extends AbstractBaseApiController {
+	final class PlaythroughController extends AbstractBaseApiController implements BaseApiControllerInterface {
 
 		#[Pure] public function __construct(
 			ValidatorInterface $validator,

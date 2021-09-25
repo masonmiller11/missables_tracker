@@ -20,7 +20,7 @@
 	 * @package App\Controller
 	 * @Route(path="/step/template/", name="step_template.")
 	 */
-	final class StepTemplateController extends AbstractBaseApiController {
+	final class StepTemplateController extends AbstractBaseApiController implements BaseApiControllerInterface {
 
 		public function __construct(
 			ValidatorInterface $validator,
