@@ -20,7 +20,7 @@
 	 * @package App\Controller
 	 * @Route(path="/section/", name="section.")
 	 */
-	final class SectionController extends AbstractBaseApiController {
+	final class SectionController extends AbstractBaseApiController implements BaseApiControllerInterface {
 
 		public function __construct(
 			ValidatorInterface $validator,

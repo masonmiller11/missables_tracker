@@ -21,7 +21,7 @@
 	 * @package App\Controller
 	 * @Route(path="/section/template/", name="section_template.")
 	 */
-	final class SectionTemplateController extends AbstractBaseApiController {
+	final class SectionTemplateController extends AbstractBaseApiController implements BaseApiControllerInterface {
 
 		#[Pure]
 		public function __construct(

@@ -10,6 +10,7 @@
 	use App\Request\Payloads\PlaythroughTemplatePayload;
 	use App\Service\ResponseHelper;
 	use App\Transformer\PlaythroughTemplateEntityTransformer;
+	use Doctrine\ORM\Query\Expr\Base;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +21,7 @@
 	/**
 	 * @Route(path="/templates/", name="templates.")
 	 */
-	final class PlaythroughTemplateController extends AbstractBaseApiController {
+	final class PlaythroughTemplateController extends AbstractBaseApiController implements BaseApiControllerInterface {
 
 		public function __construct(
 			ValidatorInterface $validator,

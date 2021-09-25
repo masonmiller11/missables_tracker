@@ -9,6 +9,7 @@
 	use App\Request\Payloads\StepPayload;
 	use App\Service\ResponseHelper;
 	use App\Transformer\StepEntityTransformer;
+	use Doctrine\ORM\Query\Expr\Base;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +21,7 @@
 	 * @package App\Controller
 	 * @Route(path="/step/", name="step.")
 	 */
-	final class StepController extends AbstractBaseApiController {
+	final class StepController extends AbstractBaseApiController implements BaseApiControllerInterface {
 
 		#[Pure]
 		public function __construct(

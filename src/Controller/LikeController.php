@@ -19,7 +19,7 @@
 	/**
 	 * @Route(path="/like/", name="like.")
 	 */
-	class LikeController extends AbstractBaseApiController {
+	final class LikeController extends AbstractBaseApiController implements BaseApiControllerInterface {
 
 		/**
 		 * LikeController constructor.

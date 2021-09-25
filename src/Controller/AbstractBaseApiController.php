@@ -220,12 +220,4 @@
 
 		}
 
-		abstract protected function create(Request $request): Response;
-
-		abstract protected function update(Request $request, int $id): Response;
-
-		abstract protected function delete(int $id): Response;
-
-		abstract protected function read(int $id, SerializerInterface $serializer): Response;
-
 	}

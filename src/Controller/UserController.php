@@ -139,12 +139,4 @@
 			return ResponseHelper::createUserUpdatedResponse();
 		}
 
-		protected function delete(int $id): Response {
-			// TODO: Implement delete() method.
-		}
-
-		protected function read(int $id, SerializerInterface $serializer): Response {
-			// TODO: Implement read() method.
-		}
-
 	}
