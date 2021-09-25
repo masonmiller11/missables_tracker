@@ -91,7 +91,7 @@
 
 		}
 
-		protected function doUpdateWork(PayloadInterface $payload, int $id): EntityInterface {
+		protected function doUpdateWork(): EntityInterface {
 			// no op
 		}
 	}
