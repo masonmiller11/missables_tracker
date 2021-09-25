@@ -63,7 +63,7 @@
 			return $template;
 		}
 
-		public function doUpdateWork(PayloadInterface $payload, int $id): EntityInterface {
+		public function doUpdateWork(): EntityInterface {
 			// no op
 		}
 
