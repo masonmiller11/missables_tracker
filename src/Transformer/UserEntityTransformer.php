@@ -35,34 +35,35 @@
 			$this->repository = $repository;
 		}
 
-		/**
-		 * @throws ValidationException
-		 */
-		public function updatePassword(int $id, string $password, bool $skipValidation = false): User {
-
-			$user = $this->repository->find($id);
-
-			if (!($user instanceof User)) {
-				throw new \InvalidArgumentException($user::class . ' not instance of User');
-			}
-
-			$this->dto = new UserDTO();
-			$this->dto->username = $user->getUsername();
-			$this->dto->email = $user->getEmail();
-			$this->dto->password = $password;
-
-			if (!$skipValidation) $this->validate($this->dto);
-
-			$password = $this->encoder->hashPassword($user, $this->dto->password);
-
-			$user->setPassword($password);
-
-			$this->entityManager->persist($user);
-			$this->entityManager->flush();
-
-			return $user;
-
-		}
+		//TODO delete this
+//		/**
+//		 * @throws ValidationException
+//		 */
+//		public function updatePassword(int $id, string $password, bool $skipValidation = false): User {
+//
+//			$user = $this->repository->find($id);
+//
+//			if (!($user instanceof User)) {
+//				throw new \InvalidArgumentException($user::class . ' not instance of User');
+//			}
+//
+//			$this->dto = new UserDTO();
+//			$this->dto->username = $user->getUsername();
+//			$this->dto->email = $user->getEmail();
+//			$this->dto->password = $password;
+//
+//			if (!$skipValidation) $this->validate($this->dto);
+//
+//			$password = $this->encoder->hashPassword($user, $this->dto->password);
+//
+//			$user->setPassword($password);
+//
+//			$this->entityManager->persist($user);
+//			$this->entityManager->flush();
+//
+//			return $user;
+//
+//		}
 
 		/**
 		 * @return User
@@ -84,44 +85,33 @@
 		}
 
 		/**
-		 * @throws ValidationException
+		 * @return User
 		 */
-		protected function doUpdateWork(int $id, Request $request, bool $skipValidation): User {
+		protected function doUpdateWork(): User {
 
-			$user = $this->repository->find($id);
+			$user = $this->checkAndSetData($this->repository->find($this->id));
 
-			if (!($user instanceof User)) {
-				throw new \InvalidArgumentException($user::class . ' not instance of User. Does ' . $id . 'belong to a user?');
-			}
+			if (!($user instanceof User))
+				throw new \InvalidArgumentException(
+					$user::class . ' not instance of User. Does ' . $this->id . 'belong to a user?'
+				);
 
-			$data = json_decode($request->getContent(), true);
+			return $user;
 
-			$tempDTO = new UserDTO();
-			$tempDTO->password = $user->getPassword();
+		}
 
-			if (!isset($data['username']) && !isset($data['email'])) {
-				throw new \OutOfBoundsException('request must include include username or email');
-			}
+		private function checkAndSetData(User $user): User {
 
-			/**If username is not present in the request data, then create a temporary username called 'fake username'
-			 * This is simply so that the $tempDTO will pass validation even if $data does not include username
-			 * After we do this for username, we do it for email as well.
-			 */
-			if (!isset($data['username'])) {
-				$tempDTO->username = 'fake username';
-			} else {
-				$tempDTO->username = $data['username'];
-				$user->setUsername($tempDTO->username);
-			}
+			if(!($this->dto instanceof UserPayload))
+				throw new \InvalidArgumentException(
+					'In ' . self::class . '. Payload not instance of UserPayload.'
+				);
 
-			if (!isset($data['email'])) {
-				$tempDTO->email = 'fake@example.com';
-			} else {
-				$tempDTO->email = $data['email'];
-				$user->setEmail($tempDTO->email);
-			}
+			$this->dto->email ?? $user->setEmail($this->dto->email);
 
-			if (!$skipValidation) $this->validate($tempDTO);
+			$this->dto->username ?? $user->setUsername($this->dto->email);
+
+			$this->dto->password ?? $user->setPassword($this->encoder->hashPassword($user, $this->dto->password));
 
 			return $user;
 
