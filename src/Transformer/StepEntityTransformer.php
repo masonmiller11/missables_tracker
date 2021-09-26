@@ -70,9 +70,7 @@
 		 */
 		public function doUpdateWork(): Step {
 
-			$step = $this->repository->find($this->id);
-
-			$step = $this->checkAndSetData($step);
+			$step = $this->checkAndSetData($this->repository->find($this->id));
 
 			if (!($step instanceof Step))
 				throw new \InvalidArgumentException(
