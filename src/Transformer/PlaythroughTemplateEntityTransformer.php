@@ -1,7 +1,6 @@
 <?php
 	namespace App\Transformer;
 
-	use App\DTO\Playthrough\PlaythroughTemplateDTO;
 	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughTemplateRequestDTOTransformer;
 	use App\Entity\Playthrough\PlaythroughTemplate;
 	use App\Exception\ValidationException;
@@ -12,7 +11,6 @@
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
-	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	final class PlaythroughTemplateEntityTransformer extends AbstractEntityTransformer {
@@ -44,7 +42,7 @@
 		                            GameRepository $gameRepository,
 		                            PlaythroughTemplateRequestDTOTransformer $DTOTransformer,
 		                            PlaythroughTemplateRepository $playthroughTemplateRepository,
-									GameEntityTransformer $gameEntityTransformer) {
+		                            GameEntityTransformer $gameEntityTransformer) {
 
 			parent::__construct($entityManager, $validator);
 
@@ -74,29 +72,19 @@
 		}
 
 		/**
-		 * @param int $id
-		 * @param Request $request
-		 * @param bool $skipValidation
 		 * @return PlaythroughTemplate
-		 * @throws ValidationException
 		 */
-		public function doUpdateWork(int $id, Request $request, bool $skipValidation = false): PlaythroughTemplate {
+		public function doUpdateWork(): PlaythroughTemplate {
 
-			$playthroughTemplate = $this->repository->find($id);
+			$playthroughTemplate = $this->repository->find($this->id);
 
-			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
-			$tempDTO->gameID = $playthroughTemplate->getGame()->getId();
-			$this->validate($tempDTO);
+			$playthroughTemplate = $this->checkAndSetData($playthroughTemplate);
 
-			$playthroughTemplate = $this->checkAndSetData(json_decode($request->getContent(), true),
-				$playthroughTemplate);
-
-			if (!($playthroughTemplate instanceof PlaythroughTemplate)) {
+			if (!($playthroughTemplate instanceof PlaythroughTemplate))
 				throw new \InvalidArgumentException(
 					$playthroughTemplate::class . ' not instance of PlaythroughTemplate. Does ' . $id .
 					'belong to a playthrough template?'
 				);
-			}
 
 			return $playthroughTemplate;
 
