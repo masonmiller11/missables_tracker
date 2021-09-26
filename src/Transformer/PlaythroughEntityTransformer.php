@@ -100,7 +100,6 @@
 					$playthrough::class . ' not instance of Playthrough. Does ' . $this->id . 'belong to a playthrough?'
 				);
 
-
 			return $playthrough;
 
 		}
