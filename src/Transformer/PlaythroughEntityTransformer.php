@@ -97,10 +97,11 @@
 
 			$playthrough = $this->checkAndSetData($playthrough);
 
-			if (!($playthrough instanceof Playthrough)) {
+			if (!($playthrough instanceof Playthrough))
 				throw new \InvalidArgumentException(
-					$playthrough::class . ' not instance of Playthrough. Does ' . $this->id . 'belong to a playthrough?');
-			}
+					$playthrough::class . ' not instance of Playthrough. Does ' . $this->id . 'belong to a playthrough?'
+				);
+
 
 			return $playthrough;
 
