@@ -4,14 +4,12 @@
 	use App\DTO\Transformer\RequestTransformer\Section\SectionRequestTransformer;
 	use App\Entity\Playthrough\Playthrough;
 	use App\Entity\Section\Section;
-	use App\Exception\ValidationException;
 	use App\Repository\PlaythroughRepository;
 	use App\Repository\SectionRepository;
 	use App\Request\Payloads\SectionPayload;
 	use App\Transformer\Trait\StepSectionTrait;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
-	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -84,7 +82,7 @@
 
 			$section = $this->repository->find($this->id);
 
-			$section = $this->checkAndSetData($section));
+			$section = $this->checkAndSetData($section);
 
 			if (!($section instanceof Section))
 				throw new \InvalidArgumentException(
