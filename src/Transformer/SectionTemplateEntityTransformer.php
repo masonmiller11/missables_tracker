@@ -1,7 +1,6 @@
 <?php
 	namespace App\Transformer;
 
-	use App\DTO\Section\SectionTemplateDTO;
 	use App\DTO\Transformer\RequestTransformer\Section\SectionTemplateRequestTransformer;
 	use App\Entity\Playthrough\PlaythroughTemplate;
 	use App\Entity\Section\SectionTemplate;
@@ -65,34 +64,7 @@
 
 		}
 
-		/**
-		 * @param int $id
-		 * @param Request $request
-		 * @param bool $skipValidation
-		 * @return SectionTemplate
-		 * @throws ValidationException
-		 */
-		public function doUpdateWork(int $id, Request $request, bool $skipValidation = false): SectionTemplate {
-
-			$sectionTemplate = $this->repository->find($id);
-
-			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
-			$tempDTO->templateId = $sectionTemplate->getPlaythrough()->getId();
-
-			if (!$skipValidation) $this->validate($tempDTO);
-
-			$sectionTemplate = $this->checkData($sectionTemplate, json_decode($request->getContent(), true));
-
-			if (!($sectionTemplate instanceof SectionTemplate)) {
-				throw new \InvalidArgumentException(
-					$sectionTemplate::class . ' not instance of Section Template. Does ' . $id . 'belong to a section template?');
-			}
-
-			return $sectionTemplate;
-
-		}
-
-		private function getTemplate(): PlaythroughTemplate{
+		private function getTemplate(): PlaythroughTemplate {
 
 			$playthroughTemplate = $this->playthroughTemplateRepository->find($this->dto->templateId);
 
@@ -101,6 +73,24 @@
 			}
 
 			return $playthroughTemplate;
+
+		}
+
+		/**
+		 * @return SectionTemplate
+		 */
+		public function doUpdateWork(): SectionTemplate {
+
+			$sectionTemplate = $this->repository->find($this->id);
+
+			$sectionTemplate = $this->checkAndSetData($sectionTemplate);
+
+			if (!($sectionTemplate instanceof SectionTemplate))
+				throw new \InvalidArgumentException(
+					$sectionTemplate::class . ' not instance of Section Template. Does ' . $id . 'belong to a section template?'
+				);
+
+			return $sectionTemplate;
 
 		}
 

@@ -72,21 +72,17 @@
 		 * @return Step
 		 * @throws ValidationException
 		 */
-		public function doUpdateWork(int $id, Request $request, bool $skipValidation = false): Step {
+		public function doUpdateWork(): Step {
 
-			$step = $this->repository->find($id);
+			$step = $this->repository->find($this->id);
 
+			$step = $this->checkAndSetData($step);
 
-			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
-			$tempDTO->sectionId = $step->getSection()->getId();
-			if (!$skipValidation) $this->validate($tempDTO);
-
-			$step = $this->checkData($step,json_decode($request->getContent(), true));
-
-			if (!($step instanceof Step)) {
+			if (!($step instanceof Step))
 				throw new \InvalidArgumentException(
-					$step::class . ' not instance of Step. Does ' . $id . 'belong to a step?');
-			}
+					$step::class . ' not instance of Step. Does ' . $this->id . 'belong to a step?'
+				);
+
 
 			return $step;
 
