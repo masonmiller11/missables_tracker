@@ -3,32 +3,35 @@
 
 	use App\Entity\Section\SectionInterface;
 	use App\Entity\Step\StepInterface;
+	use App\Request\Payloads\SectionPayload;
+	use App\Request\Payloads\SectionTemplatePayload;
 
 	trait StepSectionTrait {
 
 		/**
+		 * @param StepInterface|SectionInterface $section
+		 * @param array $data
+		 * @return StepInterface|SectionInterface
+		 *@see StepEntityTransformer
+		 *
 		 * @see SectionTemplateEntityTransformer
 		 * @see SectionEntityTransformer
 		 * @see StepTemplateEntityTransformer
-		 * @see StepEntityTransformer
-		 *
-		 * @param StepInterface|SectionInterface $entity
-		 * @param array $data
-		 * @return StepInterface|SectionInterface
 		 */
-		private function checkData (StepInterface|SectionInterface $entity, array $data): StepInterface|SectionInterface {
+		private function checkAndSetData (StepInterface|SectionInterface $section): StepInterface|SectionInterface {
 
-			if (isset($data['position'])) {
-				$entity->setPosition($data['position']);
-			}
-			if (isset($data['name'])) {
-				$entity->setName($data['name']);
-			}
-			if (isset($data['description'])) {
-				$entity->setDescription($data['description']);
-			}
+			if (!(($this->dto instanceof SectionTemplatePayload) || ($this->dto instanceof SectionPayload)))
+				throw new \InvalidArgumentException(
+					'In ' . static::class . '. Payload not instance of SectionPayload or SectionTemplatePayload.'
+				);
 
-			return $entity;
+			$this->dto->position ?? $section->setPosition($this->dto->position);
+
+			$this->dto->name ?? $section->setName($this->dto->name);
+
+			$this->dto->description ?? $section->setDescription($this->dto->description);
+
+			return $section;
 
 		}
 
