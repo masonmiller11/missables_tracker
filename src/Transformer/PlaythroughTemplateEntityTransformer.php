@@ -82,7 +82,7 @@
 
 			if (!($playthroughTemplate instanceof PlaythroughTemplate))
 				throw new \InvalidArgumentException(
-					$playthroughTemplate::class . ' not instance of PlaythroughTemplate. Does ' . $id .
+					$playthroughTemplate::class . ' not instance of PlaythroughTemplate. Does ' . $this->id .
 					'belong to a playthrough template?'
 				);
 
