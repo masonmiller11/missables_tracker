@@ -1,7 +1,6 @@
 <?php
 	namespace App\Transformer;
 
-	use App\DTO\Section\SectionDTO;
 	use App\DTO\Transformer\RequestTransformer\Section\SectionRequestTransformer;
 	use App\Entity\Playthrough\Playthrough;
 	use App\Entity\Section\Section;
@@ -37,9 +36,9 @@
 		#[Pure]
 		public function __construct(EntityManagerInterface $entityManager,
 		                            ValidatorInterface $validator,
-									SectionRequestTransformer $DTOTransformer,
+		                            SectionRequestTransformer $DTOTransformer,
 		                            PlaythroughRepository $playthroughRepository,
-									SectionRepository $sectionRepository) {
+		                            SectionRepository $sectionRepository) {
 
 			parent::__construct($entityManager, $validator);
 
@@ -53,7 +52,7 @@
 		 *
 		 * @return Section
 		 */
-		public function doCreateWork (): Section {
+		public function doCreateWork(): Section {
 
 			if (!($this->dto instanceof SectionPayload)) {
 				throw new \InvalidArgumentException('SectionEntityTransformer\'s DTO not instance of SectionDTO');
@@ -62,32 +61,6 @@
 			$playthrough = $this->getPlaythrough();
 
 			return new Section($this->dto->name, $this->dto->name, $playthrough, $this->dto->position);
-
-		}
-
-		/**
-		 * @param int $id
-		 * @param Request $request
-		 * @param bool $skipValidation
-		 * @return Section
-		 * @throws ValidationException
-		 */
-		public function doUpdateWork(int $id, Request $request, bool $skipValidation = false): Section {
-
-			$section = $this->repository->find($id);
-
-			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
-			$tempDTO->playthroughId = $section->getPlaythrough()->getId();
-			if (!$skipValidation) $this->validate($tempDTO);
-
-			$section = $this->checkData($section, json_decode($request->getContent(), true));
-
-			if (!($section instanceof Section)) {
-				throw new \InvalidArgumentException(
-					$section::class . ' not instance of Playthrough. Does ' . $id . 'belong to a section?');
-			}
-
-			return $section;
 
 		}
 
@@ -102,6 +75,24 @@
 			}
 
 			return $playthrough;
+		}
+
+		/**
+		 * @return Section
+		 */
+		public function doUpdateWork(): Section {
+
+			$section = $this->repository->find($this->id);
+
+			$section = $this->checkAndSetData($section));
+
+			if (!($section instanceof Section))
+				throw new \InvalidArgumentException(
+					$section::class . ' not instance of Playthrough. Does ' . $this->id . 'belong to a section?'
+				);
+
+			return $section;
+
 		}
 
 	}
