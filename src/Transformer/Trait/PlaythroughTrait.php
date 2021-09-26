@@ -22,7 +22,7 @@
 
 			if (!(($this->dto instanceof PlaythroughTemplatePayload) || ($this->dto instanceof PlaythroughPayload)))
 				throw new \InvalidArgumentException(
-					'In ' . static::class . '. Payload not instance of PlaythroughPayload or PlaythroughTemplatePayload'
+					'In ' . static::class . '. Payload not instance of PlaythroughPayload or PlaythroughTemplatePayload.'
 				);
 
 			$this->dto->visibility ?? $playthrough->setVisibility($this->dto->visibility);
