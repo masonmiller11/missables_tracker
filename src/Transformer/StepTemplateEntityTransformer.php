@@ -69,26 +69,16 @@
 		}
 
 		/**
-		 * @param int $id
-		 * @param Request $request
-		 * @param bool $skipValidation
 		 * @return StepTemplate
-		 * @throws ValidationException
 		 */
-		public function doUpdateWork(int $id, Request $request, bool $skipValidation = false): StepTemplate {
+		public function doUpdateWork(): StepTemplate {
 
-			$stepTemplate = $this->repository->find($id);
+			$stepTemplate = $this->checkAndSetData($this->repository->find($this->id));
 
-			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
-			$tempDTO->sectionTemplateId = $stepTemplate->getSection()->getId();
-			if (!$skipValidation) $this->validate($tempDTO);
-
-			$stepTemplate = $this->checkData($stepTemplate, json_decode($request->getContent(), true));
-
-			if (!($stepTemplate instanceof StepTemplate)) {
+			if (!($stepTemplate instanceof StepTemplate))
 				throw new \InvalidArgumentException(
-					$stepTemplate::class . ' not instance of StepTemplate. Does ' . $id . 'belong to a step template?');
-			}
+					$stepTemplate::class . ' not instance of StepTemplate. Does ' . $this->id . 'belong to a step template?'
+				);
 
 			return $stepTemplate;
 
