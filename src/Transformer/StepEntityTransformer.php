@@ -66,11 +66,7 @@
 		}
 
 		/**
-		 * @param int $id
-		 * @param Request $request
-		 * @param bool $skipValidation
 		 * @return Step
-		 * @throws ValidationException
 		 */
 		public function doUpdateWork(): Step {
 
