@@ -76,9 +76,7 @@
 		 */
 		public function doUpdateWork(): PlaythroughTemplate {
 
-			$playthroughTemplate = $this->repository->find($this->id);
-
-			$playthroughTemplate = $this->checkAndSetData($playthroughTemplate);
+			$playthroughTemplate = $this->checkAndSetData($this->repository->find($this->id));
 
 			if (!($playthroughTemplate instanceof PlaythroughTemplate))
 				throw new \InvalidArgumentException(

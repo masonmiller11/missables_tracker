@@ -80,9 +80,7 @@
 		 */
 		public function doUpdateWork(): Section {
 
-			$section = $this->repository->find($this->id);
-
-			$section = $this->checkAndSetData($section);
+			$section = $this->checkAndSetData($this->repository->find($this->id));
 
 			if (!($section instanceof Section))
 				throw new \InvalidArgumentException(

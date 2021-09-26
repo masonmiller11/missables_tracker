@@ -93,9 +93,7 @@
 		 */
 		public function doUpdateWork(): Playthrough {
 
-			$playthrough = $this->repository->find($this->id);
-
-			$playthrough = $this->checkAndSetData($playthrough);
+			$playthrough = $this->checkAndSetData($this->repository->find($this->id));
 
 			if (!($playthrough instanceof Playthrough))
 				throw new \InvalidArgumentException(

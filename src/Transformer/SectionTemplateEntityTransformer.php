@@ -81,9 +81,7 @@
 		 */
 		public function doUpdateWork(): SectionTemplate {
 
-			$sectionTemplate = $this->repository->find($this->id);
-
-			$sectionTemplate = $this->checkAndSetData($sectionTemplate);
+			$sectionTemplate = $this->checkAndSetData($this->repository->find($this->id));
 
 			if (!($sectionTemplate instanceof SectionTemplate))
 				throw new \InvalidArgumentException(
