@@ -9,7 +9,6 @@
 	use App\Request\Payloads\PlaythroughPayload;
 	use App\Service\ResponseHelper;
 	use App\Transformer\PlaythroughEntityTransformer;
-	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
@@ -21,7 +20,7 @@
 	 */
 	final class PlaythroughController extends AbstractBaseApiController implements BaseApiControllerInterface {
 
-		#[Pure] public function __construct(
+		public function __construct(
 			ValidatorInterface $validator,
 			PlaythroughEntityTransformer $entityTransformer,
 			PlaythroughRequestDTOTransformer $DTOTransformer,
