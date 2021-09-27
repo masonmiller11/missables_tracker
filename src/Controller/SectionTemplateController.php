@@ -1,21 +1,17 @@
 <?php
 	namespace App\Controller;
 
-	use App\DTO\Transformer\RequestTransformer\Section\SectionTemplateRequestTransformer;
 	use App\Exception\PayloadDecoderException;
 	use App\Exception\ValidationException;
 	use App\Payload\Registry\PayloadDecoderRegistryInterface;
 	use App\Repository\SectionTemplateRepository;
-	use App\Request\Payloads\SectionPayload;
 	use App\Request\Payloads\SectionTemplatePayload;
 	use App\Service\ResponseHelper;
 	use App\Transformer\SectionTemplateEntityTransformer;
-	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	/**
 	 * @package App\Controller
@@ -23,19 +19,20 @@
 	 */
 	final class SectionTemplateController extends AbstractBaseApiController implements BaseApiControllerInterface {
 
-		#[Pure]
+		/**
+		 * SectionTemplateController constructor.
+		 * @param SectionTemplateEntityTransformer $entityTransformer
+		 * @param SectionTemplateRepository $repository
+		 * @param PayloadDecoderRegistryInterface $decoderRegistry
+		 */
 		public function __construct(
-			ValidatorInterface $validator,
 			SectionTemplateEntityTransformer $entityTransformer,
-			SectionTemplateRequestTransformer $DTOTransformer,
 			SectionTemplateRepository $repository,
 			PayloadDecoderRegistryInterface $decoderRegistry
 		) {
 
 			parent::__construct(
-				$validator,
 				$entityTransformer,
-				$DTOTransformer,
 				$repository,
 				$decoderRegistry->getDecoder(SectionTemplatePayload::class)
 			);

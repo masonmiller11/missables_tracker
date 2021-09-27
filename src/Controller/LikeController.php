@@ -1,7 +1,6 @@
 <?php
 	namespace App\Controller;
 
-	use App\DTO\Transformer\RequestTransformer\LikeRequestDTOTransformer;
 	use App\Exception\PayloadDecoderException;
 	use App\Exception\ValidationException;
 	use App\Payload\Registry\PayloadDecoderRegistryInterface;
@@ -9,37 +8,30 @@
 	use App\Request\Payloads\LikePayload;
 	use App\Service\ResponseHelper;
 	use App\Transformer\LikeEntityTransformer;
-	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	/**
 	 * @Route(path="/like/", name="like.")
 	 */
-	final class LikeController extends AbstractBaseApiController implements BaseApiControllerInterface {
+	final class LikeController extends AbstractBaseApiController {
 
 		/**
 		 * LikeController constructor.
-		 * @param ValidatorInterface $validator
 		 * @param LikeEntityTransformer $entityTransformer
-		 * @param LikeRequestDTOTransformer $DTOTransformer
 		 * @param LikeRepository $repository
 		 * @param PayloadDecoderRegistryInterface $decoderRegistry
 		 */
 		public function __construct(
-			ValidatorInterface $validator,
 			LikeEntityTransformer $entityTransformer,
-			LikeRequestDTOTransformer $DTOTransformer,
 			LikeRepository $repository,
 			PayloadDecoderRegistryInterface $decoderRegistry
 		) {
 
-			parent::__construct($validator,
+			parent::__construct(
 				$entityTransformer,
-				$DTOTransformer,
 				$repository,
 				$decoderRegistry->getDecoder(LikePayload::class)
 			);
@@ -104,14 +96,6 @@
 
 			return ResponseHelper::createReadResponse($playthroughs, $serializer);
 
-		}
-
-		protected function update(Request $request, int $id): Response {
-			// TODO: Implement update() method.
-		}
-
-		protected function read(int $id, SerializerInterface $serializer): Response {
-			// TODO: Implement read() method.
 		}
 
 	}
