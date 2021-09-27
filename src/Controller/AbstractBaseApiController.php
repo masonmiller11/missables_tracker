@@ -17,7 +17,6 @@
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	abstract class AbstractBaseApiController extends AbstractController {
 
@@ -39,7 +38,6 @@
 
 		/**
 		 * AbstractBaseApiController constructor.
-		 * PayloadDecoderInterface will usually be @param ValidatorInterface $validator
 		 * @param EntityTransformerInterface $entityTransformer
 		 * @param ServiceEntityRepository $repository
 		 * @param PayloadDecoderInterface|null $payloadDecoder
