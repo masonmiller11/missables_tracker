@@ -1,19 +1,18 @@
 <?php
 	namespace App\Transformer;
 
-	use App\DTO\Transformer\RequestTransformer\Section\SectionTemplateRequestTransformer;
 	use App\Entity\Playthrough\PlaythroughTemplate;
 	use App\Entity\Section\SectionTemplate;
-	use App\Exception\ValidationException;
+	use App\Exception\InvalidEntityException;
+	use App\Exception\InvalidPayloadException;
+	use App\Exception\InvalidRepositoryException;
 	use App\Repository\PlaythroughTemplateRepository;
 	use App\Repository\SectionTemplateRepository;
 	use App\Request\Payloads\SectionTemplatePayload;
 	use App\Transformer\Trait\StepSectionTrait;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
-	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	final class SectionTemplateEntityTransformer extends AbstractEntityTransformer {
 
@@ -28,23 +27,17 @@
 		 * PlaythroughTemplateEntityTransformer constructor.
 		 *
 		 * @param EntityManagerInterface $entityManager
-		 * @param ValidatorInterface $validator
-		 * @param SectionTemplateRequestTransformer $DTOTransformer
 		 * @param PlaythroughTemplateRepository $playthroughTemplateRepository
 		 * @param SectionTemplateRepository $sectionTemplateRepository
 		 */
 		#[Pure]
 		public function __construct(EntityManagerInterface $entityManager,
-		                            ValidatorInterface $validator,
-		                            SectionTemplateRequestTransformer $DTOTransformer,
 		                            PlaythroughTemplateRepository $playthroughTemplateRepository,
 		                            SectionTemplateRepository $sectionTemplateRepository) {
 
-			parent::__construct($entityManager, $validator);
+			parent::__construct($entityManager, $sectionTemplateRepository);
 
-			$this->DTOTransformer = $DTOTransformer;
 			$this->playthroughTemplateRepository = $playthroughTemplateRepository;
-			$this->repository = $sectionTemplateRepository;
 
 		}
 
@@ -55,7 +48,7 @@
 		public function doCreateWork(): SectionTemplate {
 
 			if (!($this->dto instanceof SectionTemplatePayload)) {
-				throw new \InvalidArgumentException('SectionEntityTransformer\'s DTO not instance of SectionTemplateDTO');
+				throw new InvalidPayloadException(SectionTemplatePayload::class, $this->dto::class);
 			}
 
 			$playthroughTemplate = $this->getTemplate();
@@ -81,12 +74,13 @@
 		 */
 		public function doUpdateWork(): SectionTemplate {
 
+			if (!($this->repository instanceof SectionTemplate))
+				throw new InvalidRepositoryException(SectionTemplate::class, $this->repository::class);
+
 			$sectionTemplate = $this->checkAndSetData($this->repository->find($this->id));
 
 			if (!($sectionTemplate instanceof SectionTemplate))
-				throw new \InvalidArgumentException(
-					$sectionTemplate::class . ' not instance of Section Template. Does ' . $id . 'belong to a section template?'
-				);
+				throw new InvalidEntityException(SectionTemplate::class, $sectionTemplate::class);;
 
 			return $sectionTemplate;
 

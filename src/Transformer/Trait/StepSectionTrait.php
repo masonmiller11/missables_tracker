@@ -10,7 +10,6 @@
 
 		/**
 		 * @param StepInterface|SectionInterface $section
-		 * @param array $data
 		 * @return StepInterface|SectionInterface
 		 *@see StepEntityTransformer
 		 *
