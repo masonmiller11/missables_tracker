@@ -2,18 +2,13 @@
 	namespace App\Controller;
 
 	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
-	use App\Exception\PayloadDecoderException;
-	use App\Exception\ValidationException;
-	use App\Payload\Registry\PayloadDecoderRegistry;
 	use App\Payload\Registry\PayloadDecoderRegistryInterface;
 	use App\Repository\GameRepository;
 	use App\Request\Payloads\GamePayload;
 	use App\Service\IGDBHelper;
 	use App\Service\ResponseHelper;
 	use App\Transformer\GameEntityTransformer;
-	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\JsonResponse;
-	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
