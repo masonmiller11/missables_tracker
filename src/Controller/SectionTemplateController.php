@@ -90,13 +90,21 @@
 		 */
 		public function update(Request $request, int $id): Response {
 
-			$sectionTemplate = $this->updateOne($request, $id);
+			try {
+
+				$sectionTemplate = $this->doUpdate($request, $id);
+
+			} catch (PayloadDecoderException | ValidationException $exception) {
+
+				return $this->handleApiException($request, $exception);
+
+			}
 
 			return ResponseHelper::createResourceUpdatedResponse('section/template/read/' . $sectionTemplate->getId());
 
 		}
 
-		protected function read(int $id, SerializerInterface $serializer): Response {
+		public function read(int $id, SerializerInterface $serializer): Response {
 			// TODO: Implement read() method.
 		}
 	}
