@@ -100,43 +100,4 @@
 			return ResponseHelper::createUserUpdatedResponse();
 		}
 
-		/**
-		 * @Route(path="user/update/password", methods={"PATCH"}, name="update_password")
-		 *
-		 * @param Request $request
-		 *
-		 * @return Response
-		 */
-		public function updatePassword(Request $request): Response {
-
-			$data = json_decode($request->getContent(), true);
-
-			if (!isset($data['password'])) {
-
-				return ResponseHelper::createJsonErrorResponse('json must include password', 'validation error');
-
-			}
-
-			$password = $data['password'];
-
-			$userId = $this->getUser()->getId();
-
-			if (!$this->entityTransformer instanceof UserEntityTransformer)
-				throw new \InvalidArgumentException(
-					'entityTransformer is not have type UserEntityTransformer'
-				);
-
-			try {
-
-				$this->entityTransformer->updatePassword($userId, $password);
-
-			} catch (ValidationException $exception) {
-
-				ResponseHelper::createValidationErrorResponse($exception);
-
-			}
-
-			return ResponseHelper::createUserUpdatedResponse();
-		}
-
 	}
