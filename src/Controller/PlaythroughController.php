@@ -128,7 +128,7 @@
 
 			try {
 
-				$playthroughTemplate = $this->doUpdate($request, $id);
+				$playthrough = $this->doUpdate($request, $id);
 
 			} catch (PayloadDecoderException | ValidationException $exception) {
 
@@ -136,7 +136,7 @@
 
 			}
 
-			return ResponseHelper::createResourceUpdatedResponse('playthroughs/read/' . $playthroughTemplate->getId());
+			return ResponseHelper::createResourceUpdatedResponse('playthroughs/read/' . $playthrough->getId());
 
 		}
 
