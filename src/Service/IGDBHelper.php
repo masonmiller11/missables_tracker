@@ -3,18 +3,14 @@
 
 	use App\DTO\Game\IGDBGameResponseDTO;
 	use App\DTO\Transformer\ResponseTransformer\IGDBGameResponseDTOTransformer;
-	use App\Entity\Game;
-	use App\Entity\GameCoverArt;
 	use App\Entity\IGDBConfig;
 	use App\Exception\ValidationException;
 	use App\Repository\GameRepository;
 	use App\Repository\IGDBConfigRepository;
-	use App\Transformer\GameEntityTransformer;
 	use App\Utility\InternetGameDatabaseEndpoints;
 	use DateInterval;
 	use DateTimeImmutable;
 	use Doctrine\ORM\EntityManagerInterface;
-	use Doctrine\ORM\NonUniqueResultException;
 	use Exception;
 	use RuntimeException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -51,11 +47,6 @@
 		 * @var EntityManagerInterface
 		 */
 		private EntityManagerInterface $entityManager;
-
-		/**
-		 * @var GameRepository
-		 */
-		private GameRepository $gameRepository;
 
 		/**
 		 * @var IGDBConfig|null
@@ -100,7 +91,7 @@
 		                            GameRepository $gameRepository,
 		                            ValidatorInterface $validator,
 		                            IGDBGameResponseDTOTransformer $IGDBGameResponseDTOTransformer,
-		                            ) {
+		) {
 
 			$this->client = $client;
 			$this->IGDBGameResponseDTOTransformer = $IGDBGameResponseDTOTransformer;
@@ -276,7 +267,7 @@
 			]);
 
 			//TODO eventually we want to save the cover's URL so we aren't constantly pinging IGDB
-			$dto= $this->IGDBGameResponseDTOTransformer->transformFromObject($response);
+			$dto = $this->IGDBGameResponseDTOTransformer->transformFromObject($response);
 
 			$this->validateDTO($dto);
 
@@ -287,7 +278,7 @@
 		/**
 		 * @throws ValidationException
 		 */
-		private function validateDTO(IGDBGameResponseDTO $dto):void {
+		private function validateDTO(IGDBGameResponseDTO $dto): void {
 			$errors = $this->validator->validate($dto);
 			if (count($errors) > 0)
 				throw new ValidationException($errors);
