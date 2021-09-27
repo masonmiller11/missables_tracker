@@ -74,18 +74,6 @@
 		}
 
 		/**
-		 * @param DTOInterface $dto
-		 * @throws ValidationException
-		 */
-		protected function validateDTO(DTOInterface $dto): void {
-
-			$errors = $this->validator->validate($dto);
-			if (count($errors) > 0)
-				throw new ValidationException($errors);
-
-		}
-
-		/**
 		 * The doCreate method is meant to replace createOne.
 		 * Eventually there will be a doUpdate as well which will replace updateOne
 		 *
@@ -119,7 +107,6 @@
 				return ResponseHelper::createJsonErrorResponse('unknown api error', 'error');
 
 		}
-
 
 		/**
 		 * @param Request $request
