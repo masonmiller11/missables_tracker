@@ -1,40 +1,37 @@
 <?php
 	namespace App\Controller;
 
-	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughTemplateRequestDTOTransformer;
 	use App\Exception\PayloadDecoderException;
 	use App\Exception\ValidationException;
 	use App\Payload\Registry\PayloadDecoderRegistryInterface;
 	use App\Repository\PlaythroughTemplateRepository;
-	use App\Request\Payloads\PlaythroughPayload;
 	use App\Request\Payloads\PlaythroughTemplatePayload;
 	use App\Service\ResponseHelper;
 	use App\Transformer\PlaythroughTemplateEntityTransformer;
-	use Doctrine\ORM\Query\Expr\Base;
-	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	/**
 	 * @Route(path="/templates/", name="templates.")
 	 */
 	final class PlaythroughTemplateController extends AbstractBaseApiController implements BaseApiControllerInterface {
 
+		/**
+		 * PlaythroughTemplateController constructor.
+		 * @param PlaythroughTemplateEntityTransformer $entityTransformer
+		 * @param PlaythroughTemplateRepository $repository
+		 * @param PayloadDecoderRegistryInterface $decoderRegistry
+		 */
 		public function __construct(
-			ValidatorInterface $validator,
 			PlaythroughTemplateEntityTransformer $entityTransformer,
-			PlaythroughTemplateRequestDTOTransformer $DTOTransformer,
 			PlaythroughTemplateRepository $repository,
 			PayloadDecoderRegistryInterface $decoderRegistry
 		) {
 
 			parent::__construct(
-				$validator,
 				$entityTransformer,
-				$DTOTransformer,
 				$repository,
 				$decoderRegistry->getDecoder(PlaythroughTemplatePayload::class));
 		}

@@ -1,7 +1,6 @@
 <?php
 	namespace App\Controller;
 
-	use App\DTO\Transformer\RequestTransformer\UserRequestDTOTransformer;
 	use App\Exception\PayloadDecoderException;
 	use App\Exception\ValidationException;
 	use App\Payload\Registry\PayloadDecoderRegistryInterface;
@@ -10,12 +9,9 @@
 	use App\Service\ResponseHelper;
 	use App\Transformer\UserEntityTransformer;
 	use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
-	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	/**
 	 *
@@ -25,22 +21,18 @@
 
 		/**
 		 * UserController constructor.
-		 * @param ValidatorInterface $validator
 		 * @param UserEntityTransformer $entityTransformer
-		 * @param UserRequestDTOTransformer $DTOTransformer
 		 * @param UserRepository $repository
 		 * @param PayloadDecoderRegistryInterface $decoderRegistry
 		 */
 		public function __construct(
-			ValidatorInterface $validator, UserEntityTransformer $entityTransformer,
-			UserRequestDTOTransformer $DTOTransformer,
+			UserEntityTransformer $entityTransformer,
 			UserRepository $repository,
 			PayloadDecoderRegistryInterface $decoderRegistry
 		) {
 
-			parent::__construct($validator,
+			parent::__construct(
 				$entityTransformer,
-				$DTOTransformer,
 				$repository,
 				$decoderRegistry->getDecoder(UserPayload::class)
 			);

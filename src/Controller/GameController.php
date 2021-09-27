@@ -1,7 +1,6 @@
 <?php
 	namespace App\Controller;
 
-	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
 	use App\Payload\Registry\PayloadDecoderRegistryInterface;
 	use App\Repository\GameRepository;
 	use App\Request\Payloads\GamePayload;
@@ -12,7 +11,6 @@
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 	use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -37,27 +35,21 @@
 		 *
 		 * GameController constructor.
 		 * @param IGDBHelper $IGDBHelper
-		 * @param ValidatorInterface $validator
 		 * @param GameEntityTransformer $entityTransformer
-		 * @param GameRequestDTOTransformer $DTOTransformer
 		 * @param GameRepository $repository
 		 * @param PayloadDecoderRegistryInterface $decoderRegistry
 		 */
 		public function __construct(
 			IGDBHelper $IGDBHelper,
-			ValidatorInterface $validator,
 			GameEntityTransformer $entityTransformer,
-			GameRequestDTOTransformer $DTOTransformer,
 			GameRepository $repository,
 			PayloadDecoderRegistryInterface $decoderRegistry
 		) {
 
-			parent::__construct($validator,
+			parent::__construct(
 				$entityTransformer,
-				$DTOTransformer,
 				$repository,
 				$decoderRegistry->getDecoder(GamePayload::class)
-
 			);
 
 			$this->IGDBHelper = $IGDBHelper;

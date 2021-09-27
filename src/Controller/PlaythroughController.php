@@ -1,7 +1,6 @@
 <?php
 	namespace App\Controller;
 
-	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughRequestDTOTransformer;
 	use App\Exception\PayloadDecoderException;
 	use App\Exception\ValidationException;
 	use App\Payload\Registry\PayloadDecoderRegistryInterface;
@@ -13,25 +12,26 @@
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	/**
 	 * @Route(path="/playthroughs/", name="playthroughs.")
 	 */
 	final class PlaythroughController extends AbstractBaseApiController implements BaseApiControllerInterface {
 
+		/**
+		 * PlaythroughController constructor.
+		 * @param PlaythroughEntityTransformer $entityTransformer
+		 * @param PlaythroughRepository $repository
+		 * @param PayloadDecoderRegistryInterface $decoderRegistry
+		 */
 		public function __construct(
-			ValidatorInterface $validator,
 			PlaythroughEntityTransformer $entityTransformer,
-			PlaythroughRequestDTOTransformer $DTOTransformer,
 			PlaythroughRepository $repository,
 			PayloadDecoderRegistryInterface $decoderRegistry
 		) {
 
 			parent::__construct(
-				$validator,
 				$entityTransformer,
-				$DTOTransformer,
 				$repository,
 				$decoderRegistry->getDecoder(PlaythroughPayload::class)
 			);

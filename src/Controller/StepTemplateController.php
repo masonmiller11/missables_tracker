@@ -1,7 +1,6 @@
 <?php
 	namespace App\Controller;
 
-	use App\DTO\Transformer\RequestTransformer\Step\StepTemplateRequestTransformer;
 	use App\Exception\PayloadDecoderException;
 	use App\Exception\ValidationException;
 	use App\Payload\Registry\PayloadDecoderRegistryInterface;
@@ -9,12 +8,10 @@
 	use App\Request\Payloads\StepTemplatePayload;
 	use App\Service\ResponseHelper;
 	use App\Transformer\StepTemplateEntityTransformer;
-	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	/**
 	 * @package App\Controller
@@ -22,16 +19,19 @@
 	 */
 	final class StepTemplateController extends AbstractBaseApiController implements BaseApiControllerInterface {
 
+		/**
+		 * StepTemplateController constructor.
+		 * @param StepTemplateEntityTransformer $entityTransformer
+		 * @param StepTemplateRepository $repository
+		 * @param PayloadDecoderRegistryInterface $decoderRegistry
+		 */
 		public function __construct(
-			ValidatorInterface $validator,
 			StepTemplateEntityTransformer $entityTransformer,
-			StepTemplateRequestTransformer $DTOTransformer,
 			StepTemplateRepository $repository,
 			PayloadDecoderRegistryInterface $decoderRegistry
 		) {
-			parent::__construct($validator,
+			parent::__construct(
 				$entityTransformer,
-				$DTOTransformer,
 				$repository,
 				$decoderRegistry->getDecoder(StepTemplatePayload::class)
 			);
