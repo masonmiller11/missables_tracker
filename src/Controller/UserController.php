@@ -86,15 +86,14 @@
 		 */
 		public function update(Request $request, $id = null): Response {
 
-			$userId = $this->getUser()->getId();
-
 			try {
 
-				$this->entityTransformer->update($userId, $request);
+				$this->doUpdate($request, $this->getUser()->getId());
 
-			} catch (ValidationException $exception) {
+			} catch (PayloadDecoderException | ValidationException $exception) {
 
-				ResponseHelper::createValidationErrorResponse($exception);
+				return $this->handleApiException($request, $exception);
+
 			}
 
 			return ResponseHelper::createUserUpdatedResponse();
