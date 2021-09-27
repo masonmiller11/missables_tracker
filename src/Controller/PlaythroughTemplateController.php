@@ -103,9 +103,19 @@
 		 */
 		public function update(Request $request, int $id): Response {
 
-			$playthroughTemplate = $this->updateOne($request, $id);
+			try {
 
-			return ResponseHelper::createResourceUpdatedResponse('templates/read/' . $playthroughTemplate->getId());
+				$playthroughTemplate = $this->doUpdate($request, $id);
+
+			} catch (PayloadDecoderException | ValidationException $exception) {
+
+				return $this->handleApiException($request, $exception);
+
+			}
+
+			return ResponseHelper::createResourceUpdatedResponse('playthroughs/read/' . $playthroughTemplate->getId());
+
+		}
 
 		}
 
