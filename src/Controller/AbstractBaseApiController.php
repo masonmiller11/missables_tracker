@@ -2,8 +2,6 @@
 
 	namespace App\Controller;
 
-	use App\DTO\DTOInterface;
-	use App\DTO\Transformer\RequestTransformer\RequestDTOTransformerInterface;
 	use App\Entity\EntityInterface;
 	use App\Entity\User;
 	use App\Exception\PayloadDecoderException;
@@ -19,25 +17,15 @@
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-	use Symfony\Component\Serializer\SerializerInterface;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	abstract class AbstractBaseApiController extends AbstractController {
 
-		/**
-		 * @var ValidatorInterface
-		 */
-		protected ValidatorInterface $validator;
 
 		/**
 		 * @var ServiceEntityRepository
 		 */
 		protected ServiceEntityRepository $repository;
-
-		/**
-		 * @var RequestDTOTransformerInterface
-		 */
-		protected RequestDTOTransformerInterface $DTOTransformer;
 
 		/**
 		 * @var EntityTransformerInterface
@@ -53,21 +41,16 @@
 		 * AbstractBaseApiController constructor.
 		 * PayloadDecoderInterface will usually be @param ValidatorInterface $validator
 		 * @param EntityTransformerInterface $entityTransformer
-		 * @param RequestDTOTransformerInterface $DTOTransformer
 		 * @param ServiceEntityRepository $repository
 		 * @param PayloadDecoderInterface|null $payloadDecoder
 		 * @see SymfonyDeserializeDecoder
 		 *
 		 */
 		public function __construct(
-			ValidatorInterface $validator,
 			EntityTransformerInterface $entityTransformer,
-			RequestDTOTransformerInterface $DTOTransformer,
 			ServiceEntityRepository $repository,
 			?PayloadDecoderInterface $payloadDecoder = null
 		) {
-			$this->validator = $validator;
-			$this->DTOTransformer = $DTOTransformer;
 			$this->entityTransformer = $entityTransformer;
 			$this->repository = $repository;
 			$this->payloadDecoder = $payloadDecoder ?? null;
