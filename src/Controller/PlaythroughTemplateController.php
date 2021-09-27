@@ -117,8 +117,6 @@
 
 		}
 
-		}
-
 		/**
 		 * @Route(path="{page<\d+>?1}", methods={"GET"}, name="list_this_users")
 		 *
