@@ -71,7 +71,7 @@
 
 			if (!($stepTemplate instanceof StepTemplate))
 				throw new InvalidEntityException(StepTemplate::class, $stepTemplate::class);
-			
+
 			return $stepTemplate;
 
 		}
