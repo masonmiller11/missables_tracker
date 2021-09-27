@@ -88,13 +88,21 @@
 		 */
 		public function update(Request $request, int $id): Response {
 
-			$step = $this->updateOne($request, $id);
+			try {
+
+				$step = $this->doUpdate($request, $id);
+
+			} catch (PayloadDecoderException | ValidationException $exception) {
+
+				return $this->handleApiException($request, $exception);
+
+			}
 
 			return ResponseHelper::createResourceUpdatedResponse('step/read/' . $step->getId());
 
 		}
 
-		protected function read(int $id, SerializerInterface $serializer): Response {
+		public function read(int $id, SerializerInterface $serializer): Response {
 			// TODO: Implement read() method.
 		}
 	}
