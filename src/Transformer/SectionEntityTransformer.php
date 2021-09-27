@@ -1,9 +1,11 @@
 <?php
 	namespace App\Transformer;
 
-	use App\DTO\Transformer\RequestTransformer\Section\SectionRequestTransformer;
 	use App\Entity\Playthrough\Playthrough;
 	use App\Entity\Section\Section;
+	use App\Exception\InvalidPayloadException;
+	use App\Exception\InvalidEntityException;
+	use App\Exception\InvalidRepositoryException;
 	use App\Repository\PlaythroughRepository;
 	use App\Repository\SectionRepository;
 	use App\Request\Payloads\SectionPayload;
@@ -11,7 +13,6 @@
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	final class SectionEntityTransformer extends AbstractEntityTransformer {
 
@@ -26,22 +27,16 @@
 		 * PlaythroughTemplateEntityTransformer constructor.
 		 *
 		 * @param EntityManagerInterface $entityManager
-		 * @param ValidatorInterface $validator
-		 * @param SectionRequestTransformer $DTOTransformer
 		 * @param PlaythroughRepository $playthroughRepository
 		 * @param SectionRepository $sectionRepository
 		 */
 		#[Pure]
 		public function __construct(EntityManagerInterface $entityManager,
-		                            ValidatorInterface $validator,
-		                            SectionRequestTransformer $DTOTransformer,
 		                            PlaythroughRepository $playthroughRepository,
 		                            SectionRepository $sectionRepository) {
 
-			parent::__construct($entityManager, $validator);
+			parent::__construct($entityManager, $sectionRepository);
 
-			$this->DTOTransformer = $DTOTransformer;
-			$this->repository = $sectionRepository;
 			$this->playthroughRepository = $playthroughRepository;
 
 		}
@@ -53,7 +48,7 @@
 		public function doCreateWork(): Section {
 
 			if (!($this->dto instanceof SectionPayload)) {
-				throw new \InvalidArgumentException('SectionEntityTransformer\'s DTO not instance of SectionDTO');
+				throw new InvalidPayloadException(SectionPayload::class, $this->dto::class);
 			}
 
 			$playthrough = $this->getPlaythrough();
@@ -80,12 +75,13 @@
 		 */
 		public function doUpdateWork(): Section {
 
+			if (!($this->repository instanceof SectionRepository))
+				throw new InvalidRepositoryException(SectionRepository::class, $this->repository::class);
+
 			$section = $this->checkAndSetData($this->repository->find($this->id));
 
 			if (!($section instanceof Section))
-				throw new \InvalidArgumentException(
-					$section::class . ' not instance of Playthrough. Does ' . $this->id . 'belong to a section?'
-				);
+				throw new InvalidEntityException(Section::class, $section::class);
 
 			return $section;
 

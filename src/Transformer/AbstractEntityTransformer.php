@@ -1,17 +1,12 @@
 <?php
 	namespace App\Transformer;
 
-	use App\DTO\DTOInterface;
-	use App\DTO\Transformer\RequestTransformer\AbstractRequestDTOTransformer;
 	use App\Entity\EntityInterface;
 	use App\Entity\User;
-	use App\Exception\ValidationException;
 	use App\Repository\AbstractBaseRepository;
 	use App\Request\Payloads\PayloadInterface;
 	use Doctrine\ORM\EntityManagerInterface;
-	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\Validator\Exception\InvalidArgumentException;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	abstract class AbstractEntityTransformer implements EntityTransformerInterface {
 
@@ -21,19 +16,9 @@
 		protected EntityManagerInterface $entityManager;
 
 		/**
-		 * @var ValidatorInterface
-		 */
-		protected ValidatorInterface $validator;
-
-		/**
 		 * @var AbstractBaseRepository
 		 */
 		protected AbstractBaseRepository $repository;
-
-		/**
-		 * @var AbstractRequestDTOTransformer
-		 */
-		protected AbstractRequestDTOTransformer $DTOTransformer;
 
 		/**
 		 * @var User|null
@@ -43,7 +28,7 @@
 		/**
 		 * @var Object|null
 		 */
-		protected ?Object $dto;
+		protected ?object $dto;
 
 		/**
 		 * @var int|null
@@ -53,12 +38,12 @@
 		/**
 		 * AbstractEntityTransformer constructor.
 		 * @param EntityManagerInterface $entityManager
-		 * @param ValidatorInterface $validator
+		 * @param AbstractBaseRepository $repository
 		 */
-		public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator) {
+		public function __construct(EntityManagerInterface $entityManager, AbstractBaseRepository $repository) {
 
 			$this->entityManager = $entityManager;
-			$this->validator = $validator;
+			$this->repository = $repository;
 
 		}
 
@@ -67,9 +52,8 @@
 		 */
 		public function delete(int $id): void {
 
-			if (!isset($this->repository)) {
+			if (!isset($this->repository))
 				throw new InvalidArgumentException('repository is not set in ' . static::class);
-			}
 
 			$entity = $this->repository->find($id);
 
@@ -125,17 +109,5 @@
 		 * @return EntityInterface
 		 */
 		abstract protected function doUpdateWork(): EntityInterface;
-
-		/**
-		 * @param DTOInterface $dto
-		 * @throws ValidationException
-		 */
-		protected function validate(DTOInterface $dto): void {
-
-			$errors = $this->validator->validate($dto);
-
-			if (count($errors) > 0) throw new ValidationException($errors);
-
-		}
 
 	}
