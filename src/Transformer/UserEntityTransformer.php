@@ -2,8 +2,8 @@
 	namespace App\Transformer;
 
 	use App\Entity\User;
-	use App\Exception\InvalidPayloadException;
 	use App\Exception\InvalidEntityException;
+	use App\Exception\InvalidPayloadException;
 	use App\Exception\InvalidRepositoryException;
 	use App\Repository\UserRepository;
 	use App\Request\Payloads\UserPayload;
@@ -72,11 +72,14 @@
 			if (!($this->dto instanceof UserPayload))
 				throw new InvalidPayloadException(UserPayload::class, $this->dto::class);
 
-			$this->dto->email ?? $user->setEmail($this->dto->email);
+			if (isset($this->dto->email))
+				$user->setEmail($this->dto->email);
 
-			$this->dto->username ?? $user->setUsername($this->dto->email);
+			if (isset($this->dto->username))
+				$user->setUsername($this->dto->email);
 
-			$this->dto->password ?? $user->setPassword($this->encoder->hashPassword($user, $this->dto->password));
+			if (isset($this->dto->password))
+				$user->setPassword($this->encoder->hashPassword($user, $this->dto->password));
 
 			return $user;
 
