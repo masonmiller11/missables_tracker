@@ -5,7 +5,6 @@
 	use App\Exception\InvalidPayloadException;
 	use App\Exception\InvalidRepositoryException;
 	use App\Repository\GameRepository;
-	use App\Repository\PlaythroughRepository;
 	use App\Repository\PlaythroughTemplateRepository;
 	use App\Request\Payloads\PlaythroughTemplatePayload;
 	use App\Transformer\Trait\PlaythroughTrait;
@@ -68,8 +67,8 @@
 		 */
 		public function doUpdateWork(): PlaythroughTemplate {
 
-			if (!($this->repository instanceof PlaythroughRepository))
-				throw new InvalidRepositoryException(PlaythroughRepository::class, $this->repository::class);
+			if (!($this->repository instanceof PlaythroughTemplateRepository))
+				throw new InvalidRepositoryException(PlaythroughTemplateRepository::class, $this->repository::class);
 
 			$playthroughTemplate = $this->checkAndSetData($this->repository->find($this->id));
 
