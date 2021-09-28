@@ -45,7 +45,8 @@
 			if (!($this->dto instanceof GamePayload))
 				throw new InvalidPayloadException(GamePayload::class, $this->dto::class);
 
-			$this->checkIfGameIsAdded();
+			if (!($this->checkIfGameIsAdded()))
+				throw new DuplicateResourceException('A game with this IGDB id has already been added');
 
 			//This method builds, validates, and then returns an IGDBGameResponseDTO
 			$igdbGameDto = $this->IGDBHelper->getGameFromIGDB($this->dto->internetGameDatabaseID);
@@ -55,13 +56,35 @@
 		}
 
 		/**
-		 * @throws DuplicateResourceException
+		 * @throws \Exception
+		 */
+		public function createManyFromIgdbData (array $gameDtos): array {
+
+			$games = [];
+
+			foreach ($gameDtos as $dto) {
+				$games[] = $this->assemble($dto);
+			}
+
+			foreach ($games as $game) {
+
+				if (!($this->checkIfGameIsAdded($game->getInternetGameDatabaseID())))
+					$this->entityManager->persist($game);
+
+			}
+
+			$this->entityManager->flush();
+
+			return $games;
+
+	}
+
+		/**
 		 * @throws NonUniqueResultException
 		 */
-		private function checkIfGameIsAdded(): void {
+		private function checkIfGameIsAdded(int $id = null): bool {
 
-			if ($this->getIGDBGameIfInDatabase($this->dto->internetGameDatabaseID))
-				throw new DuplicateResourceException('A game with this IGDB id has already been added');
+			return (bool)$this->getIGDBGameIfInDatabase($id ?? $this->dto->internetGameDatabaseID);
 
 		}
 
@@ -72,7 +95,6 @@
 
 			if (!($this->repository instanceof GameRepository))
 				throw new InvalidRepositoryException(GameRepository::class, $this->repository::class);
-
 
 			return $this->repository->findGameByInternetGameDatabaseID($id);
 		}
