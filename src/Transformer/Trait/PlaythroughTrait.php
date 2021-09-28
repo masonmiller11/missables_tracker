@@ -25,11 +25,14 @@
 					'In ' . static::class . '. Payload not instance of PlaythroughPayload or PlaythroughTemplatePayload.'
 				);
 
-			$this->dto->visibility ?? $playthrough->setVisibility($this->dto->visibility);
+			if (isset($this->dto->visibility))
+				$playthrough->setVisibility($this->dto->visibility);
 
-			$this->dto->name ?? $playthrough->setName($this->dto->name);
+			if (isset($this->dto->name))
+				$playthrough->setName($this->dto->name);
 
-			$this->dto->description ?? $playthrough->setDescription($this->dto->description);
+			if (isset($this->dto->description))
+				$playthrough->setDescription($this->dto->description);
 
 			return $playthrough;
 
