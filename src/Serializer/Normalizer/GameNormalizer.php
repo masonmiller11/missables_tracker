@@ -36,7 +36,7 @@
 
 			$data['title'] = $object->getTitle();
 			try {
-				$data['cover'] = $this->IGDBHelper->getCoverArtWorkURIFromIGDB($object->getCover());
+				$data['cover'] = $this->IGDBHelper->getCoverArtworkURIFromIGDB($object->getCover());
 			} catch (ClientException $exception) {
 				$data['cover'] = 'cover unavailable';
 			}
