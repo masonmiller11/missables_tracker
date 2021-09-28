@@ -9,7 +9,7 @@
 		public function __construct(string $expectedRepository,
 		                            string $currentRepository) {
 
-			$message = static::class . '\'s Repository expected instance of ' . $expectedRepository . '. Got ' . $currentRepository . ' instead.';
+			$message = 'Expected instance of ' . $expectedRepository . '. Got ' . $currentRepository . ' instead.';
 			parent::__construct($message);
 
 		}
