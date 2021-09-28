@@ -199,7 +199,7 @@
 		 * @throws DecodingExceptionInterface
 		 * @throws ClientExceptionInterface
 		 */
-		public function searchIGDB(string $term, int $limit = 20): array {
+		public function searchIGDB(string $term, int $limit = 100): array {
 
 			$response = $this->client->request(
 				'POST',
@@ -215,11 +215,28 @@
 
 			$games = $response->toArray();
 
+			//Only return search results that have cover art and a summary.
+			$games = array_filter($games, fn($game) => isset($game['cover'], $game['summary']));
+
+			return $this->getCoverArtForGames($games);
+
+		}
+
+		/**
+		 * @throws TransportExceptionInterface
+		 * @throws ServerExceptionInterface
+		 * @throws RedirectionExceptionInterface
+		 * @throws DecodingExceptionInterface
+		 * @throws ClientExceptionInterface
+		 */
+		private function getCoverArtForGames(array $games): array {
+
 			$getArtworkURI = function ($game) {
 
-				if (isset($game['cover'])) $game['cover'] = $this->getCoverArtWorkURIFromIGDB($game['cover']);
+				if (isset($game['cover'])) $game['cover'] = $this->getCoverArtworkURIFromIGDB($game['cover']);
 
 				return $game;
+
 			};
 
 			return array_map($getArtworkURI, $games);
@@ -236,18 +253,20 @@
 		 * @throws ServerExceptionInterface
 		 * @throws TransportExceptionInterface
 		 */
-		public function getCoverArtWorkURIFromIGDB(string $ID): string {
+		public function getCoverArtworkURIFromIGDB(string $ID): string {
 
 			$response = $this->client->request('POST', InternetGameDatabaseEndpoints::COVER, [
 				'headers' => $this->headers,
 				'body' => 'fields *; where id = ' . $ID . ';'
 			]);
 
-			$response = $response->toArray()[0] ?? 'unavailable';
+			if (!($response = $response->toArray()[0]))
+				return '';
 
-			$imageId = $response['image_id'] ?? 'unavailable';
+			if (!($imageId = $response['image_id'] ?? 'unavailable'))
+				return '';
 
-			return $uri = 'https://images.igdb.com/igdb/image/upload/t_cover_big/' . $imageId . '.jpg';
+			return 'https://images.igdb.com/igdb/image/upload/t_cover_big/' . $imageId . '.jpg';
 
 		}
 
