@@ -108,23 +108,6 @@
 			return $this->entityTransformer->update($payload, $id);
 		}
 
-//		/**
-//		 * @param Request $request
-//		 * @param int $id
-//		 *
-//		 * @return EntityInterface
-//		 */
-//		protected function updateOne(Request $request, int $id): EntityInterface {
-//
-//			if (!$this->doesEntityExist($id))
-//				throw new NotFoundHttpException('resource does not exist');
-//
-//			$this->confirmResourceOwner($this->repository->find($id));
-//
-//			return $this->entityTransformer->update($id, $request);
-//
-//		}
-
 		/**
 		 * @param int $id
 		 *
