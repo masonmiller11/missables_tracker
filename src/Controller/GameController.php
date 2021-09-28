@@ -166,7 +166,7 @@
 
 			if (!$games || $games === []) {
 				return new JsonResponse(['status' => 'error',
-					'message' => $game . 'returned no titles'
+					'message' => $game . 'search returned no titles'
 				], Response::HTTP_NOT_FOUND);
 			}
 
