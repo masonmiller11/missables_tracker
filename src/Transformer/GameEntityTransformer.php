@@ -12,6 +12,7 @@
 	use App\Service\IGDBHelper;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Doctrine\ORM\NonUniqueResultException;
+	use http\Exception\InvalidArgumentException;
 	use JetBrains\PhpStorm\Pure;
 	use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
@@ -58,26 +59,30 @@
 		/**
 		 * @throws \Exception
 		 */
-		public function createManyFromIgdbData (array $gameDtos): array {
+		public function assembleAndSaveMany(array $gameDtos): array {
 
 			$games = [];
 
 			foreach ($gameDtos as $dto) {
-				$games[] = $this->assemble($dto);
+
+				if (!($dto instanceof IGDBGameResponseDTO))
+					throw new InvalidArgumentException();
+
+				//Only assemble games that we don't already have saved.
+				if (!($this->checkIfGameIsAdded($dto->internetGameDatabaseID)))
+					$games[] = $this->assemble($dto);
+
 			}
 
 			foreach ($games as $game) {
-
-				if (!($this->checkIfGameIsAdded($game->getInternetGameDatabaseID())))
-					$this->entityManager->persist($game);
-
+				$this->entityManager->persist($game);
 			}
 
 			$this->entityManager->flush();
 
 			return $games;
 
-	}
+		}
 
 		/**
 		 * @throws NonUniqueResultException

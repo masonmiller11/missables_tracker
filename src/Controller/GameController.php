@@ -163,7 +163,7 @@
 					);
 
 				//Creates games found on IGDB (if they're currently not added) and then returns the Game entities.
-				$igdbGames = $this->entityTransformer->createManyFromIgdbData($igdbDtos);
+				$igdbGames = $this->entityTransformer->assembleAndSaveMany($igdbDtos);
 
 				$allGames = array_merge($igdbGames, $games);
 
