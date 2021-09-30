@@ -72,20 +72,16 @@
 		}
 
 		/**
-		 * @param Request $request
-		 * @param \Exception $exception
-		 * @return Response
+		 * @param int $id
 		 */
 		protected function doDelete(int $id): void {
 
-			if ($exception instanceof ValidationException)
-				return ResponseHelper::createValidationErrorResponse($exception);
+			if (!$this->doesEntityExist($id))
+				throw new NotFoundHttpException('Resource with id ' . $id .'does not exist');
 
-			else if ($exception instanceof PayloadDecoderException)
-				return ResponseHelper::createJsonErrorResponse($exception->getMessage(), 'error');
+			$this->confirmResourceOwner($this->repository->find($id));
 
-			else
-				return ResponseHelper::createJsonErrorResponse('unknown api error', 'error');
+			$this->entityTransformer->delete($id);
 
 		}
 
@@ -99,7 +95,7 @@
 		protected function doUpdate(Request $request, int $id, User $user = null): EntityInterface {
 
 			if (!$this->doesEntityExist($id))
-				throw new NotFoundHttpException('resource does not exist');
+				throw new NotFoundHttpException('Resource with id ' . $id .'does not exist');
 
 			$this->confirmResourceOwner($this->repository->find($id));
 
@@ -109,20 +105,30 @@
 		}
 
 		/**
+		 * @param Request $request
+		 * @param \Exception $exception
+		 * @return Response
+		 */
+		protected function handleApiException(Request $request, \Exception $exception): Response {
+
+			if ($exception instanceof ValidationException)
+				return ResponseHelper::createValidationErrorResponse($exception);
+
+			else if ($exception instanceof PayloadDecoderException)
+				return ResponseHelper::createJsonErrorResponse($exception->getMessage(), 'error');
+
+			else
+				return ResponseHelper::createJsonErrorResponse('unknown api error', 'error');
+
+		}
+
+		/**
 		 * @param int $id
 		 *
 		 * @return bool
 		 */
 		private function doesEntityExist(int $id): bool {
-
-			$entity = $this->repository->find($id);
-
-			if (!$entity) {
-				return false;
-			}
-
-			return true;
-
+			return (bool)$this->repository->find($id);
 		}
 
 		/**
@@ -130,16 +136,14 @@
 		 */
 		private function confirmResourceOwner(object $entity): void {
 
-			if (!method_exists($entity, 'getOwner') && !method_exists($entity, 'getLikedBy')) {
+			if (!method_exists($entity, 'getOwner') && !method_exists($entity, 'getLikedBy'))
 				throw new \BadMethodCallException($entity::class . ' does not have getOwner or getLiked methods');
-			}
 
-			$authenticatedUser = $this->getUser();
 			$owner = $entity->getOwner() ?? $entity->getLikedBy();
 
-			if ($owner !== $authenticatedUser) {
+			//If the current user is not the owner of the resource that is being accessed, throw exception.
+			if ($owner !== $this->getUser())
 				throw new AccessDeniedHttpException();
-			}
 
 		}
 
@@ -150,24 +154,10 @@
 
 			$user = parent::getUser();
 
-			if (!($user instanceof User)) throw new \InvalidArgumentException(($user::class . ' not instance of User.'));
+			if (!($user instanceof User))
+				throw new \InvalidArgumentException(($user::class . ' not instance of User.'));
 
 			return $user;
-
-		}
-
-		//TODO handle API exceptions better... Look at https://github.com/LartTyler/php-api-common for ideas.
-
-		/**
-		 * @param int $id
-		 */
-		protected function deleteOne(int $id): void {
-
-			if (!$this->doesEntityExist($id)) throw new NotFoundHttpException('resource does not exist');
-
-			$this->confirmResourceOwner($this->repository->find($id));
-
-			$this->entityTransformer->delete($id);
 
 		}
 
