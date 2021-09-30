@@ -69,7 +69,7 @@
 		 */
 		public function delete(int $id): Response {
 
-			$this->deleteOne($id);
+			$this->doDelete($id);
 
 			return ResponseHelper::createResourceDeletedResponse();
 

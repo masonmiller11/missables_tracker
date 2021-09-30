@@ -76,7 +76,7 @@
 		 * @param \Exception $exception
 		 * @return Response
 		 */
-		protected function handleApiException(Request $request, \Exception $exception): Response {
+		protected function doDelete(int $id): void {
 
 			if ($exception instanceof ValidationException)
 				return ResponseHelper::createValidationErrorResponse($exception);
