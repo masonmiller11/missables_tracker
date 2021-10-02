@@ -50,7 +50,7 @@
 				throw new DuplicateResourceException('A game with this IGDB id has already been added');
 
 			//This method builds, validates, and then returns an IGDBGameResponseDTO
-			$igdbGameDto = $this->IGDBHelper->getGameFromIGDB($this->dto->internetGameDatabaseID);
+			$igdbGameDto = $this->IGDBHelper->getIgdbGameDto($this->dto->internetGameDatabaseID);
 
 			return $this->assemble($igdbGameDto);
 

@@ -10,6 +10,7 @@
 	use App\Service\IGDBHelper;
 	use App\Service\ResponseHelper;
 	use App\Transformer\GameEntityTransformer;
+	use Lcobucci\JWT\Exception;
 	use Symfony\Component\HttpClient\Exception\InvalidArgumentException;
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\HttpFoundation\Request;
@@ -61,34 +62,6 @@
 		}
 
 		/**
-		 * The current flow is that we do not create games directly and instead create them when creating templates.
-		 * If the template is using the IGDB id of a game that we don't have in the database, we create it at that time.
-		 * You can see this in PlaythroughTemplateEntityTransformer.
-		 *
-		 */
-//		 * @Route(path="create", methods={"POST"}, name="create")
-//		 *
-//		 * @param Request $request
-//		 *
-//		 * @return Response
-//
-//		public function create(Request $request): Response {
-//
-//			try {
-//
-//				$game = $this->doCreate($request);
-//
-//			} catch (PayloadDecoderException | ValidationException $exception) {
-//
-//				return $this->handleApiException($request, $exception);
-//
-//			}
-//
-//			return ResponseHelper::createResourceCreatedResponse('games/read/' . $game->getId());
-//
-//		}
-
-		/**
 		 * @Route(path="read/{id<\d+>}", methods={"GET"}, name="read")
 		 *
 		 * @param int $id
@@ -133,6 +106,7 @@
 		 *
 		 * @param string $searchTerm
 		 * @param SerializerInterface $serializer
+		 * @param Request $request
 		 * @return Response
 		 *
 		 * Searches our database for title that includes the combination of letters in query.
@@ -154,7 +128,7 @@
 				//Get games that we currently have saved to the database.
 				$games = $this->repository->searchByName($searchTerm);
 
-				//Returns an array of IGDB data transfer objects.
+				//Returns an array of IGDB data transfer objects based on the search term.
 				$igdbDtos = $this->IGDBHelper->searchIGDB($searchTerm);
 
 				if (!$this->entityTransformer instanceof GameEntityTransformer)
@@ -165,6 +139,7 @@
 				//Creates games found on IGDB (if they're currently not added) and then returns the Game entities.
 				$igdbGames = $this->entityTransformer->assembleAndSaveMany($igdbDtos);
 
+				//Merge games that were just created (from searching IGDB) with the games that were already in database.
 				$allGames = array_merge($igdbGames, $games);
 
 			} catch (PayloadDecoderException | ValidationException $exception) {
