@@ -2,7 +2,6 @@
 
 	namespace App\DataFixtures;
 
-	use App\Entity\Game;
 	use App\Service\IGDBHelper;
 	use App\Transformer\GameEntityTransformer;
 	use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -42,7 +41,7 @@
 
 			foreach (self::GAME_IDS as $gameID) {
 
-				$igdbGameDto = $this->IGDBHelper->getGameFromIGDB($gameID); //TODO we need to fix this!
+				$igdbGameDto = $this->IGDBHelper->getIgdbGameDto($gameID);
 
 				$game = $this->entityTransformer->assemble($igdbGameDto);
 
