@@ -1,10 +1,10 @@
 <?php
 	namespace App\Transformer;
 
-	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughRequestDTOTransformer;
-	use App\Entity\Game;
 	use App\Entity\Playthrough\Playthrough;
-	use App\Exception\ValidationException;
+	use App\Exception\InvalidPayloadException;
+	use App\Exception\InvalidEntityException;
+	use App\Exception\InvalidRepositoryException;
 	use App\Repository\GameRepository;
 	use App\Repository\PlaythroughRepository;
 	use App\Repository\PlaythroughTemplateRepository;
@@ -12,9 +12,7 @@
 	use App\Transformer\Trait\PlaythroughTrait;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
-	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	final class PlaythroughEntityTransformer extends AbstractEntityTransformer {
 
@@ -34,26 +32,20 @@
 		 * PlaythroughTemplateEntityTransformer constructor.
 		 *
 		 * @param EntityManagerInterface $entityManager
-		 * @param ValidatorInterface $validator
 		 * @param GameRepository $gameRepository
-		 * @param PlaythroughRequestDTOTransformer $DTOTransformer
 		 * @param PlaythroughRepository $playthroughRepository
 		 * @param PlaythroughTemplateRepository $playthroughTemplateRepository
 		 */
 		#[Pure]
 		public function __construct(EntityManagerInterface $entityManager,
-		                            ValidatorInterface $validator,
 		                            GameRepository $gameRepository,
-		                            PlaythroughRequestDTOTransformer $DTOTransformer,
 		                            PlaythroughRepository $playthroughRepository,
 		                            PlaythroughTemplateRepository $playthroughTemplateRepository) {
 
-			parent::__construct($entityManager, $validator);
+			parent::__construct($entityManager, $playthroughRepository);
 
 			$this->gameRepository = $gameRepository;
-			$this->DTOTransformer = $DTOTransformer;
 			$this->playthroughTemplateRepository = $playthroughTemplateRepository;
-			$this->repository = $playthroughRepository;
 
 		}
 
@@ -63,11 +55,8 @@
 		 */
 		public function doCreateWork(): Playthrough {
 
-			if (!($this->dto instanceof PlaythroughPayload)) {
-				throw new \InvalidArgumentException(
-					'PlaythroughEntityTransformer\'s Payload not instance of PlaythroughPayload'
-				);
-			}
+			if (!($this->dto instanceof PlaythroughPayload))
+				throw new InvalidPayloadException(PlaythroughPayload::class, $this->dto::class);
 
 			$game = $this->getGame();
 
@@ -84,40 +73,26 @@
 
 		}
 
-
-
 		private function doesTemplateExist(): void {
 			$template = $this->playthroughTemplateRepository->find($this->dto->templateId);
 
 			if (!$template) {
-				throw new NotFoundHttpException('template not found');
+				throw new NotFoundHttpException('Template not found');
 			}
 		}
 
 		/**
-		 * @param int $id
-		 * @param Request $request
-		 * @param bool $skipValidation
 		 * @return Playthrough
-		 * @throws ValidationException
 		 */
-		public function doUpdateWork(int $id, Request $request, bool $skipValidation = false): Playthrough {
+		public function doUpdateWork(): Playthrough {
 
-			$playthrough = $this->repository->find($id);
+			if (!($this->repository instanceof PlaythroughRepository))
+				throw new InvalidRepositoryException(PlaythroughRepository::class, $this->repository::class);
 
-			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
-			$tempDTO->gameID = $playthrough->getGame()->getId();
-			$tempDTO->templateId = $playthrough->getTemplateId();
+			$playthrough = $this->checkAndSetData($this->repository->find($this->id));
 
-			if (!$skipValidation) $this->validate($tempDTO);
-
-			$playthrough = $this->checkAndSetData(json_decode($request->getContent(), true), $playthrough);
-
-
-			if (!($playthrough instanceof Playthrough)) {
-				throw new \InvalidArgumentException(
-					$playthrough::class . ' not instance of Playthrough. Does ' . $id . 'belong to a playthrough?');
-			}
+			if (!($playthrough instanceof Playthrough))
+				throw new InvalidEntityException(Playthrough::class, $playthrough::class);
 
 			return $playthrough;
 

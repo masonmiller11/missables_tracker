@@ -13,7 +13,7 @@
 		 */
 		public function transformFromObject($object): IGDBGameResponseDTO {
 
-			$object = $object->toArray()[0];
+			if (is_object($object)) $object = $object->toArray()[0];
 
 			$dto = new IGDBGameResponseDTO();
 
@@ -24,7 +24,7 @@
 			$dto->rating = $object["rating"] ?? floatval(0); //TODO we should fix this. We need the database to be okay if this is empty.
 			$dto->summary = $object["summary"] ?? 'No summary available';
 			$dto->storyline = $object["storyline"] ?? 'No story available';
-			$dto->slug = $object["slug"] ?? [];
+			$dto->slug = $object["slug"] ?? 'no slug available';
 			$dto->screenshots = $object["screenshots"] ?? [];
 			$dto->platforms = $object["platforms"] ?? [];
 			$dto->internetGameDatabaseID = $object["id"];

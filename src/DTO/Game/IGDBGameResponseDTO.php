@@ -2,7 +2,6 @@
 
 	namespace App\DTO\Game;
 
-	use App\Genre;
 	use Symfony\Component\Validator\Constraints as Assert;
 	use App\DTO\DTOInterface;
 

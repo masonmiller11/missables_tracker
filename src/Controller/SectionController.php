@@ -1,7 +1,6 @@
 <?php
 	namespace App\Controller;
 
-	use App\DTO\Transformer\RequestTransformer\Section\SectionRequestTransformer;
 	use App\Exception\PayloadDecoderException;
 	use App\Exception\ValidationException;
 	use App\Payload\Registry\PayloadDecoderRegistryInterface;
@@ -9,31 +8,31 @@
 	use App\Request\Payloads\SectionPayload;
 	use App\Service\ResponseHelper;
 	use App\Transformer\SectionEntityTransformer;
-	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	/**
 	 * @package App\Controller
 	 * @Route(path="/section/", name="section.")
 	 */
-	final class SectionController extends AbstractBaseApiController {
+	final class SectionController extends AbstractBaseApiController implements BaseApiControllerInterface {
 
+		/**
+		 * SectionController constructor.
+		 * @param SectionEntityTransformer $entityTransformer
+		 * @param SectionRepository $repository
+		 * @param PayloadDecoderRegistryInterface $decoderRegistry
+		 */
 		public function __construct(
-			ValidatorInterface $validator,
 			SectionEntityTransformer $entityTransformer,
-			SectionRequestTransformer $DTOTransformer,
 			SectionRepository $repository,
 			PayloadDecoderRegistryInterface $decoderRegistry
 		) {
 
 			parent::__construct(
-				$validator,
 				$entityTransformer,
-				$DTOTransformer,
 				$repository,
 				$decoderRegistry->getDecoder(SectionPayload::class)
 			);
@@ -72,7 +71,7 @@
 		 */
 		public function delete(string|int $id): Response {
 
-			$this->deleteOne($id);
+			$this->doDelete($id);
 
 			return ResponseHelper::createResourceDeletedResponse();
 
@@ -88,13 +87,21 @@
 		 */
 		public function update(Request $request, int $id): Response {
 
-			$section = $this->updateOne($request, $id);
+			try {
+
+				$section = $this->doUpdate($request, $id);
+
+			} catch (PayloadDecoderException | ValidationException $exception) {
+
+				return $this->handleApiException($request, $exception);
+
+			}
 
 			return ResponseHelper::createResourceUpdatedResponse('section/read/' . $section->getId());
 
 		}
 
-		protected function read(int $id, SerializerInterface $serializer): Response {
+		public function read(int $id, SerializerInterface $serializer): Response {
 			// TODO: Implement read() method.
 		}
 	}

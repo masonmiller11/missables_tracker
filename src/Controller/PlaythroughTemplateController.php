@@ -1,39 +1,37 @@
 <?php
 	namespace App\Controller;
 
-	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughTemplateRequestDTOTransformer;
 	use App\Exception\PayloadDecoderException;
 	use App\Exception\ValidationException;
 	use App\Payload\Registry\PayloadDecoderRegistryInterface;
 	use App\Repository\PlaythroughTemplateRepository;
-	use App\Request\Payloads\PlaythroughPayload;
 	use App\Request\Payloads\PlaythroughTemplatePayload;
 	use App\Service\ResponseHelper;
 	use App\Transformer\PlaythroughTemplateEntityTransformer;
-	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	/**
 	 * @Route(path="/templates/", name="templates.")
 	 */
-	final class PlaythroughTemplateController extends AbstractBaseApiController {
+	final class PlaythroughTemplateController extends AbstractBaseApiController implements BaseApiControllerInterface {
 
+		/**
+		 * PlaythroughTemplateController constructor.
+		 * @param PlaythroughTemplateEntityTransformer $entityTransformer
+		 * @param PlaythroughTemplateRepository $repository
+		 * @param PayloadDecoderRegistryInterface $decoderRegistry
+		 */
 		public function __construct(
-			ValidatorInterface $validator,
 			PlaythroughTemplateEntityTransformer $entityTransformer,
-			PlaythroughTemplateRequestDTOTransformer $DTOTransformer,
 			PlaythroughTemplateRepository $repository,
 			PayloadDecoderRegistryInterface $decoderRegistry
 		) {
 
 			parent::__construct(
-				$validator,
 				$entityTransformer,
-				$DTOTransformer,
 				$repository,
 				$decoderRegistry->getDecoder(PlaythroughTemplatePayload::class));
 		}
@@ -70,7 +68,7 @@
 		 */
 		public function delete(string|int $id): Response {
 
-			$this->deleteOne($id);
+			$this->doDelete($id);
 
 			return ResponseHelper::createResourceDeletedResponse();
 
@@ -102,9 +100,17 @@
 		 */
 		public function update(Request $request, int $id): Response {
 
-			$playthroughTemplate = $this->updateOne($request, $id);
+			try {
 
-			return ResponseHelper::createResourceUpdatedResponse('templates/read/' . $playthroughTemplate->getId());
+				$playthroughTemplate = $this->doUpdate($request, $id);
+
+			} catch (PayloadDecoderException | ValidationException $exception) {
+
+				return $this->handleApiException($request, $exception);
+
+			}
+
+			return ResponseHelper::createResourceUpdatedResponse('playthroughs/read/' . $playthroughTemplate->getId());
 
 		}
 

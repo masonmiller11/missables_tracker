@@ -3,18 +3,13 @@
 
 	use App\DTO\Game\IGDBGameResponseDTO;
 	use App\DTO\Transformer\ResponseTransformer\IGDBGameResponseDTOTransformer;
-	use App\Entity\Game;
-	use App\Entity\GameCoverArt;
 	use App\Entity\IGDBConfig;
 	use App\Exception\ValidationException;
-	use App\Repository\GameRepository;
 	use App\Repository\IGDBConfigRepository;
-	use App\Transformer\GameEntityTransformer;
 	use App\Utility\InternetGameDatabaseEndpoints;
 	use DateInterval;
 	use DateTimeImmutable;
 	use Doctrine\ORM\EntityManagerInterface;
-	use Doctrine\ORM\NonUniqueResultException;
 	use Exception;
 	use RuntimeException;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -53,11 +48,6 @@
 		private EntityManagerInterface $entityManager;
 
 		/**
-		 * @var GameRepository
-		 */
-		private GameRepository $gameRepository;
-
-		/**
 		 * @var IGDBConfig|null
 		 */
 		private IGDBConfig|null $IGDBConfig;
@@ -83,7 +73,6 @@
 		 * @param string $apiSecret
 		 * @param IGDBConfigRepository $IGDBConfigRepository
 		 * @param EntityManagerInterface $entityManager
-		 * @param GameRepository $gameRepository
 		 * @param ValidatorInterface $validator
 		 * @param IGDBGameResponseDTOTransformer $IGDBGameResponseDTOTransformer
 		 * @throws ClientExceptionInterface
@@ -97,14 +86,12 @@
 		                            string $apiSecret,
 		                            IGDBConfigRepository $IGDBConfigRepository,
 		                            EntityManagerInterface $entityManager,
-		                            GameRepository $gameRepository,
 		                            ValidatorInterface $validator,
 		                            IGDBGameResponseDTOTransformer $IGDBGameResponseDTOTransformer,
-		                            ) {
+		) {
 
 			$this->client = $client;
 			$this->IGDBGameResponseDTOTransformer = $IGDBGameResponseDTOTransformer;
-			$this->gameRepository = $gameRepository;
 			$this->entityManager = $entityManager;
 			$this->validator = $validator;
 
@@ -113,7 +100,6 @@
 			 */
 			$this->apiID = $apiID;
 			$this->apiSecret = $apiSecret;
-
 
 			$this->IGDBConfigRepository = $IGDBConfigRepository;
 			$this->IGDBConfig = $IGDBConfigRepository->find(1);
@@ -148,7 +134,6 @@
 		 * @throws Exception
 		 */
 		public function refreshTokenInDatabase(): IGDBConfig {
-
 
 			$tokenResponse = $this->getToken();
 
@@ -207,31 +192,74 @@
 		 * @throws RedirectionExceptionInterface
 		 * @throws DecodingExceptionInterface
 		 * @throws ClientExceptionInterface
+		 * @throws Exception
 		 */
-		public function searchIGDB(string $term, int $limit = 20): array {
+		public function searchIGDB(string $term, int $limit = 100): array {
 
 			$response = $this->client->request(
 				'POST',
 				InternetGameDatabaseEndpoints::GAMES,
 				[
 					'headers' => $this->headers,
-					'body' => 'fields name, id, cover, platforms, summary, first_release_date;
-			search "' . $term . '";
-			where version_parent = null;
-			limit ' . $limit . ';'
+					'body' => 'fields name, id, rating, summary, storyline, slug, screenshots, platforms, genres, 
+						first_release_date, cover, artworks;
+						search "' . $term . '";
+						where version_parent = null;
+						limit ' . $limit . ';'
 				]
 			);
 
-			$games = $response->toArray();
+			$gamesData = $response->toArray();
 
-			$getArtworkURI = function ($game) {
+			//Only return search results that have cover art and a summary.
+			$gamesData = array_filter($gamesData, fn($game) => isset($game['cover'], $game['summary'], $game['first_release_date']));
 
-				if (isset($game['cover'])) $game['cover'] = $this->getCoverArtWorkURIFromIGDB($game['cover']);
+			$gameDtos = [];
 
-				return $game;
-			};
+			foreach ($gamesData as $gameArray) {
 
-			return array_map($getArtworkURI, $games);
+				$dto = $this->IGDBGameResponseDTOTransformer->transformFromObject($gameArray);
+
+				$this->validateDTO($dto);
+
+				$gameDtos[] = $dto;
+
+			}
+
+			return $gameDtos;
+
+		}
+
+		/**
+		 * @throws ValidationException
+		 */
+		private function validateDTO(IGDBGameResponseDTO $dto): void {
+			$errors = $this->validator->validate($dto);
+			if (count($errors) > 0)
+				throw new ValidationException($errors);
+		}
+
+		/**
+		 * @param int $ID
+		 *
+		 * @return IGDBGameResponseDTO|RuntimeException
+		 * @throws TransportExceptionInterface
+		 * @throws Exception
+		 */
+		public function getIgdbGameDto(int $ID): IGDBGameResponseDTO|RuntimeException {
+
+			$response = $this->client->request('POST', InternetGameDatabaseEndpoints::GAMES, [
+				'headers' => $this->headers,
+				'body' => 'fields name, id, rating, summary, storyline, slug, screenshots, platforms, genres, 
+				first_release_date, cover, artworks; where id = ' . $ID . ';'
+			]);
+
+			//TODO eventually we want to save the cover's URL so we aren't constantly pinging IGDB
+			$dto = $this->IGDBGameResponseDTOTransformer->transformFromObject($response);
+
+			$this->validateDTO($dto);
+
+			return $dto;
 
 		}
 
@@ -245,52 +273,21 @@
 		 * @throws ServerExceptionInterface
 		 * @throws TransportExceptionInterface
 		 */
-		public function getCoverArtWorkURIFromIGDB(string $ID): string {
+		public function getCoverArtworkURIFromIGDB(string $ID): string {
 
 			$response = $this->client->request('POST', InternetGameDatabaseEndpoints::COVER, [
 				'headers' => $this->headers,
 				'body' => 'fields *; where id = ' . $ID . ';'
 			]);
 
-			$response = $response->toArray()[0] ?? 'unavailable';
+			if (!($response = $response->toArray()[0]))
+				return '';
 
-			$imageId = $response['image_id'] ?? 'unavailable';
+			if (!($imageId = $response['image_id'] ?? 'unavailable'))
+				return '';
 
-			return $uri = 'https://images.igdb.com/igdb/image/upload/t_cover_big/' . $imageId . '.jpg';
+			return 'https://images.igdb.com/igdb/image/upload/t_cover_big/' . $imageId . '.jpg';
 
-		}
-
-		/**
-		 * @param int $ID
-		 *
-		 * @return IGDBGameResponseDTO|RuntimeException
-		 * @throws TransportExceptionInterface
-		 * @throws Exception
-		 */
-		public function getGameFromIGDB(int $ID): IGDBGameResponseDTO|RuntimeException {
-
-			$response = $this->client->request('POST', InternetGameDatabaseEndpoints::GAMES, [
-				'headers' => $this->headers,
-				'body' => 'fields name, id, rating, summary, storyline, slug, screenshots, platforms, genres, 
-				first_release_date, cover, artworks; where id = ' . $ID . ';'
-			]);
-
-			//TODO eventually we want to save the cover's URL so we aren't constantly pinging IGDB
-			$dto= $this->IGDBGameResponseDTOTransformer->transformFromObject($response);
-
-			$this->validateDTO($dto);
-
-			return $dto;
-
-		}
-
-		/**
-		 * @throws ValidationException
-		 */
-		private function validateDTO(IGDBGameResponseDTO $dto):void {
-			$errors = $this->validator->validate($dto);
-			if (count($errors) > 0)
-				throw new ValidationException($errors);
 		}
 
 	}
