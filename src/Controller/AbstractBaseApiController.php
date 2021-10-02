@@ -2,8 +2,6 @@
 
 	namespace App\Controller;
 
-	use App\DTO\DTOInterface;
-	use App\DTO\Transformer\RequestTransformer\RequestDTOTransformerInterface;
 	use App\Entity\EntityInterface;
 	use App\Entity\User;
 	use App\Exception\PayloadDecoderException;
@@ -19,25 +17,14 @@
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	abstract class AbstractBaseApiController extends AbstractController {
 
-		/**
-		 * @var ValidatorInterface
-		 */
-		protected ValidatorInterface $validator;
 
 		/**
 		 * @var ServiceEntityRepository
 		 */
 		protected ServiceEntityRepository $repository;
-
-		/**
-		 * @var RequestDTOTransformerInterface
-		 */
-		protected RequestDTOTransformerInterface $DTOTransformer;
 
 		/**
 		 * @var EntityTransformerInterface
@@ -51,38 +38,20 @@
 
 		/**
 		 * AbstractBaseApiController constructor.
-		 * PayloadDecoderInterface will usually be @param ValidatorInterface $validator
 		 * @param EntityTransformerInterface $entityTransformer
-		 * @param RequestDTOTransformerInterface $DTOTransformer
 		 * @param ServiceEntityRepository $repository
 		 * @param PayloadDecoderInterface|null $payloadDecoder
 		 * @see SymfonyDeserializeDecoder
 		 *
 		 */
 		public function __construct(
-			ValidatorInterface $validator,
 			EntityTransformerInterface $entityTransformer,
-			RequestDTOTransformerInterface $DTOTransformer,
 			ServiceEntityRepository $repository,
 			?PayloadDecoderInterface $payloadDecoder = null
 		) {
-			$this->validator = $validator;
-			$this->DTOTransformer = $DTOTransformer;
 			$this->entityTransformer = $entityTransformer;
 			$this->repository = $repository;
 			$this->payloadDecoder = $payloadDecoder ?? null;
-		}
-
-		/**
-		 * @param DTOInterface $dto
-		 * @throws ValidationException
-		 */
-		protected function validateDTO(DTOInterface $dto): void {
-
-			$errors = $this->validator->validate($dto);
-			if (count($errors) > 0)
-				throw new ValidationException($errors);
-
 		}
 
 		/**
@@ -103,6 +72,39 @@
 		}
 
 		/**
+		 * @param int $id
+		 */
+		protected function doDelete(int $id): void {
+
+			if (!$this->doesEntityExist($id))
+				throw new NotFoundHttpException('Resource with id ' . $id .'does not exist');
+
+			$this->confirmResourceOwner($this->repository->find($id));
+
+			$this->entityTransformer->delete($id);
+
+		}
+
+		/**
+		 * @param Request $request
+		 * @param int $id
+		 * @param User|null $user
+		 * @return EntityInterface
+		 * @throws ValidationException
+		 */
+		protected function doUpdate(Request $request, int $id, User $user = null): EntityInterface {
+
+			if (!$this->doesEntityExist($id))
+				throw new NotFoundHttpException('Resource with id ' . $id .'does not exist');
+
+			$this->confirmResourceOwner($this->repository->find($id));
+
+			$payload = $this->payloadDecoder->parse(DecoderIntent::UPDATE, $request->getContent());
+
+			return $this->entityTransformer->update($payload, $id);
+		}
+
+		/**
 		 * @param Request $request
 		 * @param \Exception $exception
 		 * @return Response
@@ -120,44 +122,13 @@
 
 		}
 
-//		protected function doUpdate(Request $request, User $user = null): EntityInterface {
-//
-//			$payload = $this->payloadDecoder->parse(DecoderIntent::UPDATE, $request->getContent());
-//
-//			return $this->entityTransformer->update($payload);
-//		}
-
-		/**
-		 * @param Request $request
-		 * @param int $id
-		 *
-		 * @return EntityInterface
-		 */
-		protected function updateOne(Request $request, int $id): EntityInterface {
-
-			if (!$this->doesEntityExist($id)) throw new NotFoundHttpException('resource does not exist');
-
-			$this->confirmResourceOwner($this->repository->find($id));
-
-			return $this->entityTransformer->update($id, $request);
-
-		}
-
 		/**
 		 * @param int $id
 		 *
 		 * @return bool
 		 */
 		private function doesEntityExist(int $id): bool {
-
-			$entity = $this->repository->find($id);
-
-			if (!$entity) {
-				return false;
-			}
-
-			return true;
-
+			return (bool)$this->repository->find($id);
 		}
 
 		/**
@@ -165,16 +136,14 @@
 		 */
 		private function confirmResourceOwner(object $entity): void {
 
-			if (!method_exists($entity, 'getOwner') && !method_exists($entity, 'getLikedBy')) {
+			if (!method_exists($entity, 'getOwner') && !method_exists($entity, 'getLikedBy'))
 				throw new \BadMethodCallException($entity::class . ' does not have getOwner or getLiked methods');
-			}
 
-			$authenticatedUser = $this->getUser();
 			$owner = $entity->getOwner() ?? $entity->getLikedBy();
 
-			if ($owner !== $authenticatedUser) {
+			//If the current user is not the owner of the resource that is being accessed, throw exception.
+			if ($owner !== $this->getUser())
 				throw new AccessDeniedHttpException();
-			}
 
 		}
 
@@ -185,33 +154,11 @@
 
 			$user = parent::getUser();
 
-			if (!($user instanceof User)) throw new \InvalidArgumentException(($user::class . ' not instance of User.'));
+			if (!($user instanceof User))
+				throw new \InvalidArgumentException(($user::class . ' not instance of User.'));
 
 			return $user;
 
 		}
-
-		//TODO handle API exceptions better... Look at https://github.com/LartTyler/php-api-common for ideas.
-
-		/**
-		 * @param int $id
-		 */
-		protected function deleteOne(int $id): void {
-
-			if (!$this->doesEntityExist($id)) throw new NotFoundHttpException('resource does not exist');
-
-			$this->confirmResourceOwner($this->repository->find($id));
-
-			$this->entityTransformer->delete($id);
-
-		}
-
-		abstract protected function create(Request $request): Response;
-
-		abstract protected function update(Request $request, int $id): Response;
-
-		abstract protected function delete(int $id): Response;
-
-		abstract protected function read(int $id, SerializerInterface $serializer): Response;
 
 	}

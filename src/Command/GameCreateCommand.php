@@ -51,7 +51,7 @@
 
 			try {
 
-				$igdbDTO = $this->IGDBHelper->getGameFromIGDB($input->getArgument('igdb_id'));
+				$igdbDTO = $this->IGDBHelper->getIgdbGameDto($input->getArgument('igdb_id'));
 				$game = $this->entityTransformer->assemble($igdbDTO);
 				$this->entityManager->persist($game);
 				$this->entityManager->flush();

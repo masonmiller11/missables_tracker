@@ -19,7 +19,7 @@
 		private EntityManagerInterface $entityManager;
 		private UserPasswordHasherInterface $encoder;
 
-		public function __construct (EntityManagerInterface $entityManager, UserPasswordHasherInterface $encoder) {
+		public function __construct(EntityManagerInterface $entityManager, UserPasswordHasherInterface $encoder) {
 			parent::__construct();
 			$this->entityManager = $entityManager;
 			$this->encoder = $encoder;
@@ -27,16 +27,16 @@
 
 		protected function configure() {
 			$this->addArgument('email', InputArgument::REQUIRED, 'this is a user\'s email address');
-			$this->addOption('password', 'p', InputOption::VALUE_NONE,'this is a user\'s password');
+			$this->addOption('password', 'p', InputOption::VALUE_NONE, 'this is a user\'s password');
 		}
 
-		protected function execute(InputInterface $input, OutputInterface $output) :int {
+		protected function execute(InputInterface $input, OutputInterface $output): int {
 
-			$user = new User($input->getArgument('email'),'testusername');
+			$user = new User($input->getArgument('email'), 'testusername');
 
 			if ($password = $input->getOption('password')) {
 
-				$password = $this->encoder->hashPassword($user,$password);
+				$password = $this->encoder->hashPassword($user, $password);
 				$user->setPassword($password);
 
 			}
