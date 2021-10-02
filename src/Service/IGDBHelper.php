@@ -101,7 +101,6 @@
 			$this->apiID = $apiID;
 			$this->apiSecret = $apiSecret;
 
-
 			$this->IGDBConfigRepository = $IGDBConfigRepository;
 			$this->IGDBConfig = $IGDBConfigRepository->find(1);
 
@@ -135,7 +134,6 @@
 		 * @throws Exception
 		 */
 		public function refreshTokenInDatabase(): IGDBConfig {
-
 
 			$tokenResponse = $this->getToken();
 
@@ -248,7 +246,7 @@
 		 * @throws TransportExceptionInterface
 		 * @throws Exception
 		 */
-		public function getGameFromIGDB(int $ID): IGDBGameResponseDTO|RuntimeException {
+		public function getIgdbGameDto(int $ID): IGDBGameResponseDTO|RuntimeException {
 
 			$response = $this->client->request('POST', InternetGameDatabaseEndpoints::GAMES, [
 				'headers' => $this->headers,
@@ -262,27 +260,6 @@
 			$this->validateDTO($dto);
 
 			return $dto;
-
-		}
-
-		/**
-		 * @throws TransportExceptionInterface
-		 * @throws ServerExceptionInterface
-		 * @throws RedirectionExceptionInterface
-		 * @throws DecodingExceptionInterface
-		 * @throws ClientExceptionInterface
-		 */
-		private function getCoverArtForGames(array $games): array {
-
-			$getArtworkURI = function ($game) {
-
-				if (isset($game['cover'])) $game['cover'] = $this->getCoverArtworkURIFromIGDB($game['cover']);
-
-				return $game;
-
-			};
-
-			return array_map($getArtworkURI, $games);
 
 		}
 
