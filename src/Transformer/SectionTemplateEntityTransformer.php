@@ -74,8 +74,8 @@
 		 */
 		public function doUpdateWork(): SectionTemplate {
 
-			if (!($this->repository instanceof SectionTemplate))
-				throw new InvalidRepositoryException(SectionTemplate::class, $this->repository::class);
+			if (!($this->repository instanceof SectionTemplateRepository))
+				throw new InvalidRepositoryException(SectionTemplateRepository::class, $this->repository::class);
 
 			$sectionTemplate = $this->checkAndSetData($this->repository->find($this->id));
 
