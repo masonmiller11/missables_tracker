@@ -272,6 +272,10 @@
 			return $this->cover;
 		}
 
+		public function setCover(int $id) {
+			$this->cover = $id;
+		}
+
 		/**
 		 * @return array
 		 */
