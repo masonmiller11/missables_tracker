@@ -76,7 +76,7 @@
 				$user->setEmail($this->dto->email);
 
 			if (isset($this->dto->username))
-				$user->setUsername($this->dto->email);
+				$user->setUsername($this->dto->username);
 
 			if (isset($this->dto->password))
 				$user->setPassword($this->encoder->hashPassword($user, $this->dto->password));
