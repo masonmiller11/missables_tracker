@@ -3,8 +3,8 @@
 
 	use App\Entity\Section\SectionInterface;
 	use App\Entity\Step\StepInterface;
-	use App\Request\Payloads\SectionPayload;
-	use App\Request\Payloads\SectionTemplatePayload;
+	use App\Request\Payloads\StepPayload;
+	use App\Request\Payloads\StepTemplatePayload;
 
 	trait StepSectionTrait {
 
@@ -19,7 +19,7 @@
 		 */
 		private function checkAndSetData(StepInterface|SectionInterface $section): StepInterface|SectionInterface {
 
-			if (!(($this->dto instanceof SectionTemplatePayload) || ($this->dto instanceof SectionPayload)))
+			if (!(($this->dto instanceof StepTemplatePayload) || ($this->dto instanceof StepPayload)))
 				throw new \InvalidArgumentException(
 					'In ' . static::class . '. Payload not instance of SectionPayload or SectionTemplatePayload.'
 				);
