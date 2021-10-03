@@ -201,22 +201,6 @@
 		}
 
 		/**
-		 * @return string
-		 */
-		public function getGenre(): string {
-			return $this->genre;
-		}
-
-		/**
-		 * @param string $genre
-		 * @return static
-		 */
-		public function setGenre(string $genre): static {
-			$this->genre = $genre;
-			return $this;
-		}
-
-		/**
 		 * @return PlaythroughTemplate[]|Collection|Selectable
 		 */
 		public function getTemplates(): Collection|array|Selectable {
