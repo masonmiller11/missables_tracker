@@ -92,12 +92,12 @@
 		 * @return EntityInterface
 		 * @throws ValidationException
 		 */
-		protected function doUpdate(Request $request, int $id, User $user = null): EntityInterface {
+		protected function doUpdate(Request $request, int $id, User $user = null, $confirmOwnership = true): EntityInterface {
 
 			if (!$this->doesEntityExist($id))
 				throw new NotFoundHttpException('Resource with id ' . $id .'does not exist');
 
-			$this->confirmResourceOwner($this->repository->find($id));
+			if ($confirmOwnership) $this->confirmResourceOwner($this->repository->find($id));
 
 			$payload = $this->payloadDecoder->parse(DecoderIntent::UPDATE, $request->getContent());
 
