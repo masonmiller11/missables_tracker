@@ -1,32 +1,41 @@
 <?php
 	namespace App\Controller;
 
-	use App\DTO\Transformer\RequestTransformer\Section\SectionTemplateRequestTransformer;
+	use App\Exception\PayloadDecoderException;
 	use App\Exception\ValidationException;
+	use App\Payload\Registry\PayloadDecoderRegistryInterface;
 	use App\Repository\SectionTemplateRepository;
+	use App\Request\Payloads\SectionTemplatePayload;
 	use App\Service\ResponseHelper;
 	use App\Transformer\SectionTemplateEntityTransformer;
-	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	/**
 	 * @package App\Controller
 	 * @Route(path="/section/template/", name="section_template.")
 	 */
-	final class SectionTemplateController extends AbstractBaseApiController {
+	final class SectionTemplateController extends AbstractBaseApiController implements BaseApiControllerInterface {
 
-		#[Pure]
+		/**
+		 * SectionTemplateController constructor.
+		 * @param SectionTemplateEntityTransformer $entityTransformer
+		 * @param SectionTemplateRepository $repository
+		 * @param PayloadDecoderRegistryInterface $decoderRegistry
+		 */
 		public function __construct(
-			ValidatorInterface $validator, SectionTemplateEntityTransformer $entityTransformer,
-			SectionTemplateRequestTransformer $DTOTransformer,
-			SectionTemplateRepository $repository
+			SectionTemplateEntityTransformer $entityTransformer,
+			SectionTemplateRepository $repository,
+			PayloadDecoderRegistryInterface $decoderRegistry
 		) {
 
-			parent::__construct($validator, $entityTransformer, $DTOTransformer, $repository);
+			parent::__construct(
+				$entityTransformer,
+				$repository,
+				$decoderRegistry->getDecoder(SectionTemplatePayload::class)
+			);
 
 		}
 
@@ -41,11 +50,11 @@
 
 			try {
 
-				$sectionTemplate = $this->createOne($request);
+				$sectionTemplate = $this->doCreate($request, $this->getUser());
 
-			} catch (ValidationException $exception) {
+			} catch (PayloadDecoderException | ValidationException $exception) {
 
-				return ResponseHelper::createValidationErrorResponse($exception);
+				return $this->handleApiException($request, $exception);
 
 			}
 
@@ -62,7 +71,7 @@
 		 */
 		public function delete(string|int $id): Response {
 
-			$this->deleteOne($id);
+			$this->doDelete($id);
 
 			return ResponseHelper::createResourceDeletedResponse();
 
@@ -78,13 +87,21 @@
 		 */
 		public function update(Request $request, int $id): Response {
 
-			$sectionTemplate = $this->updateOne($request, $id);
+			try {
+
+				$sectionTemplate = $this->doUpdate($request, $id);
+
+			} catch (PayloadDecoderException | ValidationException $exception) {
+
+				return $this->handleApiException($request, $exception);
+
+			}
 
 			return ResponseHelper::createResourceUpdatedResponse('section/template/read/' . $sectionTemplate->getId());
 
 		}
 
-		protected function read(int $id, SerializerInterface $serializer): Response {
+		public function read(int $id, SerializerInterface $serializer): Response {
 			// TODO: Implement read() method.
 		}
 	}

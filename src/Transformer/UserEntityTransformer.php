@@ -1,16 +1,15 @@
 <?php
 	namespace App\Transformer;
 
-	use App\DTO\Transformer\RequestTransformer\UserRequestDTOTransformer;
-	use App\DTO\User\UserDTO;
 	use App\Entity\User;
-	use App\Exception\ValidationException;
+	use App\Exception\InvalidEntityException;
+	use App\Exception\InvalidPayloadException;
+	use App\Exception\InvalidRepositoryException;
 	use App\Repository\UserRepository;
+	use App\Request\Payloads\UserPayload;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
-	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	final class UserEntityTransformer extends AbstractEntityTransformer {
 
@@ -19,47 +18,17 @@
 		/**
 		 * UserEntityTransformer constructor.
 		 * @param EntityManagerInterface $entityManager
-		 * @param ValidatorInterface $validator
 		 * @param UserPasswordHasherInterface $encoder
-		 * @param UserRequestDTOTransformer $DTOTransformer
 		 * @param UserRepository $repository
 		 */
 		#[Pure]
-		public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator,
-		                            UserPasswordHasherInterface $encoder, UserRequestDTOTransformer $DTOTransformer,
+		public function __construct(EntityManagerInterface $entityManager,
+		                            UserPasswordHasherInterface $encoder,
 		                            UserRepository $repository) {
-			parent::__construct($entityManager, $validator);
+
+			parent::__construct($entityManager, $repository);
+
 			$this->encoder = $encoder;
-			$this->DTOTransformer = $DTOTransformer;
-			$this->repository = $repository;
-		}
-
-		/**
-		 * @throws ValidationException
-		 */
-		public function updatePassword(int $id, string $password, bool $skipValidation = false): User {
-
-			$user = $this->repository->find($id);
-
-			if (!($user instanceof User)) {
-				throw new \InvalidArgumentException($user::class . ' not instance of User');
-			}
-
-			$this->dto = new UserDTO();
-			$this->dto->username = $user->getUsername();
-			$this->dto->email = $user->getEmail();
-			$this->dto->password = $password;
-
-			if (!$skipValidation) $this->validate($this->dto);
-
-			$password = $this->encoder->hashPassword($user, $this->dto->password);
-
-			$user->setPassword($password);
-
-			$this->entityManager->persist($user);
-			$this->entityManager->flush();
-
-			return $user;
 
 		}
 
@@ -68,9 +37,8 @@
 		 */
 		protected function doCreateWork(): User {
 
-			if (!($this->dto instanceof UserDTO)) {
-				throw new \InvalidArgumentException('UserEntityTransformer\'s DTO not instance of UserDTO');
-			}
+			if (!($this->dto instanceof UserPayload))
+				throw new InvalidPayloadException(UserPayload::class, $this->dto::class);
 
 			$user = new User ($this->dto->email, $this->dto->username);
 
@@ -83,46 +51,38 @@
 		}
 
 		/**
-		 * @throws ValidationException
+		 * @return User
 		 */
-		protected function doUpdateWork(int $id, Request $request, bool $skipValidation): User {
+		protected function doUpdateWork(): User {
 
-			$user = $this->repository->find($id);
+			if (!($this->repository instanceof UserRepository))
+				throw new InvalidRepositoryException(UserRepository::class, $this->repository::class);
 
-			if (!($user instanceof User)) {
-				throw new \InvalidArgumentException($user::class . ' not instance of User. Does ' . $id . 'belong to a user?');
-			}
+			$user = $this->checkAndSetData($this->repository->find($this->id));
 
-			$data = json_decode($request->getContent(), true);
-
-			$tempDTO = new UserDTO();
-			$tempDTO->password = $user->getPassword();
-
-			if (!isset($data['username']) && !isset($data['email'])) {
-				throw new \OutOfBoundsException('request must include include username or email');
-			}
-
-			/**If username is not present in the request data, then create a temporary username called 'fake username'
-			 * This is simply so that the $tempDTO will pass validation even if $data does not include username
-			 * After we do this for username, we do it for email as well.
-			 */
-			if (!isset($data['username'])) {
-				$tempDTO->username = 'fake username';
-			} else {
-				$tempDTO->username = $data['username'];
-				$user->setUsername($tempDTO->username);
-			}
-
-			if (!isset($data['email'])) {
-				$tempDTO->email = 'fake@example.com';
-			} else {
-				$tempDTO->email = $data['email'];
-				$user->setEmail($tempDTO->email);
-			}
-
-			if (!$skipValidation) $this->validate($tempDTO);
+			if (!($user instanceof User))
+				throw new InvalidEntityException(User::class, $user::class);
 
 			return $user;
 
 		}
+
+		private function checkAndSetData(User $user): User {
+
+			if (!($this->dto instanceof UserPayload))
+				throw new InvalidPayloadException(UserPayload::class, $this->dto::class);
+
+			if (isset($this->dto->email))
+				$user->setEmail($this->dto->email);
+
+			if (isset($this->dto->username))
+				$user->setUsername($this->dto->username);
+
+			if (isset($this->dto->password))
+				$user->setPassword($this->encoder->hashPassword($user, $this->dto->password));
+
+			return $user;
+
+		}
+
 	}

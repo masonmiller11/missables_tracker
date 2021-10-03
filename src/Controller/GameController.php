@@ -1,19 +1,22 @@
 <?php
 	namespace App\Controller;
 
-	use App\DTO\Transformer\RequestTransformer\GameRequestDTOTransformer;
+	use App\Exception\InvalidRepositoryException;
+	use App\Exception\PayloadDecoderException;
 	use App\Exception\ValidationException;
+	use App\Payload\Registry\PayloadDecoderRegistryInterface;
 	use App\Repository\GameRepository;
+	use App\Request\Payloads\GamePayload;
 	use App\Service\IGDBHelper;
 	use App\Service\ResponseHelper;
 	use App\Transformer\GameEntityTransformer;
-	use JetBrains\PhpStorm\Pure;
+	use Lcobucci\JWT\Exception;
+	use Symfony\Component\HttpClient\Exception\InvalidArgumentException;
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 	use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -34,48 +37,28 @@
 		private IGDBHelper $IGDBHelper;
 
 		/**
+		 * PayloadDecoderRegistryInterface's alias is set to PayloadDecoderRegistry in payload-decoder.yaml
+		 *
 		 * GameController constructor.
 		 * @param IGDBHelper $IGDBHelper
-		 * @param ValidatorInterface $validator
 		 * @param GameEntityTransformer $entityTransformer
-		 * @param GameRequestDTOTransformer $DTOTransformer
 		 * @param GameRepository $repository
+		 * @param PayloadDecoderRegistryInterface $decoderRegistry
 		 */
-		#[Pure]
 		public function __construct(
-			IGDBHelper $IGDBHelper, ValidatorInterface $validator,
-			GameEntityTransformer $entityTransformer, GameRequestDTOTransformer $DTOTransformer,
-			GameRepository $repository
+			IGDBHelper $IGDBHelper,
+			GameEntityTransformer $entityTransformer,
+			GameRepository $repository,
+			PayloadDecoderRegistryInterface $decoderRegistry
 		) {
 
-			parent::__construct($validator, $entityTransformer, $DTOTransformer, $repository);
+			parent::__construct(
+				$entityTransformer,
+				$repository,
+				$decoderRegistry->getDecoder(GamePayload::class)
+			);
 
 			$this->IGDBHelper = $IGDBHelper;
-
-		}
-
-		/**
-		 * @Route(path="create", methods={"POST"}, name="create")
-		 *
-		 * @param Request $request
-		 *
-		 * @return Response
-		 */
-		public function create(Request $request): Response {
-
-			try {
-
-				$game = $this->createOne($request);
-
-			} catch (ValidationException $exception) {
-
-
-				return ResponseHelper::createValidationErrorResponse($exception);
-
-			}
-
-			return ResponseHelper::createResourceCreatedResponse('games/read/' . $game->getId());
-
 		}
 
 		/**
@@ -119,23 +102,54 @@
 		}
 
 		/**
-		 * @Route(path="search/{game}", methods={"GET"}, name="search_game")
+		 * @Route(path="search/{searchTerm}", methods={"GET"}, name="search_game")
 		 *
+		 * @param string $searchTerm
+		 * @param SerializerInterface $serializer
+		 * @param Request $request
 		 * @return Response
 		 *
 		 * Searches our database for title that includes the combination of letters in query.
 		 * Such as ?game=halo returning Halo and Halo 4 or ?game=final returning Final Fantasy and Final Fight.
+		 * @throws ClientExceptionInterface
+		 * @throws DecodingExceptionInterface
+		 * @throws RedirectionExceptionInterface
+		 * @throws ServerExceptionInterface
+		 * @throws TransportExceptionInterface
+		 * @throws \Exception
 		 */
-		public function search(string $game, SerializerInterface $serializer): Response {
+		public function search(string $searchTerm, SerializerInterface $serializer, Request $request): Response {
 
-			if (!$this->repository instanceof GameRepository)
-				throw new \InvalidArgumentException(
-					'repository is not of type GameRespository'
-				);
+			try {
 
-			$games = $this->repository->searchByName($game);
+				if (!$this->repository instanceof GameRepository)
+					throw new InvalidRepositoryException(GameRepository::class, $this->repository::class);
 
-			return ResponseHelper::createReadResponse($games, $serializer);
+				//Get games that we currently have saved to the database.
+				$games = $this->repository->searchByName($searchTerm);
+
+				//Returns an array of IGDB data transfer objects based on the search term.
+				$igdbDtos = $this->IGDBHelper->searchIGDB($searchTerm);
+
+				if (!$this->entityTransformer instanceof GameEntityTransformer)
+					throw new InvalidArgumentException(
+						'Expected GameEntityTransformer. Current transformer: ' . $this->entityTransformer::class
+					);
+
+				//Creates games found on IGDB (if they're currently not added) and then returns the Game entities.
+				$igdbGames = $this->entityTransformer->assembleAndSaveMany($igdbDtos);
+
+				//Merge games that were just created (from searching IGDB) with the games that were already in database.
+				$allGames = array_merge($igdbGames, $games);
+
+			} catch (PayloadDecoderException | ValidationException $exception) {
+
+				return $this->handleApiException($request, $exception);
+
+			}
+
+			return ResponseHelper::createReadResponse($allGames, $serializer);
+
 
 		}
 
@@ -154,7 +168,6 @@
 		 * @throws RedirectionExceptionInterface
 		 * @throws ServerExceptionInterface
 		 * @throws TransportExceptionInterface
-
 		 */
 		public function searchIGDB(string $game): Response {
 
@@ -162,20 +175,12 @@
 
 			if (!$games || $games === []) {
 				return new JsonResponse(['status' => 'error',
-					'message' => $game . 'returned no titles'
+					'message' => $game . 'search returned no titles'
 				], Response::HTTP_NOT_FOUND);
 			}
 
 			return new JsonResponse($games);
 
-		}
-
-		protected function update(Request $request, int $id): Response {
-			// TODO: Implement update() method.
-		}
-
-		protected function delete(int $id): Response {
-			// TODO: Implement delete() method.
 		}
 
 	}

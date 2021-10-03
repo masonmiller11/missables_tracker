@@ -1,0 +1,17 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../../src/Payload/Registry/Factories/SymfonyDeserializeDecoderFactory.php'
+
+    App\Payload\Registry\Factories\SymfonyDeserializeDecoderFactory:
+        bind:
+            string $defaultFormat: 'json'
+
+    App\Payload\Registry\Factories\PayloadDecoderFactoryInterface:
+        '@App\Payload\Registry\Factories\SymfonyDeserializeDecoderFactory'
+
+    App\Payload\Decoders\PayloadDecoderInterface\PayloadDecoderRegistryInterface:
+        '@App\Payload\Registry\PayloadDecoderRegistry'

@@ -16,31 +16,41 @@
 
 			$exception = $event->getThrowable();
 
-			$response =  new JsonResponse(['status' => 'error','code' => $exception->getCode(), 'type' => get_class($exception),
-				'message' => $exception->getMessage(), 'file' => $exception->getFile()], Response::HTTP_INTERNAL_SERVER_ERROR);
-
-
 			if ($exception instanceof \OutOfBoundsException) {
+
 				$response =  new JsonResponse(['status' => 'error',
 					'message' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
+
+				$event->setResponse($response);
+
 			}
 
 			if ($exception instanceof UniqueConstraintViolationException) {
+
 				$response =  new JsonResponse(['status' => 'error',
 					'message' => 'duplicate resource'], Response::HTTP_CONFLICT);
+
+				$event->setResponse($response);
+
 			}
 
 			if ($exception instanceof NotFoundHttpException) {
+
 				$response = new JsonResponse(['status' => 'error',
 					'message' => $exception->getMessage() == '' ? 'resource not found' : $exception->getMessage()], Response::HTTP_NOT_FOUND);
+
+				$event->setResponse($response);
+
 			}
 
 			if ($exception instanceof TransportException) {
+
 				$response = new JsonResponse(['status' => 'error',
 					'message' => 'can\'t connect with the Internet Game Database'], Response::HTTP_SERVICE_UNAVAILABLE);
-			}
 
-			$event->setResponse($response);
+				$event->setResponse($response);
+
+			}
 
 		}
 

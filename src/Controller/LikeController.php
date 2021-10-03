@@ -1,31 +1,40 @@
 <?php
 	namespace App\Controller;
 
-	use App\DTO\Transformer\RequestTransformer\LikeRequestDTOTransformer;
+	use App\Exception\PayloadDecoderException;
 	use App\Exception\ValidationException;
+	use App\Payload\Registry\PayloadDecoderRegistryInterface;
 	use App\Repository\LikeRepository;
+	use App\Request\Payloads\LikePayload;
 	use App\Service\ResponseHelper;
 	use App\Transformer\LikeEntityTransformer;
-	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	/**
 	 * @Route(path="/like/", name="like.")
 	 */
-	class LikeController extends AbstractBaseApiController {
+	final class LikeController extends AbstractBaseApiController {
 
-		#[Pure]
+		/**
+		 * LikeController constructor.
+		 * @param LikeEntityTransformer $entityTransformer
+		 * @param LikeRepository $repository
+		 * @param PayloadDecoderRegistryInterface $decoderRegistry
+		 */
 		public function __construct(
-			ValidatorInterface $validator, LikeEntityTransformer $entityTransformer,
-			LikeRequestDTOTransformer $DTOTransformer,
-			LikeRepository $repository
+			LikeEntityTransformer $entityTransformer,
+			LikeRepository $repository,
+			PayloadDecoderRegistryInterface $decoderRegistry
 		) {
 
-			parent::__construct($validator, $entityTransformer, $DTOTransformer, $repository);
+			parent::__construct(
+				$entityTransformer,
+				$repository,
+				$decoderRegistry->getDecoder(LikePayload::class)
+			);
 
 		}
 
@@ -40,11 +49,11 @@
 
 			try {
 
-				$this->createOne($request);
+				$this->doCreate($request, $this->getUser());
 
-			} catch (ValidationException $exception) {
+			} catch (PayloadDecoderException | ValidationException $exception) {
 
-				return ResponseHelper::createValidationErrorResponse($exception);
+				return $this->handleApiException($request, $exception);
 
 			}
 
@@ -61,7 +70,7 @@
 		 */
 		public function delete(string|int $id): Response {
 
-			$this->deleteOne($id);
+			$this->doDelete($id);
 
 			return ResponseHelper::createResourceDeletedResponse();
 
@@ -87,14 +96,6 @@
 
 			return ResponseHelper::createReadResponse($playthroughs, $serializer);
 
-		}
-
-		protected function update(Request $request, int $id): Response {
-			// TODO: Implement update() method.
-		}
-
-		protected function read(int $id, SerializerInterface $serializer): Response {
-			// TODO: Implement read() method.
 		}
 
 	}

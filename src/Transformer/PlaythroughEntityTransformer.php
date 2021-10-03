@@ -1,23 +1,22 @@
 <?php
 	namespace App\Transformer;
 
-	use App\DTO\Playthrough\PlaythroughDTO;
-	use App\DTO\Transformer\RequestTransformer\Playthrough\PlaythroughRequestDTOTransformer;
 	use App\Entity\Playthrough\Playthrough;
-	use App\Exception\ValidationException;
+	use App\Exception\InvalidPayloadException;
+	use App\Exception\InvalidEntityException;
+	use App\Exception\InvalidRepositoryException;
 	use App\Repository\GameRepository;
 	use App\Repository\PlaythroughRepository;
 	use App\Repository\PlaythroughTemplateRepository;
-	use App\Transformer\Trait\PlaythroughCheckDataTrait;
+	use App\Request\Payloads\PlaythroughPayload;
+	use App\Transformer\Trait\PlaythroughTrait;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JetBrains\PhpStorm\Pure;
-	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	final class PlaythroughEntityTransformer extends AbstractEntityTransformer {
 
-		use PlaythroughCheckDataTrait;
+		use PlaythroughTrait;
 
 		/**
 		 * @var GameRepository
@@ -33,24 +32,20 @@
 		 * PlaythroughTemplateEntityTransformer constructor.
 		 *
 		 * @param EntityManagerInterface $entityManager
-		 * @param ValidatorInterface $validator
 		 * @param GameRepository $gameRepository
-		 * @param PlaythroughRequestDTOTransformer $DTOTransformer
 		 * @param PlaythroughRepository $playthroughRepository
 		 * @param PlaythroughTemplateRepository $playthroughTemplateRepository
 		 */
 		#[Pure]
-		public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator,
-		                            GameRepository $gameRepository, PlaythroughRequestDTOTransformer $DTOTransformer,
+		public function __construct(EntityManagerInterface $entityManager,
+		                            GameRepository $gameRepository,
 		                            PlaythroughRepository $playthroughRepository,
 		                            PlaythroughTemplateRepository $playthroughTemplateRepository) {
 
-			parent::__construct($entityManager, $validator);
+			parent::__construct($entityManager, $playthroughRepository);
 
 			$this->gameRepository = $gameRepository;
-			$this->DTOTransformer = $DTOTransformer;
 			$this->playthroughTemplateRepository = $playthroughTemplateRepository;
-			$this->repository = $playthroughRepository;
 
 		}
 
@@ -60,50 +55,44 @@
 		 */
 		public function doCreateWork(): Playthrough {
 
-			if (!($this->dto instanceof PlaythroughDTO)) {
-				throw new \InvalidArgumentException('PlaythroughEntityTransformer\'s DTO not instance of UserDTO');
-			}
+			if (!($this->dto instanceof PlaythroughPayload))
+				throw new InvalidPayloadException(PlaythroughPayload::class, $this->dto::class);
 
-			$game = $this->gameRepository->find($this->dto->gameID);
+			$game = $this->getGame();
 
-			if (!$game) {
-				throw new NotFoundHttpException('game not found');
-			}
+			$this->doesTemplateExist();
 
-			$template = $this->playthroughTemplateRepository->find($this->dto->templateId);
-
-			if (!$template) {
-				throw new NotFoundHttpException('template not found');
-			}
-
-			return new Playthrough($this->dto->name, $this->dto->description, $game, $this->dto->templateId, $this->user, $this->dto->visibility);
+			return new Playthrough(
+				$this->dto->name,
+				$this->dto->description,
+				$game,
+				$this->dto->templateId,
+				$this->user,
+				$this->dto->visibility
+			);
 
 		}
 
-		/**
-		 * @param int $id
-		 * @param Request $request
-		 * @param bool $skipValidation
-		 * @return Playthrough
-		 * @throws ValidationException
-		 */
-		public function doUpdateWork(int $id, Request $request, bool $skipValidation = false): Playthrough {
+		private function doesTemplateExist(): void {
+			$template = $this->playthroughTemplateRepository->find($this->dto->templateId);
 
-			$playthrough = $this->repository->find($id);
-
-			$tempDTO = $this->DTOTransformer->transformFromRequest($request);
-			$tempDTO->gameID = $playthrough->getGame()->getId();
-			$tempDTO->templateId = $playthrough->getTemplateId();
-
-			if (!$skipValidation) $this->validate($tempDTO);
-
-			$playthrough = $this->checkAndSetData(json_decode($request->getContent(), true), $playthrough);
-
-
-			if (!($playthrough instanceof Playthrough)) {
-				throw new \InvalidArgumentException(
-					$playthrough::class . ' not instance of Playthrough. Does ' . $id . 'belong to a playthrough?');
+			if (!$template) {
+				throw new NotFoundHttpException('Template not found');
 			}
+		}
+
+		/**
+		 * @return Playthrough
+		 */
+		public function doUpdateWork(): Playthrough {
+
+			if (!($this->repository instanceof PlaythroughRepository))
+				throw new InvalidRepositoryException(PlaythroughRepository::class, $this->repository::class);
+
+			$playthrough = $this->checkAndSetData($this->repository->find($this->id));
+
+			if (!($playthrough instanceof Playthrough))
+				throw new InvalidEntityException(Playthrough::class, $playthrough::class);
 
 			return $playthrough;
 

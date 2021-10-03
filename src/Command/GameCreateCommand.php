@@ -1,17 +1,14 @@
 <?php
 	namespace App\Command;
 
-	use App\Entity\Game;
 	use App\Service\IGDBHelper;
-	use DateTimeImmutable;
+	use App\Transformer\GameEntityTransformer;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Symfony\Component\Console\Command\Command;
 	use Symfony\Component\Console\Input\InputArgument;
 	use Symfony\Component\Console\Input\InputInterface;
-	use Symfony\Component\Console\Input\InputOption;
 	use Symfony\Component\Console\Output\OutputInterface;
 	use Symfony\Component\Console\Style\SymfonyStyle;
-	use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 	use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 	class GameCreateCommand extends Command {
@@ -19,12 +16,29 @@
 		protected static $defaultName = 'app:game:create';
 		protected static $defaultDescription = 'This is for creating games to test the app with';
 
+		/**
+		 * @var IGDBHelper
+		 */
 		private IGDBHelper $IGDBHelper;
 
-		public function __construct (IGDBHelper $IGDBHelper) {
-			parent::__construct();
+		/**
+		 * @var EntityManagerInterface
+		 */
+		private EntityManagerInterface $entityManager;
 
+		/**
+		 * @var GameEntityTransformer
+		 */
+		private GameEntityTransformer $entityTransformer;
+
+		public function __construct(IGDBHelper $IGDBHelper,
+		                            EntityManagerInterface $entityManager,
+		                            GameEntityTransformer $entityTransformer
+		) {
+			parent::__construct();
 			$this->IGDBHelper = $IGDBHelper;
+			$this->entityManager = $entityManager;
+			$this->entityTransformer = $entityTransformer;
 		}
 
 		protected function configure() {
@@ -33,14 +47,17 @@
 
 		}
 
-		protected function execute(InputInterface $input, OutputInterface $output) :int {
+		protected function execute(InputInterface $input, OutputInterface $output): int {
 
 			try {
 
-				$this->IGDBHelper->getGameAndSave($input->getArgument('igdb_id'));
+				$igdbDTO = $this->IGDBHelper->getIgdbGameDto($input->getArgument('igdb_id'));
+				$game = $this->entityTransformer->assemble($igdbDTO);
+				$this->entityManager->persist($game);
+				$this->entityManager->flush();
 				return ExitCode::OK;
 
-			} catch(\Exception | TransportExceptionInterface) {
+			} catch (\Exception | TransportExceptionInterface) {
 				return ExitCode::ERROR;
 			}
 

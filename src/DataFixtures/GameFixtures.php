@@ -1,43 +1,61 @@
 <?php
 
-namespace App\DataFixtures;
+	namespace App\DataFixtures;
 
-use App\Service\IGDBHelper;
-use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Persistence\ObjectManager;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+	use App\Service\IGDBHelper;
+	use App\Transformer\GameEntityTransformer;
+	use Doctrine\Bundle\FixturesBundle\Fixture;
+	use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+	use Doctrine\Persistence\ObjectManager;
+	use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-class GameFixtures extends Fixture implements DependentFixtureInterface
-{
+	class GameFixtures extends Fixture implements DependentFixtureInterface {
 
-	private IGDBHelper $IGDBHelper;
+		private const GAME_IDS = [11397, 2059, 145817, 88970, 398, 11133, 2368, 81085, 2368, 2364,
+			24869, 145191, 22066, 484, 485, 480, 1209, 740, 2640, 991];
 
-	private const GAME_IDS = [11397,2059,145817,88970,398,11133,2368,81085,2368,2364,
-		24869,145191,22066,484,485,480,1209,740,2640,991];
+		/**
+		 * @var IGDBHelper
+		 */
+		private IGDBHelper $IGDBHelper;
 
-	public function __construct(IGDBHelper $IGDBHelper) {
-		$this->IGDBHelper = $IGDBHelper;
-	}
+		/**
+		 * @var GameEntityTransformer
+		 */
+		private GameEntityTransformer $entityTransformer;
 
-	/**
-	 * @throws TransportExceptionInterface
-	 */
-	public function load(ObjectManager $manager) {
+		public function __construct(IGDBHelper $IGDBHelper,
+		                            GameEntityTransformer $entityTransformer) {
+			$this->IGDBHelper = $IGDBHelper;
+			$this->entityTransformer = $entityTransformer;
+		}
+
+		/**
+		 * @param ObjectManager $manager
+		 * @throws TransportExceptionInterface
+		 * @throws \Exception
+		 */
+		public function load(ObjectManager $manager) {
 
 			$i = 0;
 
 			foreach (self::GAME_IDS as $gameID) {
-				$game = $this->IGDBHelper->getGameAndSave($gameID);
+
+				$igdbGameDto = $this->IGDBHelper->getIgdbGameDto($gameID);
+
+				$game = $this->entityTransformer->assemble($igdbGameDto);
+
 				$this->addReference('game_' . $i, $game);
+				$manager->persist($game);
 				$i++;
 			}
 
-    }
+			$manager->flush();
+		}
 
-	public function getDependencies(): array {
-		return [
-			AppFixtures::class,
-		];
+		public function getDependencies(): array {
+			return [
+				AppFixtures::class,
+			];
+		}
 	}
-}

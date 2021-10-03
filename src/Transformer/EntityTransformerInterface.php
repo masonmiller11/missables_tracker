@@ -4,6 +4,7 @@
 	use App\DTO\DTOInterface;
 	use App\Entity\EntityInterface;
 	use App\Entity\User;
+	use App\Request\Payloads\PayloadInterface;
 	use Symfony\Component\HttpFoundation\Request;
 
 	/**
@@ -12,9 +13,12 @@
 	 */
 	interface EntityTransformerInterface {
 
-		public function create(DTOInterface $dto, User $user = null): EntityInterface;
+		/**
+		 * Eventually the type-hinted Object for $dto should be replaced by PayloadInterface
+		 */
+		public function create(PayloadInterface $payload, User|null $user = null): EntityInterface;
 
-		public function update(int $id, Request $request, bool $skipValidation = false): EntityInterface;
+		public function update(PayloadInterface $payload, int $id): EntityInterface;
 
 		public function delete(int $id): void;
 

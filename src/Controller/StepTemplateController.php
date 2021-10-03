@@ -1,30 +1,40 @@
 <?php
 	namespace App\Controller;
 
-	use App\DTO\Transformer\RequestTransformer\Step\StepTemplateRequestTransformer;
+	use App\Exception\PayloadDecoderException;
 	use App\Exception\ValidationException;
+	use App\Payload\Registry\PayloadDecoderRegistryInterface;
 	use App\Repository\StepTemplateRepository;
+	use App\Request\Payloads\StepTemplatePayload;
 	use App\Service\ResponseHelper;
 	use App\Transformer\StepTemplateEntityTransformer;
-	use JetBrains\PhpStorm\Pure;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 	/**
 	 * @package App\Controller
 	 * @Route(path="/step/template/", name="step_template.")
 	 */
-	final class StepTemplateController extends AbstractBaseApiController {
+	final class StepTemplateController extends AbstractBaseApiController implements BaseApiControllerInterface {
 
-		#[Pure]
+		/**
+		 * StepTemplateController constructor.
+		 * @param StepTemplateEntityTransformer $entityTransformer
+		 * @param StepTemplateRepository $repository
+		 * @param PayloadDecoderRegistryInterface $decoderRegistry
+		 */
 		public function __construct(
-			ValidatorInterface $validator, StepTemplateEntityTransformer $entityTransformer,
-			StepTemplateRequestTransformer $DTOTransformer, StepTemplateRepository $repository
+			StepTemplateEntityTransformer $entityTransformer,
+			StepTemplateRepository $repository,
+			PayloadDecoderRegistryInterface $decoderRegistry
 		) {
-			parent::__construct($validator, $entityTransformer, $DTOTransformer, $repository);
+			parent::__construct(
+				$entityTransformer,
+				$repository,
+				$decoderRegistry->getDecoder(StepTemplatePayload::class)
+			);
 		}
 
 		/**
@@ -38,11 +48,11 @@
 
 			try {
 
-				$stepTemplate = $this->createOne($request);
+				$stepTemplate = $this->doCreate($request, $this->getUser());
 
-			} catch (ValidationException $exception) {
+			} catch (PayloadDecoderException | ValidationException $exception) {
 
-				return ResponseHelper::createValidationErrorResponse($exception);
+				return $this->handleApiException($request, $exception);
 
 			}
 
@@ -59,7 +69,7 @@
 		 */
 		public function delete(int $id): Response {
 
-			$this->deleteOne($id);
+			$this->doDelete($id);
 
 			return ResponseHelper::createResourceDeletedResponse();
 
@@ -75,13 +85,21 @@
 		 */
 		public function update(Request $request, int $id): Response {
 
-			$stepTemplate = $this->updateOne($request, $id);
+			try {
+
+				$stepTemplate = $this->doUpdate($request, $id);
+
+			} catch (PayloadDecoderException | ValidationException $exception) {
+
+				return $this->handleApiException($request, $exception);
+
+			}
 
 			return ResponseHelper::createResourceUpdatedResponse('step/template/read/' . $stepTemplate->getId());
 
 		}
 
-		protected function read(int $id, SerializerInterface $serializer): Response {
+		public function read(int $id, SerializerInterface $serializer): Response {
 			// TODO: Implement read() method.
 		}
 	}
