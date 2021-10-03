@@ -80,7 +80,7 @@
 
 			try {
 
-				$this->doUpdate($request, $this->getUser()->getId());
+				$this->doUpdate($request, $this->getUser()->getId(), null, false);
 
 			} catch (PayloadDecoderException | ValidationException $exception) {
 
