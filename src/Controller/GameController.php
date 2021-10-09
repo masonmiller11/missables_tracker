@@ -10,7 +10,6 @@
 	use App\Service\IGDBHelper;
 	use App\Service\ResponseHelper;
 	use App\Transformer\GameEntityTransformer;
-	use Lcobucci\JWT\Exception;
 	use Symfony\Component\HttpClient\Exception\InvalidArgumentException;
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\HttpFoundation\Request;
@@ -140,7 +139,7 @@
 				$igdbGames = $this->entityTransformer->assembleAndSaveMany($igdbDtos);
 
 				//Merge games that were just created (from searching IGDB) with the games that were already in database.
-				$allGames = array_merge($igdbGames, $games);
+				$allGames = array_merge($games, $igdbGames);
 
 			} catch (PayloadDecoderException | ValidationException $exception) {
 
