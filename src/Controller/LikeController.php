@@ -92,9 +92,9 @@
 			if (!$this->repository instanceof LikeRepository)
 				throw new \InvalidArgumentException('repository not instance of type LikeRepository');
 
-			$playthroughs = $this->repository->findAllByOwner($ownerId, $page, $pageSize);
+			$likedTemplates = $this->repository->findAllByOwner($ownerId, $page, $pageSize);
 
-			return ResponseHelper::createReadResponse($playthroughs, $serializer);
+			return ResponseHelper::createReadResponse($likedTemplates, $serializer);
 
 		}
 
