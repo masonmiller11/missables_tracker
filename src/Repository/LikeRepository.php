@@ -1,9 +1,7 @@
 <?php
 	namespace App\Repository;
 
-	use App\Entity\Playthrough\Playthrough;
 	use App\Entity\Playthrough\PlaythroughTemplateLike;
-	use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 	use Doctrine\Persistence\ManagerRegistry;
 	use JetBrains\PhpStorm\ArrayShape;
 
@@ -52,7 +50,7 @@
 				->leftJoin('templateLike.likedBy', 'owner')
 				->setParameter('ownerId', $ownerId);
 
-			return $this->doPagination($qb, $page, $pageSize, 'playthroughs');
+			return $this->doPagination($qb, $page, $pageSize, 'likes');
 
 		}
 
