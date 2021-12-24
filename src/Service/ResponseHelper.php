@@ -13,7 +13,7 @@
 		 * @param SerializerInterface $serializer
 		 * @return JsonResponse|Response
 		 */
-		public static function createReadResponse(object|iterable|null $object, SerializerInterface $serializer): JsonResponse|Response {
+		public static function createReadResponse(object|iterable|null $object, SerializerInterface $serializer, $contextFlag = false): JsonResponse|Response {
 
 			if (!$object || $object === []) {
 				return new JsonResponse(['status' => 'error',
@@ -24,7 +24,7 @@
 			return new Response($serializer->serialize($object, 'json', [
 				'circular_reference_handler' => function ($object) {
 					return $object->getId();
-				}
+				}, 'context_flag' => $contextFlag,
 			]), Response::HTTP_OK, [
 				'Content-Type' => 'application/json'
 			]);
