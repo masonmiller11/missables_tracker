@@ -11,9 +11,10 @@
 		/**
 		 * @param Object|iterable|null $object
 		 * @param SerializerInterface $serializer
+		 * @param bool $contextFlag
 		 * @return JsonResponse|Response
 		 */
-		public static function createReadResponse(object|iterable|null $object, SerializerInterface $serializer, $contextFlag = false): JsonResponse|Response {
+		public static function createReadResponse(object|iterable|null $object, SerializerInterface $serializer, bool $contextFlag = false): JsonResponse|Response {
 
 			if (!$object || $object === []) {
 				return new JsonResponse(['status' => 'error',
