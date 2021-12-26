@@ -11,7 +11,7 @@
 	use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-	class GameNormalizer implements  ContextAwareNormalizerInterface {
+	class GameNormalizer implements ContextAwareNormalizerInterface {
 
 		private IGDBHelper $IGDBHelper;
 
@@ -30,7 +30,7 @@
 		 * @throws ServerExceptionInterface
 		 * @throws TransportExceptionInterface
 		 */
-		public function normalize ($object, string $format = null, array $context = []): array {
+		public function normalize($object, string $format = null, array $context = []): array {
 
 			$data['title'] = $object->getTitle();
 
