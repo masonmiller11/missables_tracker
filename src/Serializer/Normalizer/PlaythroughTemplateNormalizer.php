@@ -5,36 +5,61 @@
 	use App\Entity\Playthrough\PlaythroughTemplate;
 	use App\Entity\Section\SectionTemplate;
 	use App\Entity\Step\StepTemplate;
+	use App\Service\IGDBHelper;
+	use Symfony\Component\HttpClient\Exception\ClientException;
+	use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-	class PlaythroughTemplateNormalizer extends  AbstractPlaythroughNormalizer {
+	class PlaythroughTemplateNormalizer extends AbstractPlaythroughNormalizer {
+
+
+		private IGDBHelper $IGDBHelper;
+
+		public function __construct(IGDBHelper $IGDBHelper) {
+			$this->IGDBHelper = $IGDBHelper;
+		}
 
 		/**
 		 * @param Playthrough|PlaythroughTemplate $object
 		 * @param string|null $format
 		 * @param array $context
 		 * @return array
+		 * @throws ClientExceptionInterface
+		 * @throws DecodingExceptionInterface
+		 * @throws RedirectionExceptionInterface
+		 * @throws ServerExceptionInterface
+		 * @throws TransportExceptionInterface
 		 */
-		public function normalize ($object, string $format = null, array $context = []): array {
+		public function normalize($object, string $format = null, array $context = []): array {
 
 			$data = $this->createData($object);
 			$data['likes'] = $object->countLikes();
 
 			$data['sections'] = $object->getSections()->map(
 				fn(SectionTemplate $section) => [
-					'id'=>$section->getId(),
-					'name'=>$section->getName(),
-					'description'=>$section->getDescription(),
-					'position'=>$section->getPosition(),
-					'steps'=>$section->getSteps()->map(
+					'id' => $section->getId(),
+					'name' => $section->getName(),
+					'description' => $section->getDescription(),
+					'position' => $section->getPosition(),
+					'steps' => $section->getSteps()->map(
 						fn(StepTemplate $step) => [
-							'id'=>$step->getId(),
-							'name'=>$step->getName(),
-							'position'=>$step->getPosition(),
-							'description'=>$step->getDescription()
+							'id' => $step->getId(),
+							'name' => $step->getName(),
+							'position' => $step->getPosition(),
+							'description' => $step->getDescription()
 						]
 					)->toArray()
 				]
 			)->toArray();
+
+			try {
+				$data['image'] = $this->IGDBHelper->getCoverArtForGame($object->getGame());
+			} catch (ClientException $exception) {
+				$data['image'] = 'cover unavailable';
+			}
 
 			return $data;
 
