@@ -14,7 +14,7 @@
 	abstract class AbstractPlaythroughNormalizer implements ContextAwareNormalizerInterface {
 
 		protected IGDBHelper $IGDBHelper;
-		
+
 		/**
 		 * @throws TransportExceptionInterface
 		 * @throws ServerExceptionInterface
@@ -31,12 +31,12 @@
 			$data['owner'] = [
 				'ownerID' => $object->getOwner()->getId(),
 				'owner' => $object->getOwner()->getUsername(),
-				'cover' => $data['image'] = $this->IGDBHelper->getCoverArtForGame($object->getGame())
 			];
 
 			$data['game'] = [
 				'gameID' => strval($object->getGame()->getId()),
-				'gameTitle' => $object->getGame()->getTitle()
+				'gameTitle' => $object->getGame()->getTitle(),
+				'cover' => $this->IGDBHelper->getCoverArtForGame($object->getGame())
 			];
 
 			$data['stepPositions'] = call_user_func_array("array_merge",
