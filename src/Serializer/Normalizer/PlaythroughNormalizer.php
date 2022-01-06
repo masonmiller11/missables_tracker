@@ -5,14 +5,29 @@
 	use App\Entity\Playthrough\PlaythroughTemplate;
 	use App\Entity\Section\Section;
 	use App\Entity\Step\Step;
+	use App\Service\IGDBHelper;
+	use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 	class PlaythroughNormalizer extends  AbstractPlaythroughNormalizer {
+
+		public function __construct(IGDBHelper $IGDBHelper) {
+			$this->IGDBHelper = $IGDBHelper;
+		}
 
 		/**
 		 * @param Playthrough|PlaythroughTemplate $object
 		 * @param string|null $format
 		 * @param array $context
 		 * @return array
+		 * @throws ClientExceptionInterface
+		 * @throws DecodingExceptionInterface
+		 * @throws RedirectionExceptionInterface
+		 * @throws ServerExceptionInterface
+		 * @throws TransportExceptionInterface
 		 */
 		public function normalize ($object, string $format = null, array $context = []): array {
 

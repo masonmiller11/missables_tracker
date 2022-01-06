@@ -6,7 +6,6 @@
 	use App\Entity\Section\SectionTemplate;
 	use App\Entity\Step\StepTemplate;
 	use App\Service\IGDBHelper;
-	use Symfony\Component\HttpClient\Exception\ClientException;
 	use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -14,9 +13,6 @@
 	use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 	class PlaythroughTemplateNormalizer extends AbstractPlaythroughNormalizer {
-
-
-		private IGDBHelper $IGDBHelper;
 
 		public function __construct(IGDBHelper $IGDBHelper) {
 			$this->IGDBHelper = $IGDBHelper;
@@ -54,12 +50,6 @@
 					)->toArray()
 				]
 			)->toArray();
-
-			try {
-				$data['image'] = $this->IGDBHelper->getCoverArtForGame($object->getGame());
-			} catch (ClientException $exception) {
-				$data['image'] = 'cover unavailable';
-			}
 
 			return $data;
 

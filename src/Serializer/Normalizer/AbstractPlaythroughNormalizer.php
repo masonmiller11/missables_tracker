@@ -3,10 +3,25 @@
 
 	use App\Entity\Section\SectionInterface;
 	use App\Entity\Step\StepInterface;
+	use App\Service\IGDBHelper;
 	use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
+	use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+	use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 	abstract class AbstractPlaythroughNormalizer implements ContextAwareNormalizerInterface {
 
+		protected IGDBHelper $IGDBHelper;
+		
+		/**
+		 * @throws TransportExceptionInterface
+		 * @throws ServerExceptionInterface
+		 * @throws RedirectionExceptionInterface
+		 * @throws DecodingExceptionInterface
+		 * @throws ClientExceptionInterface
+		 */
 		protected function createData($object): array {
 
 			$data['title'] = $object->getName();
@@ -15,7 +30,8 @@
 			$data['visibility'] = $object->isVisible();
 			$data['owner'] = [
 				'ownerID' => $object->getOwner()->getId(),
-				'owner' => $object->getOwner()->getUsername()
+				'owner' => $object->getOwner()->getUsername(),
+				'cover' => $data['image'] = $this->IGDBHelper->getCoverArtForGame($object->getGame())
 			];
 
 			$data['game'] = [
