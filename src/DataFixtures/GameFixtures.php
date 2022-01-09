@@ -11,7 +11,7 @@
 
 	class GameFixtures extends Fixture implements DependentFixtureInterface {
 
-		private const GAME_IDS = [11397, 2059, 145817, 88970, 398, 11133, 2368, 81085, 2368, 2364,
+		private const GAME_IDS = [11397, 2059, 145817, 88970, 398, 11133, 2368, 81085, 2364,
 			24869, 145191, 22066, 484, 485, 480, 1209, 740, 2640, 991];
 
 		/**
