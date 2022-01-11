@@ -1,33 +1,54 @@
 <?php
 	namespace App\Controller;
 
+	use App\Entity\Playthrough\Playthrough;
 	use App\Exception\PayloadDecoderException;
 	use App\Exception\ValidationException;
 	use App\Payload\Registry\PayloadDecoderRegistryInterface;
 	use App\Repository\PlaythroughRepository;
+	use App\Repository\PlaythroughTemplateRepository;
 	use App\Request\Payloads\PlaythroughPayload;
+	use App\Request\Payloads\SectionPayload;
+	use App\Request\Payloads\StepPayload;
 	use App\Service\ResponseHelper;
 	use App\Transformer\PlaythroughEntityTransformer;
+	use App\Transformer\SectionEntityTransformer;
+	use App\Transformer\StepEntityTransformer;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
+	use http\Exception\InvalidArgumentException;
 
 	/**
 	 * @Route(path="/playthroughs/", name="playthroughs.")
 	 */
 	final class PlaythroughController extends AbstractBaseApiController implements BaseApiControllerInterface {
 
+		private PlaythroughTemplateRepository $playthroughTemplateRepository;
+		private SectionEntityTransformer $sectionEntityTransformer;
+		private StepEntityTransformer $stepEntityTransformer;
+		private SerializerInterface $serializer;
+
 		/**
 		 * PlaythroughController constructor.
+		 *
 		 * @param PlaythroughEntityTransformer $entityTransformer
 		 * @param PlaythroughRepository $repository
 		 * @param PayloadDecoderRegistryInterface $decoderRegistry
+		 * @param PlaythroughTemplateRepository $playthroughTemplateRepository
+		 * @param SectionEntityTransformer $sectionEntityTransformer
+		 * @param StepEntityTransformer $stepEntityTransformer
+		 * @param SerializerInterface $serializer
 		 */
 		public function __construct(
 			PlaythroughEntityTransformer $entityTransformer,
 			PlaythroughRepository $repository,
-			PayloadDecoderRegistryInterface $decoderRegistry
+			PayloadDecoderRegistryInterface $decoderRegistry,
+			PlaythroughTemplateRepository $playthroughTemplateRepository,
+			SectionEntityTransformer $sectionEntityTransformer,
+			StepEntityTransformer $stepEntityTransformer,
+			SerializerInterface $serializer
 		) {
 
 			parent::__construct(
@@ -35,6 +56,11 @@
 				$repository,
 				$decoderRegistry->getDecoder(PlaythroughPayload::class)
 			);
+
+			$this->playthroughTemplateRepository = $playthroughTemplateRepository;
+			$this->sectionEntityTransformer = $sectionEntityTransformer;
+			$this->stepEntityTransformer = $stepEntityTransformer;
+			$this->serializer = $serializer;
 
 		}
 
@@ -45,11 +71,42 @@
 		 *
 		 * @return Response
 		 */
-		public function create(Request $request): Response {
+		public function createNew(Request $request): Response {
 
 			try {
-
 				$playthrough = $this->doCreate($request, $this->getUser());
+
+				if (!($playthrough instanceof Playthrough))
+					throw new InvalidArgumentException();
+
+				$playthroughTemplate = $this->playthroughTemplateRepository->find($playthrough->getTemplateId());
+				$sectionTemplates = $playthroughTemplate->getSections();
+
+				foreach ($sectionTemplates as $sectionTemplate) {
+					$sectionTemplatePayload = new SectionPayload(
+						$sectionTemplate->getDescription(),
+						$sectionTemplate->getName(),
+						$sectionTemplate->getPosition(),
+						$playthrough->getId()
+					);
+
+					$section = $this->sectionEntityTransformer->create($sectionTemplatePayload);
+
+					$stepTemplates = $sectionTemplate->getSteps();
+
+					foreach ($stepTemplates as $stepTemplate) {
+						$stepTemplatePayload = new StepPayload(
+							$stepTemplate->getDescription(),
+							$stepTemplate->getName(),
+							$stepTemplate->getPosition(),
+							$section->getId()
+						);
+
+						$this->stepEntityTransformer->create($stepTemplatePayload);
+
+					}
+
+				}
 
 			} catch (PayloadDecoderException | ValidationException $exception) {
 
@@ -140,4 +197,7 @@
 
 		}
 
+		public function create(Request $request): Response {
+			// TODO: Implement create() method.
+		}
 	}

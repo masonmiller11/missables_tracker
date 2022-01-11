@@ -31,4 +31,13 @@
 		 */
 		public mixed $playthroughId;
 
+		public function __construct(string $name, string $description, int $position, int $playthroughId) {
+
+			$this->description = $description;
+			$this->name = $name;
+			$this->position = $position;
+			$this->playthroughId = $playthroughId;
+
+		}
+
 	}
