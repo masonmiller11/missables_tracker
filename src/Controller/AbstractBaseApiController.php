@@ -89,6 +89,7 @@
 		 * @param Request $request
 		 * @param int $id
 		 * @param User|null $user
+		 * @param bool $confirmOwnership
 		 * @return EntityInterface
 		 * @throws ValidationException
 		 */
