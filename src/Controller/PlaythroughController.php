@@ -57,7 +57,7 @@
 
 			}
 
-			return ResponseHelper::createResourceCreatedResponse('playthroughs/read/' . $playthrough->getId());
+			return ResponseHelper::createResourceCreatedResponse('playthroughs/read/' . $playthrough->getId(), $playthrough->getId());
 
 		}
 

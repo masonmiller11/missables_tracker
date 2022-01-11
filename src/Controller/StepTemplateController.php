@@ -56,7 +56,7 @@
 
 			}
 
-			return ResponseHelper::createResourceCreatedResponse('step/template/read/' . $stepTemplate->getId());
+			return ResponseHelper::createResourceCreatedResponse('step/template/read/' . $stepTemplate->getId(),$stepTemplate->getId());
 
 		}
 

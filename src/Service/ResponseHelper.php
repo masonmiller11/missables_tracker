@@ -37,10 +37,11 @@
 		 *
 		 * @return JsonResponse
 		 */
-		public static function createResourceCreatedResponse(string $uri): JsonResponse {
+		public static function createResourceCreatedResponse(string $uri, string $id): JsonResponse {
 
 			return new JsonResponse([
-				'status' => 'resource created'
+				'status' => 'resource created',
+				"id" => $id
 			], Response::HTTP_CREATED, [
 				"Location" => $uri
 			]);

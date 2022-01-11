@@ -8,6 +8,7 @@
 	use App\Request\Payloads\PlaythroughTemplatePayload;
 	use App\Service\ResponseHelper;
 	use App\Transformer\PlaythroughTemplateEntityTransformer;
+	use InvalidArgumentException;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Routing\Annotation\Route;
@@ -55,7 +56,7 @@
 
 			}
 
-			return ResponseHelper::createResourceCreatedResponse('templates/read/' . $playthroughTemplate->getId());
+			return ResponseHelper::createResourceCreatedResponse('templates/read/' . $playthroughTemplate->getId(), $playthroughTemplate->getId());
 
 		}
 
@@ -144,7 +145,7 @@
 		public function listByGame(int $gameID, int $page, int $pageSize, SerializerInterface $serializer): Response {
 
 			if (!$this->repository instanceof PlaythroughTemplateRepository)
-				throw new \InvalidArgumentException(
+				throw new InvalidArgumentException(
 					'repository not instance of type PlaythroughTemplateRepository'
 				);
 
@@ -169,7 +170,7 @@
 		): Response {
 
 			if (!$this->repository instanceof PlaythroughTemplateRepository)
-				throw new \InvalidArgumentException(
+				throw new InvalidArgumentException(
 					'repository not instance of type PlaythroughTemplateRepository'
 				);
 
@@ -191,7 +192,7 @@
 		public function list(int $page, int $pageSize, SerializerInterface $serializer): Response {
 
 			if (!$this->repository instanceof PlaythroughTemplateRepository)
-				throw new \InvalidArgumentException(
+				throw new InvalidArgumentException(
 					'repository not instance of type PlaythroughTemplateRepository'
 				);
 			$templates = $this->repository->findAllOrderByLikes($page, $pageSize);

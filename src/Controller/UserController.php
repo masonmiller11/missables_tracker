@@ -64,7 +64,7 @@
 
 			}
 
-			return ResponseHelper::createResourceCreatedResponse('users/read' . $user->getId());
+			return ResponseHelper::createResourceCreatedResponse('users/read' . $user->getId(), $user->getId());
 
 		}
 

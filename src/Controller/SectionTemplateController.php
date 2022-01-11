@@ -58,7 +58,7 @@
 
 			}
 
-			return ResponseHelper::createResourceCreatedResponse('section/template/read/' . $sectionTemplate->getId());
+			return ResponseHelper::createResourceCreatedResponse('section/template/read/' . $sectionTemplate->getId(), $sectionTemplate->getId());
 
 		}
 
