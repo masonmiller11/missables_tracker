@@ -34,6 +34,7 @@
 
 		/**
 		 * @param string $uri
+		 * @param string $id
 		 *
 		 * @return JsonResponse
 		 */

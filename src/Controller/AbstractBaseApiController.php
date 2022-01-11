@@ -9,6 +9,7 @@
 	use App\Payload\DecoderIntent;
 	use App\Payload\Decoders\PayloadDecoderInterface;
 	use App\Payload\Decoders\SymfonyDeserializeDecoder;
+	use App\Request\Payloads\PayloadInterface;
 	use App\Service\ResponseHelper;
 	use App\Transformer\EntityTransformerInterface;
 	use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
