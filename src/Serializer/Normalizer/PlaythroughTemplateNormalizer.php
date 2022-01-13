@@ -34,22 +34,26 @@
 			$data = $this->createData($object);
 			$data['likes'] = $object->countLikes();
 
-			$data['sections'] = $object->getSections()->map(
-				fn(SectionTemplate $section) => [
-					'id' => $section->getId(),
-					'name' => $section->getName(),
-					'description' => $section->getDescription(),
-					'position' => $section->getPosition(),
-					'steps' => $section->getSteps()->map(
-						fn(StepTemplate $step) => [
-							'id' => $step->getId(),
-							'name' => $step->getName(),
-							'position' => $step->getPosition(),
-							'description' => $step->getDescription()
-						]
-					)->toArray()
-				]
-			)->toArray();
+			if (!$context['context_flag']) {
+
+				$data['sections'] = $object->getSections()->map(
+					fn(SectionTemplate $section) => [
+						'id' => $section->getId(),
+						'name' => $section->getName(),
+						'description' => $section->getDescription(),
+						'position' => $section->getPosition(),
+						'steps' => $section->getSteps()->map(
+							fn(StepTemplate $step) => [
+								'id' => $step->getId(),
+								'name' => $step->getName(),
+								'position' => $step->getPosition(),
+								'description' => $step->getDescription()
+							]
+						)->toArray()
+					]
+				)->toArray();
+
+			}
 
 			return $data;
 

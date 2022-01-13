@@ -128,7 +128,7 @@
 			$user = $this->getUser();
 			$templates = $user->getPlaythroughTemplates();
 
-			return ResponseHelper::createReadResponse($templates, $serializer);
+			return ResponseHelper::createReadResponse($templates, $serializer, true);
 
 		}
 
