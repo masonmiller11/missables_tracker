@@ -37,17 +37,17 @@
 			}
 
 			$queryResults = [
-				$itemsName => $items,
+				'items' => $items,
 				'totalItems' => $totalItems,
 				'pageCount' => $pagesCount
 			];
 
-			if ($queryResults[$itemsName] == []) {
+			if ($queryResults['items'] == []) {
 				throw new NotFoundHttpException('no ' . $itemsName . ' were found');
 			}
 
 			return [
-				$itemsName => $items,
+				'items' => $items,
 				'totalItems' => $totalItems,
 				'pageCount' => $pagesCount
 			];
