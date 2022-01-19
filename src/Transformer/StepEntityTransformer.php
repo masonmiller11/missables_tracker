@@ -82,6 +82,9 @@
 			if (!($step instanceof Step))
 				throw new InvalidEntityException(Step::class, $step::class);
 
+			if (isset($this->dto->isCompleted))
+				$step->setCompleted($this->dto->isCompleted);
+
 			return $step;
 
 		}
