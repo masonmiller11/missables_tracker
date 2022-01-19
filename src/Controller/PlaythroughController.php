@@ -14,11 +14,11 @@
 	use App\Transformer\PlaythroughEntityTransformer;
 	use App\Transformer\SectionEntityTransformer;
 	use App\Transformer\StepEntityTransformer;
+	use http\Exception\InvalidArgumentException;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
-	use Symfony\Component\Routing\Annotation\Route;
 	use Symfony\Component\Serializer\SerializerInterface;
-	use http\Exception\InvalidArgumentException;
+	use Symfony\Component\Routing\Annotation\Route;
 
 	/**
 	 * @Route(path="/playthroughs/", name="playthroughs.")
@@ -26,8 +26,11 @@
 	final class PlaythroughController extends AbstractBaseApiController implements BaseApiControllerInterface {
 
 		private PlaythroughTemplateRepository $playthroughTemplateRepository;
+
 		private SectionEntityTransformer $sectionEntityTransformer;
+
 		private StepEntityTransformer $stepEntityTransformer;
+
 		private SerializerInterface $serializer;
 
 		/**
@@ -83,26 +86,24 @@
 				$sectionTemplates = $playthroughTemplate->getSections();
 
 				foreach ($sectionTemplates as $sectionTemplate) {
-					$sectionTemplatePayload = new SectionPayload(
-						$sectionTemplate->getDescription(),
-						$sectionTemplate->getName(),
-						$sectionTemplate->getPosition(),
-						$playthrough->getId()
-					);
+					$sectionPayload = new SectionPayload();
+					$sectionPayload->description = $sectionTemplate->getDescription;
+					$sectionPayload->playthroughId = $playthrough->getId();
+					$sectionPayload->name = $sectionTemplate->getName();
+					$sectionPayload->position = $sectionTemplate->getPosition();
 
-					$section = $this->sectionEntityTransformer->create($sectionTemplatePayload);
+					$section = $this->sectionEntityTransformer->create($sectionPayload);
 
 					$stepTemplates = $sectionTemplate->getSteps();
 
 					foreach ($stepTemplates as $stepTemplate) {
-						$stepTemplatePayload = new StepPayload(
-							$stepTemplate->getDescription(),
-							$stepTemplate->getName(),
-							$stepTemplate->getPosition(),
-							$section->getId()
-						);
+						$stepPayload = new StepPayload;
+						$stepPayload->description = $stepTemplate->getDescription();
+						$stepPayload->name = $stepTemplate->getName();
+						$stepPayload->position = $stepTemplate->getPosition();
+						$stepPayload->sectionId = $section->getId();
 
-						$this->stepEntityTransformer->create($stepTemplatePayload);
+						$this->stepEntityTransformer->create($stepPayload);
 
 					}
 
@@ -114,7 +115,10 @@
 
 			}
 
-			return ResponseHelper::createResourceCreatedResponse('playthroughs/read/' . $playthrough->getId(), $playthrough->getId());
+			return ResponseHelper::createResourceCreatedResponse(
+				'playthroughs/read/' . $playthrough->getId(),
+				$playthrough->getId()
+			);
 
 		}
 

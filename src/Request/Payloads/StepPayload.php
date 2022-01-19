@@ -31,14 +31,9 @@
 		 */
 		public mixed $sectionId;
 
-		public function __construct(string $name, string $description, int $position, int $sectionId) {
-
-			$this->description = $description;
-			$this->name = $name;
-			$this->position = $position;
-			$this->sectionId = $sectionId;
-
-		}
-
+		/**
+		 * @Assert\Type("boolean")
+		 */
+		public mixed $isCompleted;
 
 	}
