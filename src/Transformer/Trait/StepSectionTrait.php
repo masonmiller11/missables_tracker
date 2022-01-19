@@ -11,7 +11,8 @@
 	trait StepSectionTrait {
 
 		/**
-		 * @param StepInterface|SectionInterface $section
+		 * @param StepInterface|SectionInterface $sectionOrStep
+		 *
 		 * @return StepInterface|SectionInterface
 		 * @see StepEntityTransformer
 		 *
@@ -19,7 +20,7 @@
 		 * @see SectionEntityTransformer
 		 * @see StepTemplateEntityTransformer
 		 */
-		private function checkAndSetData(StepInterface|SectionInterface $section): StepInterface|SectionInterface {
+		private function checkAndSetData(StepInterface|SectionInterface $sectionOrStep): StepInterface|SectionInterface {
 
 			if (!(($this->dto instanceof StepTemplatePayload) || ($this->dto instanceof StepPayload)
 				|| ($this->dto instanceof SectionTemplatePayload) || ($this->dto instanceof SectionPayload)  ))
@@ -28,15 +29,15 @@
 				);
 
 			if (isset($this->dto->position))
-				$section->setPosition($this->dto->position);
+				$sectionOrStep->setPosition($this->dto->position);
 
 			if (isset($this->dto->name))
-				$section->setName($this->dto->name);
+				$sectionOrStep->setName($this->dto->name);
 
 			if (isset($this->dto->description))
-				$section->setDescription($this->dto->description);
+				$sectionOrStep->setDescription($this->dto->description);
 
-			return $section;
+			return $sectionOrStep;
 
 		}
 
