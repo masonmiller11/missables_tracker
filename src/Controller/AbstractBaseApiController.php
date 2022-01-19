@@ -97,7 +97,7 @@
 		protected function doUpdate(Request $request, int $id, User $user = null, $confirmOwnership = true): EntityInterface {
 
 			if (!$this->doesEntityExist($id))
-				throw new NotFoundHttpException('Resource with id ' . $id .'does not exist');
+				throw new NotFoundHttpException('Resource with id ' . $id .' does not exist');
 
 			if ($confirmOwnership) $this->confirmResourceOwner($this->repository->find($id));
 
