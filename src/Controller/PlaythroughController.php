@@ -87,7 +87,7 @@
 
 				foreach ($sectionTemplates as $sectionTemplate) {
 					$sectionPayload = new SectionPayload();
-					$sectionPayload->description = $sectionTemplate->getDescription;
+					$sectionPayload->description = $sectionTemplate->getDescription();
 					$sectionPayload->playthroughId = $playthrough->getId();
 					$sectionPayload->name = $sectionTemplate->getName();
 					$sectionPayload->position = $sectionTemplate->getPosition();
