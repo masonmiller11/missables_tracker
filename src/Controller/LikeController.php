@@ -49,7 +49,7 @@
 
 			try {
 
-				$this->doCreate($request, $this->getUser());
+				$like = $this->doCreate($request, $this->getUser());
 
 			} catch (PayloadDecoderException | ValidationException $exception) {
 
@@ -57,7 +57,10 @@
 
 			}
 
-			return ResponseHelper::createLikeCreatedResponse();
+			return ResponseHelper::createResourceCreatedResponse(
+				'like/read/' . $like->getId(),
+				$like->getId()
+			);
 
 		}
 
