@@ -18,7 +18,12 @@
 			$data['id'] = $object->getId();
 
 			$data['playthroughTemplate'] = [
-				'template_id' => $object->getLikedTemplate()->getId(),
+				'id' => $object->getLikedTemplate()->getId(),
+				'name' => $object->getLikedTemplate()->getOwner(),
+				'game' => [
+					'title' => $object->getLikedTemplate()->getGame()->getTitle(),
+					'id' => $object->getLikedTemplate()->getGame()->getId()
+				]
 			];
 
 			return $data;
