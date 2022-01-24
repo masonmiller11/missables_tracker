@@ -141,7 +141,7 @@
 			if (!method_exists($entity, 'getOwner') && !method_exists($entity, 'getLikedBy'))
 				throw new \BadMethodCallException($entity::class . ' does not have getOwner or getLiked methods');
 
-			$owner = $entity->getOwner() ?? $entity->getLikedBy();
+			$owner = method_exists($entity, 'getOwner') ? $entity->getOwner() : $entity->getLikedBy();
 
 			//If the current user is not the owner of the resource that is being accessed, throw exception.
 			if ($owner !== $this->getUser())
