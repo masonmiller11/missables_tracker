@@ -19,12 +19,6 @@
 
 			$data['playthroughTemplate'] = [
 				'template_id' => $object->getLikedTemplate()->getId(),
-				'template_author' => $object->getLikedTemplate()->getOwner(),
-				'template_likes' => $object->getLikedTemplate()->countLikes(),
-				'game' => [
-					'game_title' => $object->getLikedTemplate()->getGame()->getTitle(),
-					'game_id' => $object->getLikedTemplate()->getGame()->getId()
-				]
 			];
 
 			return $data;
