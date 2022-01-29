@@ -138,7 +138,7 @@
 		}
 
 		/**
-		 * @Route(path="/{page<\d+>?1}/{pageSize<\d+>?20}", methods={"GET"}, name="list")
+		 * @Route(path="{page<\d+>?1}/{pageSize<\d+>?20}", methods={"GET"}, name="list")
 		 *
 		 * @param int $page
 		 * @param int $pageSize
