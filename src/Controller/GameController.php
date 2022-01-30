@@ -128,7 +128,7 @@
 				$games = $this->repository->searchByName($searchTerm);
 
 				//Returns an array of IGDB data transfer objects based on the search term.
-				$igdbDtos = $this->IGDBHelper->searchIGDB($searchTerm);
+				$igdbDtos = $this->IGDBHelper->searchIGDB($searchTerm, 9);
 
 				if (!$this->entityTransformer instanceof GameEntityTransformer)
 					throw new InvalidArgumentException(
