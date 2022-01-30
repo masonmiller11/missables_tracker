@@ -85,6 +85,11 @@
 		 */
 		public function read(int $id, SerializerInterface $serializer): Response {
 
+			if (!$this->repository instanceof PlaythroughTemplateRepository)
+				throw new \InvalidArgumentException(
+					'repository not instance of type PlaythroughTemplateRepository'
+				);
+
 			$playthroughTemplate = $this->repository->find($id);
 
 			return ResponseHelper::createReadResponse($playthroughTemplate, $serializer);
@@ -116,17 +121,23 @@
 		}
 
 		/**
-		 * @Route(path="{page<\d+>?1}", methods={"GET"}, name="list_this_users")
+		 * @Route(path="{page<\d+>?1}/{pageSize<\d+>?20}", methods={"GET"}, name="list_this_users")
 		 *
 		 * @param int $page
 		 * @param SerializerInterface $serializer
 		 *
 		 * @return Response
 		 */
-		public function listThisUsers(int $page, SerializerInterface $serializer): Response {
+		public function listThisUsers(int $page, int $pageSize, SerializerInterface $serializer): Response {
 
-			$user = $this->getUser();
-			$templates = $user->getPlaythroughTemplates();
+			$ownerId = $this->getUser()->getId();
+
+			if (!$this->repository instanceof PlaythroughTemplateRepository)
+				throw new \InvalidArgumentException(
+					'repository not instance of type PlaythroughTemplateRepository'
+				);
+
+			$templates = $this->repository->findAllByAuthor($ownerId, $page, $pageSize);
 
 			return ResponseHelper::createReadResponse($templates, $serializer, true);
 
