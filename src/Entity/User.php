@@ -149,6 +149,13 @@
 		}
 
 		/**
+		 * @return string
+		 */
+		public function getHandle() :string {
+			return $this->username;
+		}
+
+		/**
 		 * @return string|null
 		 */
 		public function getPassword(): ?string {
