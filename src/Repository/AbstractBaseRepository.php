@@ -43,7 +43,7 @@
 			];
 
 			if ($queryResults['items'] == []) {
-				throw new NotFoundHttpException('no ' . $itemsName . ' were found');
+				throw new NotFoundHttpException('No ' . $itemsName . ' were found.');
 			}
 
 			return [
