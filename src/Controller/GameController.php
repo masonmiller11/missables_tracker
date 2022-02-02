@@ -147,6 +147,9 @@
 
 			}
 
+			if ($allGames == [])
+				return ResponseHelper::createJsonErrorResponse('Your search did not return any games.','error');
+
 			return ResponseHelper::createReadResponse($allGames, $serializer);
 
 
