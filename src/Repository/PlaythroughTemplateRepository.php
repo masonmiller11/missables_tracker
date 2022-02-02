@@ -32,7 +32,7 @@
 				->orderBy('template.numberOfLikes', 'DESC')
 				->setParameter('gameId', $gameId);
 
-			return $this->doPagination($qb, $page, $pageSize, 'templates');
+			return $this->doPagination($qb, $page, $pageSize, 'guides');
 
 		}
 
@@ -52,7 +52,7 @@
 				->orderBy('template.numberOfLikes', 'DESC')
 				->setParameter('authorId', $authorId);
 
-			return $this->doPagination($qb, $page, $pageSize, 'templates');
+			return $this->doPagination($qb, $page, $pageSize, 'guides');
 
 		}
 
@@ -68,7 +68,7 @@
 				->andWhere('template.visibility = true')
 				->orderBy('template.numberOfLikes', 'DESC');
 
-			return $this->doPagination($qb, $page, $pageSize, 'templates');
+			return $this->doPagination($qb, $page, $pageSize, 'guides');
 
 		}
 	}
