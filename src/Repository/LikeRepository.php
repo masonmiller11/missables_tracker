@@ -50,7 +50,7 @@
 				->leftJoin('templateLike.likedBy', 'owner')
 				->setParameter('ownerId', $ownerId);
 
-			return $this->doPagination($qb, $page, $pageSize, 'likes');
+			return $this->doPagination($qb, $page, $pageSize, 'favorites');
 
 		}
 
