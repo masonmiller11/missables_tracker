@@ -1,7 +1,7 @@
 DOCKER_COMPOSE = docker-compose
 EXEC = $(DOCKER_COMPOSE) exec
 EXEC_PHP = $(DOCKER_COMPOSE) exec php bash
-EXEC_DATABASE = $(EXEC) database -u application -p
+EXEC_DATABASE = $(EXEC) database mysql -u application -p
 SYMFONY = php bin/console
 SYMFONY_EXEC = $(EXEC_PHP) php bin/console
 
