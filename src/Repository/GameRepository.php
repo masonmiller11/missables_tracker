@@ -29,10 +29,23 @@
 			return $qb->getQuery()->getOneOrNullResult();
 		}
 
-		public function searchByName (string $term): array | null {
+		/**
+		 * @param int $page
+		 * @param int $pageSize
+		 * @param string $term
+		 *
+		 * @return array|null
+		 */
+		#[ArrayShape(['items' => "array", 'totalItems' => "int", 'pageCount' => "float"])]
+		public function searchByName (string $term, int $page, int $pageSize): array | null {
 			$qb = $this->createQueryBuilder('game')
+				->select('COUNT(template) AS HIDDEN myCount', 'game')
+				->leftJoin('game.playthroughTemplates', 'template')
 				->andWhere('game.title LIKE :searchTerm')
-				->setParameter('searchTerm','%' . $term . '%');
+				->orderBy('myCount', 'DESC')
+				->setParameter('searchTerm','%' . $term . '%')
+				->groupBy('game');
+
 
 			return $this->doPagination($qb, $page, $pageSize, 'games');
 		}
