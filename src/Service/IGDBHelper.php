@@ -76,19 +76,21 @@
 		 * @param EntityManagerInterface $entityManager
 		 * @param ValidatorInterface $validator
 		 * @param IGDBGameResponseDTOTransformer $IGDBGameResponseDTOTransformer
+		 *
 		 * @throws ClientExceptionInterface
 		 * @throws DecodingExceptionInterface
 		 * @throws RedirectionExceptionInterface
 		 * @throws ServerExceptionInterface
 		 * @throws TransportExceptionInterface
 		 */
-		public function __construct(HttpClientInterface $client,
-		                            string $apiID,
-		                            string $apiSecret,
-		                            IGDBConfigRepository $IGDBConfigRepository,
-		                            EntityManagerInterface $entityManager,
-		                            ValidatorInterface $validator,
-		                            IGDBGameResponseDTOTransformer $IGDBGameResponseDTOTransformer,
+		public function __construct(
+			HttpClientInterface $client,
+			string $apiID,
+			string $apiSecret,
+			IGDBConfigRepository $IGDBConfigRepository,
+			EntityManagerInterface $entityManager,
+			ValidatorInterface $validator,
+			IGDBGameResponseDTOTransformer $IGDBGameResponseDTOTransformer,
 		) {
 
 			$this->client = $client;
@@ -120,7 +122,7 @@
 			$this->headers = [
 				'Authorization' => 'Bearer ' . $this->IGDBConfig->getToken(),
 				'Client-ID' => $this->apiID,
-				'Content-Type' => 'text/plain'
+				'Content-Type' => 'text/plain',
 			];
 
 		}
@@ -175,13 +177,17 @@
 		 */
 		private function getToken(): array {
 
-			$response = $this->client->request('POST', InternetGameDatabaseEndpoints::TOKEN, [
-				'query' => [
-					'client_id' => $this->apiID,
-					'client_secret' => $this->apiSecret,
-					'grant_type' => 'client_credentials'
-				],
-			]);
+			$response = $this->client->request(
+				'POST',
+				InternetGameDatabaseEndpoints::TOKEN,
+				[
+					'query' => [
+						'client_id' => $this->apiID,
+						'client_secret' => $this->apiSecret,
+						'grant_type' => 'client_credentials',
+					],
+				]
+			);
 
 			return $response->toArray();
 
@@ -206,14 +212,17 @@
 						first_release_date, cover, artworks;
 						search "' . $term . '";
 						where version_parent = null;
-						limit ' . $limit . ';'
+						limit ' . $limit . ';',
 				]
 			);
 
 			$gamesData = $response->toArray();
 
 			//Only return search results that have cover art and a summary.
-			$gamesData = array_filter($gamesData, fn($game) => isset($game['cover'], $game['summary'], $game['first_release_date']));
+			$gamesData = array_filter(
+				$gamesData,
+				fn($game) => isset($game['cover'], $game['summary'], $game['first_release_date'])
+			);
 
 			$gameDtos = [];
 
@@ -242,6 +251,7 @@
 
 		/**
 		 * @param Game $game
+		 *
 		 * @return string
 		 * @throws ClientExceptionInterface
 		 * @throws DecodingExceptionInterface
@@ -322,10 +332,12 @@
 		/**
 		 * @param Game $game
 		 * @param int $coverArtId
+		 * @param string $coverArtUri
 		 */
-		private function saveNewCoverArtId(Game $game, int $coverArtId): void {
+		private function saveNewCoverArt(Game $game, int $coverArtId, string $coverArtUri): void {
 
 			$game->setCover($coverArtId);
+			$game->setCoverUri($coverArtUri);
 
 			$this->entityManager->persist($game);
 			$this->entityManager->flush();
