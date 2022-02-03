@@ -34,7 +34,7 @@
 				->andWhere('game.title LIKE :searchTerm')
 				->setParameter('searchTerm','%' . $term . '%');
 
-			return $qb->getQuery()->getResult();
+			return $this->doPagination($qb, $page, $pageSize, 'games');
 		}
 
 		/**
