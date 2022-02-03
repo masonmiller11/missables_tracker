@@ -83,7 +83,6 @@
 		 */
 		private ?array $platforms;
 
-		//TODO eventually we want to save the cover's URL so we aren't constantly pinging IGDB
 		/**
 		 * @var string
 		 *
@@ -92,6 +91,15 @@
 		 * @ORM\Column(type="string", length=64, nullable=false)
 		 */
 		private string $cover;
+
+		/**
+		 * @var string
+		 *
+		 * @Assert\NotBlank()
+		 *
+		 * @ORM\Column(type="string", length=128, nullable=false)
+		 */
+		private ?string $coverUri;
 
 		/**
 		 * @var array|null
@@ -143,6 +151,7 @@
 		                                    ?array $screenshots,
 		                                    ?array $artworks,
 		                                    string $cover,
+		                                    ?string $coverUri,
 		                                    ?array $platforms,
 		                                    ?string $slug,
 		                                    ?float $rating,
@@ -152,7 +161,6 @@
 
 			$this->playthroughTemplates = new ArrayCollection();
 			$this->playthroughs = new ArrayCollection();
-
 			$this->genres = $genres;
 			$this->screenshots = $screenshots;
 			$this->artworks = $artworks;
@@ -165,7 +173,7 @@
 			$this->storyline = $storyline;
 			$this->releaseDate = $releaseDate;
 			$this->internetGameDatabaseID = $internetGameDatabaseID;
-
+			$this->coverUri = $coverUri;
 		}
 
 		/**
@@ -274,6 +282,17 @@
 
 		public function setCover(int $id) {
 			$this->cover = $id;
+		}
+
+		/**
+		 * @return string
+		 */
+		public function getCoverUri(): string {
+			return $this->coverUri;
+		}
+
+		public function setCoverUri(string $uri) {
+			$this->coverUri = $uri;
 		}
 
 		/**
