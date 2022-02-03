@@ -23,6 +23,7 @@
 		 * @param Game $object
 		 * @param string|null $format
 		 * @param array $context
+		 *
 		 * @return array
 		 * @throws ClientExceptionInterface
 		 * @throws DecodingExceptionInterface
@@ -34,11 +35,9 @@
 
 			$data['title'] = $object->getTitle();
 
-			try {
-				$data['cover'] = $this->IGDBHelper->getCoverArtForGame($object);
-			} catch (ClientException $exception) {
-				$data['cover'] = 'cover unavailable';
-			}
+			//If we have the uri for the cover, then let's not both IGDB.
+
+			$data['cover'] = $this->IGDBHelper->getAndSaveIfNeededCoverArtForGame($object);
 			$data['templateCount'] = $object->getPlaythroughTemplateCount();
 			$data['playthroughCount'] = $object->getPlaythroughCount();
 			$data['id'] = $object->getId();
@@ -55,7 +54,10 @@
 
 		}
 
-		public function supportsNormalization($data, string $format = null, array $context = []): bool {
+		public
+		function supportsNormalization(
+			$data, string $format = null, array $context = []
+		): bool {
 
 			return $data instanceof Game;
 

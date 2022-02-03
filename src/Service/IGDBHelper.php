@@ -259,30 +259,44 @@
 		 * @throws ServerExceptionInterface
 		 * @throws TransportExceptionInterface
 		 */
-		public function getCoverArtForGame(Game $game): string {
+		public function getAndSaveIfNeededCoverArtForGame(Game $game): string {
 
+			//If saved game has cover art uri, just return that.
+			if ($game->getCoverUri())
+				return $game->getCoverUri();
+
+			//If it does not, let's see if we can get it from the cover id, which is stored on $game->getCover
 			try {
 
+				$coverArtUri = $this->getCoverArtImageUriFromIgdb($game->getCover());;
+
+				//If the game entity does not have the uri saved, we should save it
+				$game->setCoverUri($coverArtUri);
+				$this->entityManager->persist($game);
+				$this->entityManager->flush();
+
 				//Get the imageUri based off of the saved cover art id that IGDB originally gave us.
-				return $this->getCoverArtImageUriFromIgdb($game->getCover());
 
 			} catch (\ErrorException) {
 
 				//Sometimes IGDB will change the cover art id, causing this to fail.
-				//If it fails, let's try getting a new cover art id from IGDB and trying again.
 				$igdbDTO = $this->getIgdbGameDto($game->getInternetGameDatabaseID());
 
-				//Since we now know the current cover art id is out of date, let's save the new one.
-				$this->saveNewCoverArtId($game, $igdbDTO->cover);
+				//If it fails, let's try getting a new cover art id from IGDB and trying again.
+				$coverArtUri = $this->getCoverArtImageUriFromIgdb($igdbDTO->cover);
 
-				return $this->getCoverArtImageUriFromIgdb($igdbDTO->cover);
+				//Since we now know the current cover art id and uri are out of date, let's save the new ones.
+				$this->saveNewCoverArt($game, $igdbDTO->cover, $coverArtUri);
 
 			}
+
+			return $coverArtUri;
 
 		}
 
 		/**
 		 * @param string $coverArtId
+		 *
 		 * @return string
 		 * @throws ClientExceptionInterface
 		 * @throws DecodingExceptionInterface
@@ -290,12 +304,16 @@
 		 * @throws ServerExceptionInterface
 		 * @throws TransportExceptionInterface
 		 */
-		private function getCoverArtImageUriFromIgdb(string $coverArtId): string {
+		public function getCoverArtImageUriFromIgdb(string $coverArtId): string {
 
-			$response = $this->client->request('POST', InternetGameDatabaseEndpoints::COVER, [
-				'headers' => $this->headers,
-				'body' => 'fields *; where id = ' . $coverArtId . ';'
-			]);
+			$response = $this->client->request(
+				'POST',
+				InternetGameDatabaseEndpoints::COVER,
+				[
+					'headers' => $this->headers,
+					'body' => 'fields *; where id = ' . $coverArtId . ';',
+				]
+			);
 
 			$response = $response->toArray()[0];
 
@@ -314,11 +332,15 @@
 		 */
 		public function getIgdbGameDto(int $igdbId): IGDBGameResponseDTO|RuntimeException {
 
-			$response = $this->client->request('POST', InternetGameDatabaseEndpoints::GAMES, [
-				'headers' => $this->headers,
-				'body' => 'fields name, id, rating, summary, storyline, slug, screenshots, platforms, genres, 
-				first_release_date, cover, artworks; where id = ' . $igdbId . ';'
-			]);
+			$response = $this->client->request(
+				'POST',
+				InternetGameDatabaseEndpoints::GAMES,
+				[
+					'headers' => $this->headers,
+					'body' => 'fields name, id, rating, summary, storyline, slug, screenshots, platforms, genres, 
+				first_release_date, cover, artworks; where id = ' . $igdbId . ';',
+				]
+			);
 
 			//TODO eventually we want to save the cover's URL so we aren't constantly pinging IGDB
 			$dto = $this->IGDBGameResponseDTOTransformer->transformFromObject($response);

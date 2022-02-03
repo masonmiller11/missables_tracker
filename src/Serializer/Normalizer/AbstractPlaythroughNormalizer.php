@@ -36,19 +36,8 @@
 			$data['game'] = [
 				'gameID' => strval($object->getGame()->getId()),
 				'gameTitle' => $object->getGame()->getTitle(),
-				'cover' => $this->IGDBHelper->getCoverArtForGame($object->getGame())
+				'cover' => $this->IGDBHelper->getAndSaveIfNeededCoverArtForGame($object->getGame())
 			];
-
-			// $data['stepPositions'] = call_user_func_array("array_merge",
-			// 	$object->getSections()->map(
-			// 		fn(SectionInterface $section) => $section->getSteps()->map(
-			// 			fn(StepInterface $step) => $step->getPosition()
-			// 		)->toArray()
-			// 	)->toArray());
-			//
-			// $data['sectionPositions'] = $object->getSections()->map(
-			// 	fn(SectionInterface $section) => $section->getPosition()
-			// )->toArray();
 
 			return $data;
 

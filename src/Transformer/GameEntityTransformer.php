@@ -106,8 +106,13 @@
 
 		/**
 		 * @param IGDBGameResponseDTO $igdbGameDto
+		 *
 		 * @return Game
-		 * @throws \Exception
+		 * @throws TransportExceptionInterface
+		 * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+		 * @throws \Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface
+		 * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+		 * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
 		 */
 		#[Pure] public function assemble(IGDBGameResponseDTO $igdbGameDto): Game {
 
@@ -118,6 +123,7 @@
 				$igdbGameDto->screenshots,
 				$igdbGameDto->artworks,
 				$igdbGameDto->cover,
+				$this->IGDBHelper->getCoverArtImageUriFromIgdb($igdbGameDto->cover),
 				$igdbGameDto->platforms,
 				$igdbGameDto->slug,
 				$igdbGameDto->rating,
