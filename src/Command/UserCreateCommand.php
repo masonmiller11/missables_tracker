@@ -14,7 +14,7 @@
 	class UserCreateCommand extends Command {
 
 		protected static $defaultName = 'app:user:create';
-		protected static $defaultDescription = 'This is for creating users to test the app with';
+		protected static string $defaultDescription = 'This is for creating users to test the app with';
 
 		private EntityManagerInterface $entityManager;
 		private UserPasswordHasherInterface $encoder;
@@ -27,12 +27,13 @@
 
 		protected function configure() {
 			$this->addArgument('email', InputArgument::REQUIRED, 'this is a user\'s email address');
+			$this->addArgument('username', InputArgument::REQUIRED, 'this is a user\'s username');
 			$this->addOption('password', 'p', InputOption::VALUE_NONE, 'this is a user\'s password');
 		}
 
 		protected function execute(InputInterface $input, OutputInterface $output): int {
 
-			$user = new User($input->getArgument('email'), 'testusername');
+			$user = new User($input->getArgument('email'), $input->getArgument('username'));
 
 			if ($password = $input->getOption('password')) {
 
@@ -51,6 +52,9 @@
 			$io = new SymfonyStyle($input, $output);
 			if (!$input->getArgument('email')) {
 				$input->setArgument('email', $io->ask('What is the email of the test user?'));
+			}
+			if (!$input->getArgument('username')) {
+				$input->setArgument('username', $io->ask('What should the username be?'));
 			}
 			if ($input->getOption('password')) {
 				$input->setOption('password', $io->askHidden('What is the user\'s password going to be?'));
