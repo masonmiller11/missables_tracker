@@ -30,7 +30,7 @@
 			$data['visibility'] = $object->isVisible();
 			$data['owner'] = [
 				'ownerID' => $object->getOwner()->getId(),
-				'owner' => $object->getOwner()->getUsername(),
+				'owner' => $object->getOwner()->getHandle(),
 			];
 
 			$data['game'] = [
