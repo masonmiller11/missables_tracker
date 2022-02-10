@@ -40,17 +40,29 @@
 		 * @param int $authorId
 		 * @param int $page
 		 * @param int $pageSize
+		 * @param bool $showOnlyVisible
+		 *
 		 * @return array|null
 		 */
 		#[ArrayShape(['items' => "array", 'totalItems' => "int", 'pageCount' => "float"])]
-		public function findAllByAuthor(int $authorId, int $page, int $pageSize): array|null {
-			$qb = $this->createQueryBuilder('template')
-				->select('template')
-				->andWhere('author.id = :authorId')
-				->andWhere('template.visibility = true')
-				->leftJoin('template.owner', 'author')
-				->orderBy('template.numberOfLikes', 'DESC')
-				->setParameter('authorId', $authorId);
+		public function findAllByAuthor(int $authorId, int $page, int $pageSize, bool $showOnlyVisible): array|null {
+
+			if ($showOnlyVisible) {
+				$qb = $this->createQueryBuilder('template')
+					->select('template')
+					->andWhere('author.id = :authorId')
+					->andWhere('template.visibility = true')
+					->leftJoin('template.owner', 'author')
+					->orderBy('template.numberOfLikes', 'DESC')
+					->setParameter('authorId', $authorId);
+			} else {
+				$qb = $this->createQueryBuilder('template')
+					->select('template')
+					->andWhere('author.id = :authorId')
+					->leftJoin('template.owner', 'author')
+					->orderBy('template.numberOfLikes', 'DESC')
+					->setParameter('authorId', $authorId);
+			}
 
 			return $this->doPagination($qb, $page, $pageSize, 'guides');
 

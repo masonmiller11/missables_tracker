@@ -124,6 +124,7 @@
 		 * @Route(path="{page<\d+>?1}/{pageSize<\d+>?20}", methods={"GET"}, name="list_this_users")
 		 *
 		 * @param int $page
+		 * @param int $pageSize
 		 * @param SerializerInterface $serializer
 		 *
 		 * @return Response
@@ -137,7 +138,7 @@
 					'repository not instance of type PlaythroughTemplateRepository'
 				);
 
-			$templates = $this->repository->findAllByAuthor($ownerId, $page, $pageSize);
+			$templates = $this->repository->findAllByAuthor($ownerId, $page, $pageSize, false);
 
 			return ResponseHelper::createReadResponse($templates, $serializer, true);
 
@@ -185,7 +186,7 @@
 					'repository not instance of type PlaythroughTemplateRepository'
 				);
 
-			$templates = $this->repository->findAllByAuthor($authorID, $page, $pageSize);
+			$templates = $this->repository->findAllByAuthor($authorID, $page, $pageSize, true);
 
 			return ResponseHelper::createReadResponse($templates, $serializer);
 
