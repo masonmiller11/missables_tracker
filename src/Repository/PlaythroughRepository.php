@@ -37,4 +37,15 @@
 
 		}
 
+		#[ArrayShape(['items' => "array", 'totalItems' => "int", 'pageCount' => "float"])]
+		public function findAllByTemplate(int $templateId, int $page, int $pageSize): array|null {
+			$qb = $this->createQueryBuilder('playthrough')
+				->select('playthrough')
+				->andWhere('playthrough.templateId = :templateId')
+				->setParameter('templateId', $templateId);
+
+			return $this->doPagination($qb, $page, $pageSize, 'playthroughs');
+
+		}
+
 	}

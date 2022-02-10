@@ -5,7 +5,9 @@
 	use App\Entity\Playthrough\PlaythroughTemplate;
 	use App\Entity\Section\SectionTemplate;
 	use App\Entity\Step\StepTemplate;
+	use App\Repository\PlaythroughRepository;
 	use App\Service\IGDBHelper;
+	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 	use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 	use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -14,8 +16,11 @@
 
 	class PlaythroughTemplateNormalizer extends AbstractPlaythroughNormalizer {
 
-		public function __construct(IGDBHelper $IGDBHelper) {
+		private PlaythroughRepository $repository;
+
+		public function __construct(IGDBHelper $IGDBHelper, PlaythroughRepository $repository) {
 			$this->IGDBHelper = $IGDBHelper;
+			$this->repository = $repository;
 		}
 
 		/**
@@ -33,6 +38,13 @@
 
 			$data = $this->createData($object);
 			$data['likes'] = $object->countLikes();
+
+			try {
+				$repositoryData = $this->repository->findAllByTemplate($object->getId(), 1, 12);
+				$data['playthroughs'] = $repositoryData['totalItems'];
+			} catch (NotFoundHttpException) {
+				$data['playthroughs'] = 0;
+			}
 
 			if (!$context['context_flag']) {
 
