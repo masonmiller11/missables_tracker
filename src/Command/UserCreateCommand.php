@@ -14,7 +14,7 @@
 	class UserCreateCommand extends Command {
 
 		protected static $defaultName = 'app:user:create';
-		protected static string $defaultDescription = 'This is for creating users to test the app with';
+		protected static $defaultDescription = 'This is for creating users to test the app with';
 
 		private EntityManagerInterface $entityManager;
 		private UserPasswordHasherInterface $encoder;
