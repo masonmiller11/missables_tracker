@@ -1,5 +1,7 @@
-# Welcome!
-Hey! This is one of my first (let's just call it my first) project working in Symfony. Any feedback is always welcome!
+![Website Demo](https://media.giphy.com/media/kv8cWAoxqNxTVPNpdQ/giphy.gif)
+
+# Missables Tracker!
+Hey! Welcome! Enjoy your stay. Any feedback is always appreciated! 
 
 ## Project Description
 I enjoy video games. I especially enjoy RPGs and action adventure games. The problem with a lot of older RPGs and JRPGs
@@ -16,6 +18,9 @@ playthrough using that template. You'll then be able to check off missables as y
 So if you were to start a playthrough of say, *Tales of Vesperia*, you'd search for a template of that game created by
 another user (or add one yourself). You would then start a new playthrough based off that template and check items off
 as you progress.
+
+## Frontend Repository
+You can find the frontend of this project [here](https://github.com/masonmiller11/missables_tracker-frontend). 
 
 ### Setup
  
