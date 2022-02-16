@@ -67,7 +67,7 @@ API_ID=id
 API_SECRET=secret
 ```
 
-###Makefile
+### Makefile
 
 There are some makefile commands to make navigating the project a bit easier. Each of these will need to begin with 
 make. So the entire command for ```build``` is ```make build```. 
